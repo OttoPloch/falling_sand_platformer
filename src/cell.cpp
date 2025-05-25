@@ -28,6 +28,8 @@ void Cell::update()
     }
 }
 
+void Cell::setPos(sf::Vector2u newPos) { position = newPos; }
+
 void Cell::changePos(sf::Vector2i distance)
 {
     position.x += distance.x;
@@ -35,3 +37,18 @@ void Cell::changePos(sf::Vector2i distance)
 }
 
 std::string Cell::getType() { return type; }
+
+int Cell::getWeight() { return myPreset.weight; }
+
+bool Cell::hasBehavior(std::string behaviorName)
+{
+    for (int i = 0; i < myPreset.behaviors.size(); i++)
+    {
+        if (myPreset.behaviors[i]->getName() == behaviorName)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}

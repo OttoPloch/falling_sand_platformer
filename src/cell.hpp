@@ -18,16 +18,22 @@ public:
 
     void update();
 
+    void setPos(sf::Vector2u newPos);
+
     void changePos(sf::Vector2i distance);
 
     std::string getType();
+
+    int getWeight();
+
+    bool hasBehavior(std::string behaviorName);
 private:
     CellManager* cellManager;
 
     Grid* grid;
     
     std::string type;
-    
+
     sf::Vector2u position;
 
     CellPreset myPreset;

@@ -36,6 +36,9 @@ public:
     // moves a cell a given distance, no checks other than for nullptr
     void moveCell(sf::Vector2u gridPos, sf::Vector2i distance);
 
+    // swaps two cells
+    void swap(sf::Vector2u gridPos1, sf::Vector2u gridPos2);
+
     // iterates through the grid and updates cells
     void updateCells();
 private:

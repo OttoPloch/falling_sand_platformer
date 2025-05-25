@@ -74,6 +74,13 @@ void Grid::moveCell(sf::Vector2u gridPos, sf::Vector2i distance)
     }
 }
 
+void Grid::swap(sf::Vector2u gridPos1, sf::Vector2u gridPos2)
+{
+    theGrid[gridPos1.y][gridPos1.x]->setPos(gridPos2);
+    theGrid[gridPos2.y][gridPos2.x]->setPos(gridPos1);
+    std::swap(*(theGrid[gridPos1.y][gridPos1.x]), *(theGrid[gridPos2.y][gridPos2.x]));
+}
+
 void Grid::updateCells()
 {
     // these lines just print the grid
