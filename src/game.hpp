@@ -1,8 +1,10 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
-#include "grid.hpp"
+#include "window_preset.hpp"
+#include "world.hpp"
 
 class Game
 {
@@ -23,7 +25,7 @@ private:
 
     sf::Clock dtClock;
 
-    Grid grid;
+    World world;
 
     bool isPaused;
 

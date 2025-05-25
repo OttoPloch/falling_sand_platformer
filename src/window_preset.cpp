@@ -1,4 +1,4 @@
-#include "window_presets.hpp"
+#include "window_preset.hpp"
 
 WindowPreset::WindowPreset(sf::VideoMode mode, std::string title, bool fullscreen, bool borderless)
 {
