@@ -18,6 +18,8 @@ bool HeavyBehavior::update(Grid* grid, sf::Vector2u gridPos)
         }
         else if (grid->at(gridPos)->hasBehavior("settle"))
         {
+            // if this cell settles
+
             if (grid->at({gridPos.x - 1, gridPos.y + 1}) != nullptr &&  grid->at({gridPos.x + 1, gridPos.y + 1}) != nullptr && grid->at({gridPos.x - 1, gridPos.y + 1})->getWeight() < grid->at(gridPos)->getWeight() && grid->at({gridPos.x + 1, gridPos.y + 1})->getWeight() < grid->at(gridPos)->getWeight())
             {
                 // if both bottom left and bottom right are valid
@@ -52,6 +54,8 @@ bool HeavyBehavior::update(Grid* grid, sf::Vector2u gridPos)
         }
         else if (grid->at(gridPos)->hasBehavior("flow"))
         {
+            // if this cell flows
+
             if (grid->at({gridPos.x - 1, gridPos.y}) != nullptr && grid->at({gridPos.x + 1, gridPos.y}) != nullptr && grid->at({gridPos.x - 1, gridPos.y})->getWeight() < grid->at(gridPos)->getWeight() && grid->at({gridPos.x + 1, gridPos.y})->getWeight() < grid->at(gridPos)->getWeight())
             {
                 // if both left and right are valid

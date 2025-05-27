@@ -2,14 +2,35 @@
 
 World::World() {}
 
-void World::create(int gridLength, int gridHeight)
+void World::create(int gridLength, int gridHeight, sf::RenderWindow* window)
 {
     grid.create(gridLength, gridHeight);
+
+    this->window = window;
 }
 
 void World::update()
 {
     grid.updateCells();
+}
+
+void World::draw()
+{
+    for (unsigned int i = 0; i < grid.getSize(); i++)
+    {
+        for (unsigned int j = 0; j < grid.getSizeOfRow(i); j++)
+        {
+            if (grid.at({j, i}) != nullptr)
+            {
+                sf::RectangleShape rect({30.f, 30.f});
+    
+                rect.setFillColor(grid.at({j, i})->getColor());
+                rect.setPosition({(float)(j * 30), (float)(i * 30)});
+    
+                window->draw(rect);
+            }
+        }
+    }
 }
 
 sf::Vector2u World::getGridSize() { return {grid.getSize(), grid.getSizeOfRow(0)}; }

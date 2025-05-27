@@ -15,7 +15,7 @@ void Game::start()
     window.setVerticalSyncEnabled(true);
     isFullscreen = false;
 
-    world.create(GRIDLENGTH, GRIDHEIGHT);
+    world.create(GRIDLENGTH, GRIDHEIGHT, &window);
 
     run();
 }
@@ -73,15 +73,23 @@ void Game::events()
             // set window to preset 1
             if (code == sf::Keyboard::Key::Num1)
             {
-                window.setSize(WINDOWPRESET1.mode.size);
-                window.setPosition({(int)((sf::VideoMode::getDesktopMode().size.x / 2) - window.getSize().x / 2), (int)((sf::VideoMode::getDesktopMode().size.y / 2) - window.getSize().y / 2)});
+                if (!isFullscreen)
+                {
+                    window.setSize(WINDOWPRESET1.mode.size);
+                    window.setView(sf::View({(float)window.getSize().x / 2, (float)window.getSize().y / 2}, {window.getSize().x, window.getSize().y}));
+                    window.setPosition({(int)((sf::VideoMode::getDesktopMode().size.x / 2) - window.getSize().x / 2), (int)((sf::VideoMode::getDesktopMode().size.y / 2) - window.getSize().y / 2)});
+                }
             }
             
             // set window to preset 2
             if (code == sf::Keyboard::Key::Num2)
             {
-                window.setSize(WINDOWPRESET2.mode.size);
-                window.setPosition({(int)((sf::VideoMode::getDesktopMode().size.x / 2) - window.getSize().x / 2), (int)((sf::VideoMode::getDesktopMode().size.y / 2) - window.getSize().y / 2)});
+                if (!isFullscreen)
+                {
+                    window.setSize(WINDOWPRESET2.mode.size);
+                    window.setView(sf::View({(float)window.getSize().x / 2, (float)window.getSize().y / 2}, {window.getSize().x, window.getSize().y}));
+                    window.setPosition({(int)((sf::VideoMode::getDesktopMode().size.x / 2) - window.getSize().x / 2), (int)((sf::VideoMode::getDesktopMode().size.y / 2) - window.getSize().y / 2)});
+                }
             }
 
             // toggles fullscreen
@@ -128,6 +136,8 @@ void Game::update()
 void Game::draw()
 {
     window.clear(sf::Color(35, 35, 40));
+
+    world.draw();
 
     window.display();
 }

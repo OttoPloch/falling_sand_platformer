@@ -13,9 +13,11 @@ class World
 public:
     World();
 
-    void create(int gridLength, int gridHeight);
+    void create(int gridLength, int gridHeight, sf::RenderWindow* window);
 
     void update();    
+
+    void draw();
 
     sf::Vector2u getGridSize();
 
@@ -23,6 +25,8 @@ public:
 
     void makeACell(std::string type, sf::Vector2u position);
 private:
+    sf::RenderWindow* window;
+
     CellManager cellManager;
 
     Grid grid;

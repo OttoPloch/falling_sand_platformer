@@ -26,6 +26,8 @@ public:
 
     int getWeight();
 
+    sf::Color getColor();
+
     bool hasBehavior(std::string behaviorName);
 private:
     CellManager* cellManager;

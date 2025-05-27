@@ -40,6 +40,11 @@ std::string Cell::getType() { return type; }
 
 int Cell::getWeight() { return myPreset.weight; }
 
+sf::Color Cell::getColor()
+{
+    return myPreset.color;
+}
+
 bool Cell::hasBehavior(std::string behaviorName)
 {
     for (int i = 0; i < myPreset.behaviors.size(); i++)
