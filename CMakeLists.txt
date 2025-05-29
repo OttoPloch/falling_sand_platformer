@@ -27,6 +27,7 @@ src/behaviors/falling_behavior.cpp
 src/behaviors/settling_behavior.cpp
 src/behaviors/flowing_behavior.cpp
 src/behaviors/heavy_behavior.cpp
+src/behaviors/spreading_behavior.cpp
 )
 target_compile_features(app PRIVATE cxx_std_17)
 target_link_libraries(app PRIVATE SFML::Graphics)

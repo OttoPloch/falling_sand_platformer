@@ -2,14 +2,12 @@
 
 #include "../behavior.hpp"
 #include "../grid.hpp"
-#include "../cell.hpp"
+#include "../get_random_number.hpp"
 
-class HeavyBehavior : public Behavior
+class FlamingBehavior : public Behavior
 {
 public:
-    HeavyBehavior();
-
-    HeavyBehavior(int weight);
+    FlamingBehavior();
 
     // overrides the parent class's update method
     bool update(Grid* grid, sf::Vector2u gridPos) override;

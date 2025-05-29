@@ -12,7 +12,7 @@ Game::Game() {}
 void Game::start()
 {
     createWindowFromPreset(WINDOWPRESET1, window);
-    window.setVerticalSyncEnabled(true);
+    window.setFramerateLimit(60);
     isFullscreen = false;
 
     world.create(GRIDLENGTH, GRIDHEIGHT, &window);
@@ -76,7 +76,7 @@ void Game::events()
                 if (!isFullscreen)
                 {
                     window.setSize(WINDOWPRESET1.mode.size);
-                    window.setView(sf::View({(float)window.getSize().x / 2, (float)window.getSize().y / 2}, {window.getSize().x, window.getSize().y}));
+                    window.setView(sf::View({static_cast<float>(window.getSize().x / 2), static_cast<float>(window.getSize().y / 2)}, {static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)}));
                     window.setPosition({(int)((sf::VideoMode::getDesktopMode().size.x / 2) - window.getSize().x / 2), (int)((sf::VideoMode::getDesktopMode().size.y / 2) - window.getSize().y / 2)});
                 }
             }
@@ -87,7 +87,7 @@ void Game::events()
                 if (!isFullscreen)
                 {
                     window.setSize(WINDOWPRESET2.mode.size);
-                    window.setView(sf::View({(float)window.getSize().x / 2, (float)window.getSize().y / 2}, {window.getSize().x, window.getSize().y}));
+                    window.setView(sf::View({static_cast<float>(window.getSize().x / 2), static_cast<float>(window.getSize().y / 2)}, {static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)}));
                     window.setPosition({(int)((sf::VideoMode::getDesktopMode().size.x / 2) - window.getSize().x / 2), (int)((sf::VideoMode::getDesktopMode().size.y / 2) - window.getSize().y / 2)});
                 }
             }
@@ -110,15 +110,21 @@ void Game::events()
             }
             
             // creates a sand particle; temporary for testing
-            if (code == sf::Keyboard::Key::Enter)
+            if (code == sf::Keyboard::Key::S)
             {
                 world.makeACell("sand", {static_cast<unsigned int>(world.getGridSize().x / 2), 1});
             }
 
             // creates a water particle; temporary for testing
-            if (code == sf::Keyboard::Key::Tab)
+            if (code == sf::Keyboard::Key::W)
             {
                 world.makeACell("water", {static_cast<unsigned int>(world.getGridSize().x / 2), 1});
+            }
+
+            // creates a fire particle; temporary for testing
+            if (code == sf::Keyboard::Key::F)
+            {
+                world.makeACell("fire", {static_cast<unsigned int>(world.getGridSize().x / 2), 1});
             }
 
             ////////////////////////////////////////////////////////

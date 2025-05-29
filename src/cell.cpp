@@ -38,12 +38,9 @@ void Cell::changePos(sf::Vector2i distance)
 
 std::string Cell::getType() { return type; }
 
-int Cell::getWeight() { return myPreset.weight; }
+int Cell::getWeight() { return myPreset.optionalSettings["heavy"]; }
 
-sf::Color Cell::getColor()
-{
-    return myPreset.color;
-}
+sf::Color Cell::getColor() { return myPreset.color; }
 
 bool Cell::hasBehavior(std::string behaviorName)
 {

@@ -7,6 +7,7 @@
 #include "behaviors/settling_behavior.hpp"
 #include "behaviors/flowing_behavior.hpp"
 #include "behaviors/heavy_behavior.hpp"
+#include "behaviors/spreading_behavior.hpp"
 
 struct CellManager
 {

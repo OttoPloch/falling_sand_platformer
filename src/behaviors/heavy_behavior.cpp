@@ -1,6 +1,8 @@
 #include "heavy_behavior.hpp"
 
-HeavyBehavior::HeavyBehavior() : Behavior("heavy") {}
+HeavyBehavior::HeavyBehavior() : Behavior("heavy", -1) {}
+
+HeavyBehavior::HeavyBehavior(int weight) : Behavior("heavy", weight) {}
 
 bool HeavyBehavior::update(Grid* grid, sf::Vector2u gridPos)
 {
@@ -20,7 +22,7 @@ bool HeavyBehavior::update(Grid* grid, sf::Vector2u gridPos)
         {
             // if this cell settles
 
-            if (grid->at({gridPos.x - 1, gridPos.y + 1}) != nullptr &&  grid->at({gridPos.x + 1, gridPos.y + 1}) != nullptr && grid->at({gridPos.x - 1, gridPos.y + 1})->getWeight() < grid->at(gridPos)->getWeight() && grid->at({gridPos.x + 1, gridPos.y + 1})->getWeight() < grid->at(gridPos)->getWeight())
+            if (grid->at({gridPos.x - 1, gridPos.y + 1}) != nullptr && grid->at({gridPos.x + 1, gridPos.y + 1}) != nullptr && grid->at({gridPos.x - 1, gridPos.y + 1})->getWeight() < grid->at(gridPos)->getWeight() && grid->at({gridPos.x + 1, gridPos.y + 1})->getWeight() < grid->at(gridPos)->getWeight())
             {
                 // if both bottom left and bottom right are valid
 

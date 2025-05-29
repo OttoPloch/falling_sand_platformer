@@ -1,6 +1,6 @@
 #include "flowing_behavior.hpp"
 
-FlowingBehavior::FlowingBehavior() : Behavior("flow") {}
+FlowingBehavior::FlowingBehavior() : Behavior("flow", -1) {}
 
 bool FlowingBehavior::update(Grid* grid, sf::Vector2u gridPos)
 {

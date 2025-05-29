@@ -100,6 +100,10 @@ void Grid::updateCells()
                 {
                     std::cout << "\e[34m~~\e[39m";
                 }
+                else if (theGrid[y][x]->getType() == "fire")
+                {
+                    std::cout << "\e[31m~~\e[39m";
+                }
             }
             else
             {

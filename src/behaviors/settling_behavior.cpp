@@ -1,6 +1,6 @@
 #include "settling_behavior.hpp"
 
-SettlingBehavior::SettlingBehavior() : Behavior("settle") {}
+SettlingBehavior::SettlingBehavior() : Behavior("settle", -1) {}
 
 bool SettlingBehavior::update(Grid* grid, sf::Vector2u gridPos)
 {
