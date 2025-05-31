@@ -8,7 +8,8 @@ CellPreset::CellPreset(sf::Color color, std::vector<std::shared_ptr<Behavior>> b
     this->behaviors = behaviors;
 
     optionalSettings = {
-        {"heavy", -1}
+        {"heavy", -1},
+        {"flammable", -1}
     };
 
     for (auto i : optionalSettings)

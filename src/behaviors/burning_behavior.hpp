@@ -4,10 +4,10 @@
 #include "../grid.hpp"
 #include "../get_random_number.hpp"
 
-class SpreadingBehavior : public Behavior
+class BurningBehavior : public Behavior
 {
 public:
-    SpreadingBehavior();
+    BurningBehavior();
 
     // overrides the parent class's update method
     bool update(Grid* grid, sf::Vector2u gridPos) override;

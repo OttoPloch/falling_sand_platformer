@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <map>
 
 #include "cell_manager.hpp"
 #include "cell_preset.hpp"
@@ -22,9 +23,15 @@ public:
 
     void changePos(sf::Vector2i distance);
 
+    void changeType(std::string newType);
+
+    void addStartBehavior(std::shared_ptr<Behavior> newBehavior);
+
+    void addEndBehavior(std::shared_ptr<Behavior> newBehavior);
+
     std::string getType();
 
-    int getWeight();
+    int getOptionalSetting(std::string settingName);
 
     sf::Color getColor();
 

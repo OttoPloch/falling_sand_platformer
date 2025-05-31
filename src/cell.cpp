@@ -19,11 +19,14 @@ void Cell::create(CellManager* cellManager, Grid* grid, std::string type, sf::Ve
 
 void Cell::update()
 {
-    for (int i = 0; i < myPreset.behaviors.size(); i++)
+    if (myPreset.behaviors.size() > 0)
     {
-        if (myPreset.behaviors[i]->update(grid, position))
+        for (int i = 0; i < myPreset.behaviors.size(); i++)
         {
-            break;
+            if (myPreset.behaviors[i]->update(grid, position))
+            {
+                break;
+            }
         }
     }
 }
@@ -36,9 +39,34 @@ void Cell::changePos(sf::Vector2i distance)
     position.y += distance.y;
 }
 
+void Cell::changeType(std::string newType)
+{
+    type = newType;
+
+    myPreset = cellManager->presets[type];
+}
+
+void Cell::addStartBehavior(std::shared_ptr<Behavior> newBehavior)
+{
+    myPreset.behaviors.insert(myPreset.behaviors.begin(), newBehavior);
+}
+
+void Cell::addEndBehavior(std::shared_ptr<Behavior> newBehavior)
+{
+    myPreset.behaviors.push_back(newBehavior);
+}
+
 std::string Cell::getType() { return type; }
 
-int Cell::getWeight() { return myPreset.optionalSettings["heavy"]; }
+int Cell::getOptionalSetting(std::string settingName)
+{
+    if (myPreset.optionalSettings.find(settingName) != myPreset.optionalSettings.end())
+    {
+        return myPreset.optionalSettings[settingName];
+    }
+
+    return -2;
+}
 
 sf::Color Cell::getColor() { return myPreset.color; }
 

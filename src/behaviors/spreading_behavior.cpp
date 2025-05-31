@@ -1,8 +1,8 @@
 #include "spreading_behavior.hpp"
 
-FlamingBehavior::FlamingBehavior() : Behavior("spread", -1) {}
+SpreadingBehavior::SpreadingBehavior() : Behavior("spread", -1) {}
 
-bool FlamingBehavior::update(Grid* grid, sf::Vector2u gridPos)
+bool SpreadingBehavior::update(Grid* grid, sf::Vector2u gridPos)
 {
     std::vector<sf::Vector2i> openSpots;
 

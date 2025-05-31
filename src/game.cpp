@@ -62,6 +62,7 @@ void Game::events()
         else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
         {
             //////////////////// KEYBOARD INPUT ////////////////////
+            
             auto code = keyPressed->code;
 
             // close window
@@ -125,6 +126,18 @@ void Game::events()
             if (code == sf::Keyboard::Key::F)
             {
                 world.makeACell("fire", {static_cast<unsigned int>(world.getGridSize().x / 2), 1});
+            }
+
+            // creates a wood particle; temporary for testing
+            if (code == sf::Keyboard::Key::D)
+            {
+                world.makeACell("wood", {static_cast<unsigned int>(getRandomInt(GRIDLENGTH - 1)), static_cast<unsigned int>(getRandomInt(GRIDHEIGHT - 1))});
+            }
+
+            // creates a smoke particle; temporary for testing
+            if (code == sf::Keyboard::Key::O)
+            {
+                world.makeACell("smoke", {static_cast<unsigned int>(getRandomInt(GRIDLENGTH - 1)), 9});
             }
 
             ////////////////////////////////////////////////////////

@@ -64,6 +64,11 @@ void Grid::createCell(CellManager* cellManager, Grid* grid, std::string type, sf
     }
 }
 
+void Grid::removeCell(sf::Vector2u gridPos)
+{
+    theGrid[gridPos.y][gridPos.x].reset();
+}
+
 void Grid::moveCell(sf::Vector2u gridPos, sf::Vector2i distance)
 {
     // make sure all other necessary checks have been done before calling this function
@@ -102,7 +107,15 @@ void Grid::updateCells()
                 }
                 else if (theGrid[y][x]->getType() == "fire")
                 {
-                    std::cout << "\e[31m~~\e[39m";
+                    std::cout << "\e[31m!!\e[39m";
+                }
+                else if (theGrid[y][x]->getType() == "wood")
+                {
+                    std::cout << "\e[33mHH\e[39m";
+                }
+                else if (theGrid[y][x]->getType() == "smoke")
+                {
+                    std::cout << "\e[90m**\e[39m";
                 }
             }
             else

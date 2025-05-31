@@ -33,6 +33,9 @@ public:
     // makes the cell, no checks other than for nullptr
     void createCell(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position);
 
+    // removes a cell from the grid
+    void removeCell(sf::Vector2u gridPos);
+
     // moves a cell a given distance, no checks other than for nullptr
     void moveCell(sf::Vector2u gridPos, sf::Vector2i distance);
 

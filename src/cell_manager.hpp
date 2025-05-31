@@ -8,6 +8,11 @@
 #include "behaviors/flowing_behavior.hpp"
 #include "behaviors/heavy_behavior.hpp"
 #include "behaviors/spreading_behavior.hpp"
+#include "behaviors/flaming_behavior.hpp"
+#include "behaviors/flammable_behavior.hpp"
+#include "behaviors/static_behavior.hpp"
+#include "behaviors/burning_behavior.hpp"
+#include "behaviors/cooling_behavior.hpp"
 
 struct CellManager
 {
