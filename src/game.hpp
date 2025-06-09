@@ -30,4 +30,6 @@ private:
     bool isPaused;
 
     bool isFullscreen;
+
+    sf::Vector2u creatorPos;
 };

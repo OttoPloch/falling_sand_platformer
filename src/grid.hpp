@@ -24,8 +24,11 @@ public:
     unsigned int getSize();
 
     // gets the width of the grid at a specific row,
-    // though I doubt a non-rectangle grid will happen
+    // though I doubt a non-rectangular grid will happen
     unsigned int getSizeOfRow(unsigned int rowIndex);
+
+    // returns the dimensions of cells in the grid
+    sf::Vector2u getCellSize();
 
     // gets the current amount of cells on the grid
     unsigned int getCellCount();
@@ -43,7 +46,7 @@ public:
     void swap(sf::Vector2u gridPos1, sf::Vector2u gridPos2);
 
     // iterates through the grid and updates cells
-    void updateCells();
+    void updateCells(sf::Vector2u creatorPos);
 private:
     std::vector<std::vector<std::shared_ptr<Cell>>> theGrid;
 };

@@ -3,6 +3,9 @@
 #include "cell.hpp"
 #include "cell_manager.hpp"
 
+const unsigned int CELLSIZEX = 30;
+const unsigned int CELLSIZEY = 30;
+
 Grid::Grid() {}
 
 Grid::Grid(unsigned int gridLength, unsigned int gridHeight) { create(gridLength, gridHeight); }
@@ -36,6 +39,8 @@ Cell* Grid::at(sf::Vector2u position) {
 unsigned int Grid::getSize() { return theGrid.size(); }
 
 unsigned int Grid::getSizeOfRow(unsigned int rowIndex) { return theGrid[rowIndex].size(); }
+
+sf::Vector2u Grid::getCellSize() { return {CELLSIZEX, CELLSIZEY}; }
 
 unsigned int Grid::getCellCount()
 {
@@ -86,7 +91,7 @@ void Grid::swap(sf::Vector2u gridPos1, sf::Vector2u gridPos2)
     std::swap(*(theGrid[gridPos1.y][gridPos1.x]), *(theGrid[gridPos2.y][gridPos2.x]));
 }
 
-void Grid::updateCells()
+void Grid::updateCells(sf::Vector2u creatorPos)
 {
     // these lines just print the grid
     std::cout << "////////////////////////STARTING////////////////////////\n";
@@ -95,7 +100,11 @@ void Grid::updateCells()
     {
         for (int x = 0; x < theGrid[y].size(); x++)
         {
-            if (theGrid[y][x] != nullptr)
+            if (x == creatorPos.x && y == creatorPos.y)
+            {
+                std::cout << "\e[32mcc\e[39m";
+            }
+            else if (theGrid[y][x] != nullptr)
             {
                 if (theGrid[y][x]->getType() == "sand")
                 {

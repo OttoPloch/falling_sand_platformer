@@ -17,6 +17,8 @@ void Game::start()
 
     world.create(GRIDLENGTH, GRIDHEIGHT, &window);
 
+    creatorPos = {static_cast<unsigned int>(world.getGridSize().x / 2), 1};
+
     run();
 }
 
@@ -113,31 +115,55 @@ void Game::events()
             // creates a sand particle; temporary for testing
             if (code == sf::Keyboard::Key::S)
             {
-                world.makeACell("sand", {static_cast<unsigned int>(world.getGridSize().x / 2), 1});
+                world.makeACell("sand", creatorPos);
             }
 
             // creates a water particle; temporary for testing
             if (code == sf::Keyboard::Key::W)
             {
-                world.makeACell("water", {static_cast<unsigned int>(world.getGridSize().x / 2), 1});
+                world.makeACell("water", creatorPos);
             }
 
             // creates a fire particle; temporary for testing
             if (code == sf::Keyboard::Key::F)
             {
-                world.makeACell("fire", {static_cast<unsigned int>(world.getGridSize().x / 2), 1});
+                world.makeACell("fire", creatorPos);
             }
 
             // creates a wood particle; temporary for testing
             if (code == sf::Keyboard::Key::D)
             {
-                world.makeACell("wood", {static_cast<unsigned int>(getRandomInt(GRIDLENGTH - 1)), static_cast<unsigned int>(getRandomInt(GRIDHEIGHT - 1))});
+                world.makeACell("wood", creatorPos);
             }
 
             // creates a smoke particle; temporary for testing
             if (code == sf::Keyboard::Key::O)
             {
-                world.makeACell("smoke", {static_cast<unsigned int>(getRandomInt(GRIDLENGTH - 1)), 9});
+                world.makeACell("smoke", creatorPos);
+            }
+
+            // moves the creator position left
+            if (code == sf::Keyboard::Key::Left && creatorPos.x > 0)
+            {
+                creatorPos.x--;
+            }
+
+            // moves the creator position right
+            if (code == sf::Keyboard::Key::Right && creatorPos.x < world.getGridSize().x - 1)
+            {
+                creatorPos.x++;
+            }
+
+            // moves the creator position up
+            if (code == sf::Keyboard::Key::Up && creatorPos.y > 0)
+            {
+                creatorPos.y--;
+            }
+
+            // moves the creator position down
+            if (code == sf::Keyboard::Key::Down && creatorPos.y < world.getGridSize().y - 1)
+            {
+                creatorPos.y++;
             }
 
             ////////////////////////////////////////////////////////
@@ -147,7 +173,7 @@ void Game::events()
 
 void Game::update()
 {
-    world.update();
+    world.update(creatorPos);
 
     std::cout << "cells: " << world.getCellCount() << '\n';
 }
@@ -157,6 +183,14 @@ void Game::draw()
     window.clear(sf::Color(35, 35, 40));
 
     world.draw();
+
+    sf::RectangleShape creatorOutline({static_cast<float>(world.getCellSize().x), static_cast<float>(world.getCellSize().y)});
+    creatorOutline.setFillColor(sf::Color::Transparent);
+    creatorOutline.setOutlineColor(sf::Color::Green);
+    creatorOutline.setOutlineThickness(5.f);
+    creatorOutline.setPosition({static_cast<float>(creatorPos.x * world.getCellSize().x), static_cast<float>(creatorPos.y * world.getCellSize().y)});
+
+    window.draw(creatorOutline);
 
     window.display();
 }

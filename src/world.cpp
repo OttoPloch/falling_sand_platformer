@@ -9,9 +9,9 @@ void World::create(int gridLength, int gridHeight, sf::RenderWindow* window)
     this->window = window;
 }
 
-void World::update()
+void World::update(sf::Vector2u creatorPos)
 {
-    grid.updateCells();
+    grid.updateCells(creatorPos);
 }
 
 void World::draw()
@@ -34,6 +34,8 @@ void World::draw()
 }
 
 sf::Vector2u World::getGridSize() { return {grid.getSize(), grid.getSizeOfRow(0)}; }
+
+sf::Vector2u World::getCellSize() { return grid.getCellSize(); }
 
 int World::getCellCount() { return grid.getCellCount(); }
 

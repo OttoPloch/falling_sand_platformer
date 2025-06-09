@@ -15,11 +15,13 @@ public:
 
     void create(int gridLength, int gridHeight, sf::RenderWindow* window);
 
-    void update();    
+    void update(sf::Vector2u creatorPos);    
 
     void draw();
 
     sf::Vector2u getGridSize();
+
+    sf::Vector2u getCellSize();
 
     int getCellCount();
 
