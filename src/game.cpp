@@ -142,6 +142,12 @@ void Game::events()
                 world.makeACell("smoke", creatorPos);
             }
 
+            // delete a cell
+            if (code == sf::Keyboard::Key::X)
+            {
+                world.deleteACell(creatorPos);
+            }
+
             // moves the creator position left
             if (code == sf::Keyboard::Key::Left && creatorPos.x > 0)
             {

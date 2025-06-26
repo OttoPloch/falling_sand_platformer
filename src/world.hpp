@@ -26,6 +26,8 @@ public:
     int getCellCount();
 
     void makeACell(std::string type, sf::Vector2u position);
+
+    void deleteACell(sf::Vector2u position);
 private:
     sf::RenderWindow* window;
 

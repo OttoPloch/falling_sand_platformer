@@ -43,3 +43,8 @@ void World::makeACell(std::string type, sf::Vector2u position)
 {
     grid.createCell(&cellManager, &grid, type, position);
 }
+
+void World::deleteACell(sf::Vector2u position)
+{
+    grid.removeCell(position);
+}
