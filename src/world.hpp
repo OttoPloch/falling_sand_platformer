@@ -30,8 +30,8 @@ public:
     void deleteACell(sf::Vector2u position);
 private:
     sf::RenderWindow* window;
-
+    
     CellManager cellManager;
-
+    
     Grid grid;
 };

@@ -33,6 +33,7 @@ src/behaviors/flammable_behavior.cpp
 src/behaviors/static_behavior.cpp
 src/behaviors/burning_behavior.cpp
 src/behaviors/cooling_behavior.cpp
+src/behaviors/rising_behavior.cpp
 )
 target_compile_features(app PRIVATE cxx_std_17)
 target_link_libraries(app PRIVATE SFML::Graphics)

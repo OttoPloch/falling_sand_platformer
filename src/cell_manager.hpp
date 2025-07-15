@@ -13,6 +13,7 @@
 #include "behaviors/static_behavior.hpp"
 #include "behaviors/burning_behavior.hpp"
 #include "behaviors/cooling_behavior.hpp"
+#include "behaviors/rising_behavior.hpp"
 
 struct CellManager
 {

@@ -4,11 +4,15 @@
 #include "../grid.hpp"
 #include "../cell.hpp"
 
-class SettlingBehavior : public Behavior
+class RisingBehavior : public Behavior
 {
 public:
-    SettlingBehavior();
+    RisingBehavior();
+
+    RisingBehavior(int riseSpeed);
 
     // overrides the parent class's update method
     bool update(Grid* grid, sf::Vector2u gridPos) override;
+
+    bool hasRisen;
 };
