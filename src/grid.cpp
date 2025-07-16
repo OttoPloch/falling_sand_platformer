@@ -155,9 +155,24 @@ void Grid::updateCells(sf::Vector2u creatorPos)
             // on the rightToLeft boolean variable
             (rightToLeft) ? x = theGrid[y].size() - 1 - i : x = i;
 
+            // iterates through regular cells
             if (theGrid[y][x] != nullptr)
             {
-                theGrid[y][x]->update();
+                if (!theGrid[y][x]->hasBehavior("rise"))
+                {
+                    theGrid[y][x]->update();
+                }
+            }
+
+            int oppY = (theGrid.size() - 1) - y;
+
+            // iterates through rising cells (like smoke)
+            if (theGrid[oppY][x] != nullptr)
+            {
+                if (theGrid[oppY][x]->hasBehavior("rise"))
+                {
+                    theGrid[oppY][x]->update();
+                }
             }
         }
     }

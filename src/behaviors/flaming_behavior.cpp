@@ -21,7 +21,7 @@ bool FlamingBehavior::update(Grid* grid, sf::Vector2u gridPos)
     {   
         for (int i = 0; i < flammableNeighbors.size(); i++)
         {
-            if (getRandomInt(99) + 1 <= grid->at({gridPos.x + flammableNeighbors[i].x, gridPos.y + flammableNeighbors[i].y})->getOptionalSetting("flammable"))
+            if (getRandomInt(999) + 1 <= grid->at({gridPos.x + flammableNeighbors[i].x, gridPos.y + flammableNeighbors[i].y})->getOptionalSetting("flammable"))
             {
                 grid->at({gridPos.x + flammableNeighbors[i].x, gridPos.y + flammableNeighbors[i].y})->changeType("fire");
             }

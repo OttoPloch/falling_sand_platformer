@@ -38,18 +38,20 @@ void Game::run()
 
         if (!isPaused)
         {
-            // formula is: milliseconds since last frame / desired millisecondsper update
+            // formula is: milliseconds since last frame / desired milliseconds per update
             // the last number is the desired ups (20 right now)
             ticksToProcess += (dt * 1000) / (1000 / 20.f);
 
             // if there was a big stutter, then this will run continuously until it is caught up
             while (ticksToProcess >= 1.f)
             {
-                update();
+                step();
 
                 ticksToProcess -= 1.f;
             }
         }
+
+        update();
 
         draw();
     }
@@ -111,42 +113,6 @@ void Game::events()
                     window.setPosition({(int)((sf::VideoMode::getDesktopMode().size.x / 2) - window.getSize().x / 2), (int)((sf::VideoMode::getDesktopMode().size.y / 2) - window.getSize().y / 2)});
                 }
             }
-            
-            // creates a sand particle; temporary for testing
-            if (code == sf::Keyboard::Key::S)
-            {
-                world.makeACell("sand", creatorPos);
-            }
-
-            // creates a water particle; temporary for testing
-            if (code == sf::Keyboard::Key::W)
-            {
-                world.makeACell("water", creatorPos);
-            }
-
-            // creates a fire particle; temporary for testing
-            if (code == sf::Keyboard::Key::F)
-            {
-                world.makeACell("fire", creatorPos);
-            }
-
-            // creates a wood particle; temporary for testing
-            if (code == sf::Keyboard::Key::D)
-            {
-                world.makeACell("wood", creatorPos);
-            }
-
-            // creates a smoke particle; temporary for testing
-            if (code == sf::Keyboard::Key::O)
-            {
-                world.makeACell("smoke", creatorPos);
-            }
-
-            // delete a cell
-            if (code == sf::Keyboard::Key::X)
-            {
-                world.deleteACell(creatorPos);
-            }
 
             // moves the creator position left
             if (code == sf::Keyboard::Key::Left && creatorPos.x > 0)
@@ -177,11 +143,16 @@ void Game::events()
     }
 }
 
+void Game::step()
+{
+    world.step(creatorPos);
+
+    std::cout << "cells: " << world.getCellCount() << '\n';
+}
+
 void Game::update()
 {
     world.update(creatorPos);
-
-    std::cout << "cells: " << world.getCellCount() << '\n';
 }
 
 void Game::draw()

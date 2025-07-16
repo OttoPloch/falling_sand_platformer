@@ -1,57 +1,44 @@
 #include "rising_behavior.hpp"
 
-RisingBehavior::RisingBehavior() : Behavior("rise", -1), hasRisen(false) {}
+RisingBehavior::RisingBehavior() : Behavior("rise", -1) {}
 
-RisingBehavior::RisingBehavior(int riseSpeed) : Behavior("rise", riseSpeed), hasRisen(false) {}
+RisingBehavior::RisingBehavior(int riseSpeed) : Behavior("rise", riseSpeed) {}
 
 bool RisingBehavior::update(Grid* grid, sf::Vector2u gridPos)
 {
-    if (!hasRisen)
+    if (gridPos.y > 0)
     {
-        if (gridPos.y > 0)
+        int myRiseSpeed = grid->at(gridPos)->getOptionalSetting("rise");
+
+        if (myRiseSpeed > 0)
         {
-            int myRiseSpeed = grid->at(gridPos)->getOptionalSetting("rise");
+            int validSpacesUp = 0;
 
-            if (myRiseSpeed > 0)
+            for (int i = 1; i <= myRiseSpeed; i++)
             {
-                int validSpacesUp = 0;
-
-                for (int i = 1; i <= myRiseSpeed; i++)
+                if (i > gridPos.y) 
                 {
-                    if (i > gridPos.y) 
-                    {
-                        break;
-                    }
-
-                    if (grid->at({gridPos.x, gridPos.y - i}) == nullptr)
-                    {
-                        validSpacesUp++;
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    break;
                 }
 
-                if (validSpacesUp > 0)
+                if (grid->at({gridPos.x, gridPos.y - i}) == nullptr)
                 {
-                    grid->moveCell(gridPos, {0, -validSpacesUp});
-
-                    hasRisen = true;
-
-                    return true;
+                    validSpacesUp++;
                 }
+                else
+                {
+                    break;
+                }
+            }
+
+            if (validSpacesUp > 0)
+            {
+                grid->moveCell(gridPos, {0, -validSpacesUp});
+
+                return true;
             }
         }
     }
-    else
-    {
-        hasRisen = false;
-
-        return true;
-    }
-
-    hasRisen = false;
-
+    
     return false;
 }

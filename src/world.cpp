@@ -9,9 +9,48 @@ void World::create(int gridLength, int gridHeight, sf::RenderWindow* window)
     this->window = window;
 }
 
-void World::update(sf::Vector2u creatorPos)
+void World::step(sf::Vector2u creatorPos)
 {
     grid.updateCells(creatorPos);
+}
+
+void World::update(sf::Vector2u creatorPos)
+{
+    // creates a sand cell; temporary for testing
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
+    {
+        makeACell("sand", creatorPos);
+    }
+
+    // creates a water cell; temporary for testing
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
+    {
+        makeACell("water", creatorPos);
+    }
+
+    // creates a fire cell; temporary for testing
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F))
+    {
+        makeACell("fire", creatorPos);
+    }
+
+    // creates a wood cell; temporary for testing
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+    {
+        makeACell("wood", creatorPos);
+    }
+
+    // creates a smoke cell; temporary for testing
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::O))
+    {
+        makeACell("smoke", creatorPos);
+    }
+
+    // delete a cell
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::X))
+    {
+        deleteACell(creatorPos);
+    }
 }
 
 void World::draw()

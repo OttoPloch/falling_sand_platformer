@@ -9,6 +9,8 @@ class BurningBehavior : public Behavior
 public:
     BurningBehavior();
 
+    BurningBehavior(int smokeChance);
+
     // overrides the parent class's update method
     bool update(Grid* grid, sf::Vector2u gridPos) override;
 };

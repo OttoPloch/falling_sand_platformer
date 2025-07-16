@@ -9,8 +9,9 @@
 
 class Cell;
 
-struct Behavior
+class Behavior
 {
+public:
     Behavior(std::string name, int specialAttribute);
 
     // overridden by child classes, if it succeeds in moving the cell,

@@ -17,6 +17,8 @@ public:
 
     void events();
 
+    void step();
+
     void update();
 
     void draw();

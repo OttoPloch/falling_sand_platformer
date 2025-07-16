@@ -15,7 +15,9 @@ public:
 
     void create(int gridLength, int gridHeight, sf::RenderWindow* window);
 
-    void update(sf::Vector2u creatorPos);    
+    void step(sf::Vector2u creatorPos);
+    
+    void update(sf::Vector2u creatorPos);
 
     void draw();
 

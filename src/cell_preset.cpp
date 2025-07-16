@@ -10,6 +10,7 @@ CellPreset::CellPreset(sf::Color color, std::vector<std::shared_ptr<Behavior>> b
     optionalSettings = {
         {"heavy", -1},
         {"flammable", -1},
+        {"burning", -1},
         {"rise", -1}
     };
 
