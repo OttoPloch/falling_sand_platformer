@@ -4,8 +4,8 @@
 #include <vector>
 #include <iostream>
 
-#include "grid.hpp"
-#include "get_random_number.hpp"
+#include "../../grid.hpp"
+#include "../../tools/get_random_number.hpp"
 
 class Cell;
 

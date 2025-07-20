@@ -1,7 +1,7 @@
 #include "grid.hpp"
 
 #include "cell.hpp"
-#include "cell_manager.hpp"
+#include "./managers/cell_manager.hpp"
 
 const unsigned int CELLSIZEX = 30;
 const unsigned int CELLSIZEY = 30;

@@ -45,7 +45,7 @@ void Game::run()
             // if there was a big stutter, then this will run continuously until it is caught up
             while (ticksToProcess >= 1.f)
             {
-                step();
+                tick();
 
                 ticksToProcess -= 1.f;
             }
@@ -143,9 +143,9 @@ void Game::events()
     }
 }
 
-void Game::step()
+void Game::tick()
 {
-    world.step(creatorPos);
+    world.tick(creatorPos);
 
     std::cout << "cells: " << world.getCellCount() << '\n';
 }

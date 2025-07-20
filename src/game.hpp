@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-#include "window_preset.hpp"
+#include "./presets/window_preset.hpp"
 #include "world.hpp"
 
 class Game
@@ -17,7 +17,7 @@ public:
 
     void events();
 
-    void step();
+    void tick();
 
     void update();
 

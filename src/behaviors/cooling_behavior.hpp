@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../behavior.hpp"
+#include "base/behavior.hpp"
 #include "../grid.hpp"
 
 class CoolingBehavior : public Behavior

@@ -4,18 +4,24 @@
 #include <vector>
 
 #include "cell.hpp"
-#include "get_random_number.hpp"
-#include "cell_manager.hpp"
+#include "./tools/get_random_number.hpp"
+#include "./managers/cell_manager.hpp"
 #include "grid.hpp"
+#include "being.hpp"
+#include "./managers/resource_manager.hpp"
 
 class World
 {
 public:
+    // temp
+    Being moon;
+    Being sun;
+
     World();
 
     void create(int gridLength, int gridHeight, sf::RenderWindow* window);
 
-    void step(sf::Vector2u creatorPos);
+    void tick(sf::Vector2u creatorPos);
     
     void update(sf::Vector2u creatorPos);
 
@@ -34,6 +40,8 @@ private:
     sf::RenderWindow* window;
     
     CellManager cellManager;
+
+    ResourceManager resourceManager;
     
     Grid grid;
 };

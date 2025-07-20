@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../behavior.hpp"
+#include "base/behavior.hpp"
 #include "../grid.hpp"
-#include "../get_random_number.hpp"
+#include "../tools/get_random_number.hpp"
 
 class BurningBehavior : public Behavior
 {

@@ -1,6 +1,6 @@
 #include "behavior.hpp"
 
-#include "cell.hpp"
+#include "../../cell.hpp"
 
 Behavior::Behavior(std::string name, int specialAttribute) : name(name), specialAttribute(specialAttribute) {}
 

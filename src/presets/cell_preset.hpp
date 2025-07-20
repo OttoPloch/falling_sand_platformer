@@ -5,7 +5,7 @@
 #include <map>
 #include <iostream>
 
-#include "behavior.hpp"
+#include "../behaviors/base/behavior.hpp"
 
 struct CellPreset
 {

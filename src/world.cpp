@@ -6,16 +6,27 @@ void World::create(int gridLength, int gridHeight, sf::RenderWindow* window)
 {
     grid.create(gridLength, gridHeight);
 
+    resourceManager.load();
+
+    moon.create({300, 300}, {100, 100}, 0, resourceManager.getTexture("moon"), window);
+    sun.create({500, 800}, {500, 500}, 0, resourceManager.getTexture("sun"), window);
+
     this->window = window;
 }
 
-void World::step(sf::Vector2u creatorPos)
+void World::tick(sf::Vector2u creatorPos)
 {
     grid.updateCells(creatorPos);
+
+    moon.tick();
+    sun.tick();
 }
 
 void World::update(sf::Vector2u creatorPos)
 {
+    moon.update();
+    sun.update();
+
     // creates a sand cell; temporary for testing
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
     {
@@ -61,15 +72,18 @@ void World::draw()
         {
             if (grid.at({j, i}) != nullptr)
             {
-                sf::RectangleShape rect({30.f, 30.f});
+                sf::RectangleShape rect({static_cast<float>(grid.getCellSize().x),static_cast<float>(grid.getCellSize().y)});
     
                 rect.setFillColor(grid.at({j, i})->getColor());
-                rect.setPosition({(float)(j * 30), (float)(i * 30)});
+                rect.setPosition({(float)(j * grid.getCellSize().x), (float)(i * grid.getCellSize().y)});
     
                 window->draw(rect);
             }
         }
     }
+
+    moon.draw();
+    sun.draw();
 }
 
 sf::Vector2u World::getGridSize() { return {grid.getSize(), grid.getSizeOfRow(0)}; }

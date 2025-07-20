@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-#include "get_random_number.hpp"
+#include "./tools/get_random_number.hpp"
 
 class Cell;
 class CellManager;
