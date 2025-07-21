@@ -4,11 +4,11 @@
 #include <vector>
 
 #include "cell.hpp"
-#include "./tools/get_random_number.hpp"
-#include "./managers/cell_manager.hpp"
+#include "../tools/get_random_number.hpp"
+#include "../managers/cell_manager.hpp"
 #include "grid.hpp"
 #include "being.hpp"
-#include "./managers/resource_manager.hpp"
+#include "../managers/resource_manager.hpp"
 
 class World
 {
@@ -29,7 +29,7 @@ public:
 
     sf::Vector2u getGridSize();
 
-    sf::Vector2u getCellSize();
+    int getCellSize();
 
     int getCellCount();
 

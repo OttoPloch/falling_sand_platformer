@@ -1,7 +1,7 @@
 #pragma once
 
 #include "base/behavior.hpp"
-#include "../grid.hpp"
+#include "../game_classes/grid.hpp"
 #include "../tools/get_random_number.hpp"
 #include "burning_behavior.hpp"
 

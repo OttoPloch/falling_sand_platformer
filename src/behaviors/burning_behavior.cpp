@@ -1,6 +1,6 @@
 #include "burning_behavior.hpp"
 
-#include "../cell.hpp"
+#include "../game_classes/cell.hpp"
 
 BurningBehavior::BurningBehavior() : Behavior("burning", -1) {}
 

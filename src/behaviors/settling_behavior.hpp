@@ -1,8 +1,8 @@
 #pragma once
 
 #include "base/behavior.hpp"
-#include "../grid.hpp"
-#include "../cell.hpp"
+#include "../game_classes/grid.hpp"
+#include "../game_classes/cell.hpp"
 
 class SettlingBehavior : public Behavior
 {

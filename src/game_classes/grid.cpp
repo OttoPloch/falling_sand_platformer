@@ -1,10 +1,9 @@
 #include "grid.hpp"
 
 #include "cell.hpp"
-#include "./managers/cell_manager.hpp"
+#include "../managers/cell_manager.hpp"
 
-const unsigned int CELLSIZEX = 30;
-const unsigned int CELLSIZEY = 30;
+const unsigned int CELLSIZE = 30;
 
 Grid::Grid() {}
 
@@ -40,7 +39,7 @@ unsigned int Grid::getSize() { return theGrid.size(); }
 
 unsigned int Grid::getSizeOfRow(unsigned int rowIndex) { return theGrid[rowIndex].size(); }
 
-sf::Vector2u Grid::getCellSize() { return {CELLSIZEX, CELLSIZEY}; }
+int Grid::getCellSize() { return CELLSIZE; }
 
 unsigned int Grid::getCellCount()
 {
@@ -93,7 +92,7 @@ void Grid::swap(sf::Vector2u gridPos1, sf::Vector2u gridPos2)
 
 void Grid::updateCells(sf::Vector2u creatorPos)
 {
-    // these lines just print the grid
+    // these lines just print the grid for fun
     std::cout << "////////////////////////STARTING////////////////////////\n";
 
     for (int y = 0; y < theGrid.size(); y++)

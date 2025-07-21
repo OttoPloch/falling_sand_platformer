@@ -12,7 +12,6 @@ Game::Game() {}
 void Game::start()
 {
     createWindowFromPreset(WINDOWPRESET1, window);
-    window.setFramerateLimit(60);
     isFullscreen = false;
 
     world.create(GRIDLENGTH, GRIDHEIGHT, &window);
@@ -161,12 +160,12 @@ void Game::draw()
 
     world.draw();
 
-    sf::RectangleShape creatorOutline({static_cast<float>(world.getCellSize().x), static_cast<float>(world.getCellSize().y)});
+    // TEMP
+    sf::RectangleShape creatorOutline({static_cast<float>(world.getCellSize()), static_cast<float>(world.getCellSize())});
     creatorOutline.setFillColor(sf::Color::Transparent);
     creatorOutline.setOutlineColor(sf::Color::Green);
     creatorOutline.setOutlineThickness(5.f);
-    creatorOutline.setPosition({static_cast<float>(creatorPos.x * world.getCellSize().x), static_cast<float>(creatorPos.y * world.getCellSize().y)});
-
+    creatorOutline.setPosition({static_cast<float>(creatorPos.x * world.getCellSize()), static_cast<float>(creatorPos.y * world.getCellSize())});
     window.draw(creatorOutline);
 
     window.display();

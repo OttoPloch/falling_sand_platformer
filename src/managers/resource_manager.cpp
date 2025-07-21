@@ -11,8 +11,8 @@ void ResourceManager::load()
     moonPath = "images/moon.jpg";
     sunPath = "images/sun.jpg";
     
-    if (!moonTexture.loadFromFile(path / moonPath)) { std::cerr << "Error loading file " << path / moonPath; }
-    if (!sunTexture.loadFromFile(path / sunPath)) { std::cerr << "Error loading file " << path / sunPath; }
+    if (!moonTexture.loadFromFile(path / moonPath)) { std::cerr << "Error loading file " << path / moonPath << '\n'; }
+    if (!sunTexture.loadFromFile(path / sunPath)) { std::cerr << "Error loading file " << path / sunPath << '\n'; }
 
     textures = 
     {

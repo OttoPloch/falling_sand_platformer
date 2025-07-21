@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-#include "./presets/window_preset.hpp"
+#include "../presets/window_preset.hpp"
 #include "world.hpp"
 
 class Game

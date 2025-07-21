@@ -1,6 +1,6 @@
 #include "flaming_behavior.hpp"
 
-#include "../cell.hpp"
+#include "../game_classes/cell.hpp"
 
 FlamingBehavior::FlamingBehavior() : Behavior("flaming", -1) {}
 

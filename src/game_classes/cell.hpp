@@ -4,8 +4,8 @@
 #include <iostream>
 #include <map>
 
-#include "./managers/cell_manager.hpp"
-#include "./presets/cell_preset.hpp"
+#include "../managers/cell_manager.hpp"
+#include "../presets/cell_preset.hpp"
 #include "grid.hpp"
 
 class Cell

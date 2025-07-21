@@ -1,7 +1,7 @@
 #pragma once
 
 #include "base/behavior.hpp"
-#include "../grid.hpp"
+#include "../game_classes/grid.hpp"
 
 class FlowingBehavior : public Behavior
 {

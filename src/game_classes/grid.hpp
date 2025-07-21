@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-#include "./tools/get_random_number.hpp"
+#include "../tools/get_random_number.hpp"
 
 class Cell;
 class CellManager;
@@ -28,7 +28,7 @@ public:
     unsigned int getSizeOfRow(unsigned int rowIndex);
 
     // returns the dimensions of cells in the grid
-    sf::Vector2u getCellSize();
+    int getCellSize();
 
     // gets the current amount of cells on the grid
     unsigned int getCellCount();

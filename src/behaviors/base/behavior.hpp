@@ -4,7 +4,7 @@
 #include <vector>
 #include <iostream>
 
-#include "../../grid.hpp"
+#include "../../game_classes/grid.hpp"
 #include "../../tools/get_random_number.hpp"
 
 class Cell;
