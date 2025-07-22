@@ -19,7 +19,7 @@ public:
 
     World();
 
-    void create(int gridLength, int gridHeight, sf::RenderWindow* window);
+    void create(sf::RenderWindow* window);
 
     void tick(sf::Vector2u creatorPos);
     

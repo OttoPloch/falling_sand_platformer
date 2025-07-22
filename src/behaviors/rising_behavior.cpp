@@ -13,7 +13,7 @@ bool RisingBehavior::update(Grid* grid, sf::Vector2u gridPos)
         if (myRiseSpeed > 0)
         {
             int validSpacesUp = 0;
-
+            
             for (int i = 1; i <= myRiseSpeed; i++)
             {
                 if (i > gridPos.y) 

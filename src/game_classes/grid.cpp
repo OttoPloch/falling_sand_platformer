@@ -2,8 +2,11 @@
 
 #include "cell.hpp"
 #include "../managers/cell_manager.hpp"
+#include "being.hpp"
 
-const unsigned int CELLSIZE = 30;
+const unsigned int CELLSIZE = 10;
+const int CELLOFFSETX = 0;
+const int CELLOFFSETY = 0;
 
 Grid::Grid() {}
 
@@ -41,6 +44,8 @@ unsigned int Grid::getSizeOfRow(unsigned int rowIndex) { return theGrid[rowIndex
 
 int Grid::getCellSize() { return CELLSIZE; }
 
+sf::Vector2i Grid::getCellOffset() { return {CELLOFFSETX, CELLOFFSETY}; }
+
 unsigned int Grid::getCellCount()
 {
     int cells = 0;
@@ -59,12 +64,50 @@ unsigned int Grid::getCellCount()
     return cells;
 }
 
-void Grid::createCell(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position)
+void Grid::makeBeingCells(Being* being, std::vector<sf::Vector2f> points, std::string cellType, CellManager* cellManager, Grid* grid)
+{
+    for (int i = 0; i < points.size(); i++)
+    {
+        sf::Vector2u gridCoord({static_cast<unsigned int>(points[i].x), static_cast<unsigned int>(points[i].y)});
+
+        if (gridCoord.y < getSize() && gridCoord.x < getSizeOfRow(gridCoord.y))
+        {
+            if (at(gridCoord) != nullptr && !at(gridCoord)->isFromBeing())
+            {
+                if (CELLOFFSETX + gridCoord.x * CELLSIZE > being->getPosition().x)
+                {
+                    if (!moveCell(gridCoord, {1, 0})) removeCell(gridCoord);
+                }
+                else if (CELLOFFSETX + gridCoord.x * CELLSIZE < being->getPosition().x)
+                {
+                    if (!moveCell(gridCoord, {-1, 0})) removeCell(gridCoord);
+                }
+                else
+                {
+                    if (getRandomInt(1) == 0)
+                    {
+                        if (!moveCell(gridCoord, {1, 0})) removeCell(gridCoord);
+                    }
+                    else
+                    {
+                        if (!moveCell(gridCoord, {-1, 0})) removeCell(gridCoord);
+                    }
+                }
+            }
+
+            createCell(cellManager, grid, cellType, gridCoord, true);
+        }
+    }
+}        
+
+void Grid::createCell(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position, bool fromBeing)
 {
     // make sure all other necessary checks have been done before calling this function
     if (theGrid[position.y][position.x] == nullptr)
     {
-        theGrid[position.y][position.x] = std::make_unique<Cell>(cellManager, grid, type, position);
+        theGrid[position.y][position.x] = std::make_unique<Cell>(cellManager, grid, type, position, fromBeing);
+
+        if (fromBeing) beingCells.push_back({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)});
     }
 }
 
@@ -73,14 +116,21 @@ void Grid::removeCell(sf::Vector2u gridPos)
     theGrid[gridPos.y][gridPos.x].reset();
 }
 
-void Grid::moveCell(sf::Vector2u gridPos, sf::Vector2i distance)
+bool Grid::moveCell(sf::Vector2u gridPos, sf::Vector2i distance)
 {
     // make sure all other necessary checks have been done before calling this function
-    if (theGrid[gridPos.y + distance.y][gridPos.x + distance.x] == nullptr)
+    if (gridPos.y + distance.y < getSize() && gridPos.x + distance.x < getSizeOfRow(gridPos.y + distance.y))
     {
-        theGrid[gridPos.y][gridPos.x]->changePos(distance);
-        theGrid[gridPos.y + distance.y][gridPos.x + distance.x] = std::move(theGrid[gridPos.y][gridPos.x]);
+        if (theGrid[gridPos.y + distance.y][gridPos.x + distance.x] == nullptr)
+        {
+            theGrid[gridPos.y][gridPos.x]->changePos(distance);
+            theGrid[gridPos.y + distance.y][gridPos.x + distance.x] = std::move(theGrid[gridPos.y][gridPos.x]);
+
+            return true;
+        }
     }
+
+    return false;
 }
 
 void Grid::swap(sf::Vector2u gridPos1, sf::Vector2u gridPos2)
@@ -92,50 +142,54 @@ void Grid::swap(sf::Vector2u gridPos1, sf::Vector2u gridPos2)
 
 void Grid::updateCells(sf::Vector2u creatorPos)
 {
-    // these lines just print the grid for fun
-    std::cout << "////////////////////////STARTING////////////////////////\n";
+    // // these lines just print the grid for fun
+    // std::cout << "//////////////////////////STARTING//////////////////////////\n";
 
-    for (int y = 0; y < theGrid.size(); y++)
-    {
-        for (int x = 0; x < theGrid[y].size(); x++)
-        {
-            if (x == creatorPos.x && y == creatorPos.y)
-            {
-                std::cout << "\e[32mcc\e[39m";
-            }
-            else if (theGrid[y][x] != nullptr)
-            {
-                if (theGrid[y][x]->getType() == "sand")
-                {
-                    std::cout << "\e[33m##\e[39m";
-                }
-                else if (theGrid[y][x]->getType() == "water")
-                {
-                    std::cout << "\e[34m~~\e[39m";
-                }
-                else if (theGrid[y][x]->getType() == "fire")
-                {
-                    std::cout << "\e[31m!!\e[39m";
-                }
-                else if (theGrid[y][x]->getType() == "wood")
-                {
-                    std::cout << "\e[33mHH\e[39m";
-                }
-                else if (theGrid[y][x]->getType() == "smoke")
-                {
-                    std::cout << "\e[90m**\e[39m";
-                }
-            }
-            else
-            {
-                std::cout << "..";
-            }
-        }
+    // for (int y = 0; y < theGrid.size(); y++)
+    // {
+    //     for (int x = 0; x < theGrid[y].size(); x++)
+    //     {
+    //         if (x == creatorPos.x && y == creatorPos.y)
+    //         {
+    //             std::cout << "\e[32mcc\e[39m";
+    //         }
+    //         else if (theGrid[y][x] != nullptr)
+    //         {
+    //             if (theGrid[y][x]->getType() == "sand")
+    //             {
+    //                 std::cout << "\e[33m##\e[39m";
+    //             }
+    //             else if (theGrid[y][x]->getType() == "water")
+    //             {
+    //                 std::cout << "\e[34m~~\e[39m";
+    //             }
+    //             else if (theGrid[y][x]->getType() == "fire")
+    //             {
+    //                 std::cout << "\e[31m!!\e[39m";
+    //             }
+    //             else if (theGrid[y][x]->getType() == "wood")
+    //             {
+    //                 std::cout << "\e[33mHH\e[39m";
+    //             }
+    //             else if (theGrid[y][x]->getType() == "smoke")
+    //             {
+    //                 std::cout << "\e[90m**\e[39m";
+    //             }
+    //             else if (theGrid[y][x]->getType() == "being")
+    //             {
+    //                 std::cout << "  ";
+    //             }
+    //         }
+    //         else
+    //         {
+    //             std::cout << "..";
+    //         }
+    //     }
 
-        std::cout << '\n';
-    }
+    //     std::cout << '\n';
+    // }
 
-    std::cout << "//////////////////////////DONE//////////////////////////\n";
+    // std::cout << "////////////////////////////DONE////////////////////////////\n";
 
     // updating the grid itself
     for (int y = theGrid.size() - 1; y >= 0; y--)
@@ -174,5 +228,15 @@ void Grid::updateCells(sf::Vector2u creatorPos)
                 }
             }
         }
+    }
+
+    if (beingCells.size() > 0)
+    {
+        for (int i = 0; i < beingCells.size(); i++)
+        {
+            removeCell(beingCells[i]);
+        }
+
+        beingCells.clear();
     }
 }

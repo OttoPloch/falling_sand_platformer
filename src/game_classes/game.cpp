@@ -4,9 +4,6 @@ const WindowPreset WINDOWPRESET1(sf::VideoMode({800, 600}), "game", false, false
 const WindowPreset WINDOWPRESET2(sf::VideoMode::getDesktopMode(), "game", false, true);
 const WindowPreset WINDOWPRESET3(sf::VideoMode::getDesktopMode(), "game", true, false);
 
-const int GRIDLENGTH = 30;
-const int GRIDHEIGHT = 30;
-
 Game::Game() {}
 
 void Game::start()
@@ -14,7 +11,7 @@ void Game::start()
     createWindowFromPreset(WINDOWPRESET1, window);
     isFullscreen = false;
 
-    world.create(GRIDLENGTH, GRIDHEIGHT, &window);
+    world.create(&window);
 
     creatorPos = {static_cast<unsigned int>(world.getGridSize().x / 2), 1};
 
@@ -34,6 +31,8 @@ void Game::run()
         events();
 
         float FPS = 1.f / dt;
+
+        //std::cout << "FPS: " << FPS << "; frame time: " << dt * 1000.f << '\n';
 
         if (!isPaused)
         {
@@ -146,7 +145,7 @@ void Game::tick()
 {
     world.tick(creatorPos);
 
-    std::cout << "cells: " << world.getCellCount() << '\n';
+    //std::cout << "cells: " << world.getCellCount() << '\n';
 }
 
 void Game::update()
@@ -164,7 +163,7 @@ void Game::draw()
     sf::RectangleShape creatorOutline({static_cast<float>(world.getCellSize()), static_cast<float>(world.getCellSize())});
     creatorOutline.setFillColor(sf::Color::Transparent);
     creatorOutline.setOutlineColor(sf::Color::Green);
-    creatorOutline.setOutlineThickness(5.f);
+    creatorOutline.setOutlineThickness(2.f);
     creatorOutline.setPosition({static_cast<float>(creatorPos.x * world.getCellSize()), static_cast<float>(creatorPos.y * world.getCellSize())});
     window.draw(creatorOutline);
 

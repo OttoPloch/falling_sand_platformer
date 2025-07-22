@@ -17,9 +17,17 @@ public:
 
     void create(sf::Vector2f position, sf::Vector2f size, float rotation, sf::Texture* myTexture, sf::RenderWindow* window, Grid* grid);
 
-    std::vector<std::vector<sf::Vector2f>> getAlignedPoints();
+    sf::Vector2f getPosition();
+
+    sf::Vector2f getSize();
 
     float getRotation();
+
+    std::vector<sf::Vector2f> getAlignedPoints(bool asGridCoords);
+
+    void move(sf::Vector2f amount);
+
+    void move(float xAmount, float yAmount);
 
     void rotate(float amount);
 

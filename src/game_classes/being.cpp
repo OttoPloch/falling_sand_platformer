@@ -16,11 +16,7 @@ void Being::create(sf::Vector2f position, sf::Vector2f size, float rotation, sf:
     this->window = window;
     this->grid = grid;
 
-    velocity = {1.f, 0.f};
-
     spriteInit();
-
-    getAlignedPoints();
 }
 
 void Being::spriteInit()
@@ -32,61 +28,17 @@ void Being::spriteInit()
     sprite->setRotation(sf::degrees(rotation));
 }
 
-std::vector<std::vector<sf::Vector2f>> Being::getAlignedPoints()
-{
-    int cellSize = grid->getCellSize();
-    
-    int lengthInCells = std::floor(size.x / cellSize);
-    int widthInCells = std::floor(size.y / cellSize);
+sf::Vector2f Being::getPosition() { return position; }
 
-    sf::Vector2f tl = getRectTopLeft(position, size, rotation);
-
-    // puts all the points in the center instead of the top left
-    //tl = getRotatedPoint(tl, sqrt(2) * cellSize / 2, 135 + rotation);
-    
-    sf::Vector2f lastPoint = tl;
-    sf::Vector2f firstOfLastColumn = tl;
-
-
-
-    std::vector<std::vector<sf::Vector2f>> points;
-    
-    points.resize(widthInCells);
-    
-    for (int y = 0; y < points.size(); y++)
-    {
-        points[y].resize(lengthInCells);
-
-        for (int x = 0; x < points[y].size(); x++)
-        {
-            if (x == 0)
-            {
-                if (y == 0)
-                {
-                    points[y][x] = tl;
-                }
-                else
-                {
-                    points[y][x] = getRotatedPoint(firstOfLastColumn, cellSize, 180 + rotation);
-
-                    lastPoint = points[y][x];
-                }
-
-                firstOfLastColumn = points[y][x];
-            }
-            else
-            {
-                points[y][x] = getRotatedPoint(lastPoint, cellSize, 90 + rotation);
-
-                lastPoint = points[y][x];
-            }
-        }
-    }
-
-    return points;
-}
+sf::Vector2f Being::getSize() { return size; }
 
 float Being::getRotation() { return rotation; }
+
+std::vector<sf::Vector2f> Being::getAlignedPoints(bool asGridCoords) { return getRectAlignedPoints(grid->getCellSize(), grid->getCellOffset(), position, size, rotation, asGridCoords); }
+
+void Being::move(sf::Vector2f amount) { position = {position.x + amount.x, position.y + amount.y}; }
+
+void Being::move(float xAmount, float yAmount) { position = {position.x + xAmount, position.y + yAmount}; }
 
 void Being::rotate(float amount)
 {

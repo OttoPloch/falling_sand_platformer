@@ -2,12 +2,12 @@
 
 Cell::Cell() {}
 
-Cell::Cell(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position)
+Cell::Cell(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position, bool fromBeing)
 {
-    create(cellManager, grid, type, position);
+    create(cellManager, grid, type, position, fromBeing);
 }
 
-void Cell::create(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position)
+void Cell::create(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position, bool fromBeing)
 {
     this->cellManager = cellManager;
     this->grid = grid;
@@ -15,6 +15,10 @@ void Cell::create(CellManager* cellManager, Grid* grid, std::string type, sf::Ve
     this->position = position;
 
     myPreset = cellManager->presets[type];
+
+    age = 0;
+
+    this->fromBeing = fromBeing;
 }
 
 void Cell::update()
@@ -29,15 +33,13 @@ void Cell::update()
             }
         }
     }
+
+    age++;
 }
 
 void Cell::setPos(sf::Vector2u newPos) { position = newPos; }
 
-void Cell::changePos(sf::Vector2i distance)
-{
-    position.x += distance.x;
-    position.y += distance.y;
-}
+void Cell::changePos(sf::Vector2i distance) { position = {position.x + distance.x, position.y + distance.y}; }
 
 void Cell::changeType(std::string newType)
 {
@@ -46,17 +48,13 @@ void Cell::changeType(std::string newType)
     myPreset = cellManager->presets[type];
 }
 
-void Cell::addStartBehavior(std::shared_ptr<Behavior> newBehavior)
-{
-    myPreset.behaviors.insert(myPreset.behaviors.begin(), newBehavior);
-}
+void Cell::addStartBehavior(std::shared_ptr<Behavior> newBehavior) { myPreset.behaviors.insert(myPreset.behaviors.begin(), newBehavior); }
 
-void Cell::addEndBehavior(std::shared_ptr<Behavior> newBehavior)
-{
-    myPreset.behaviors.push_back(newBehavior);
-}
+void Cell::addEndBehavior(std::shared_ptr<Behavior> newBehavior) { myPreset.behaviors.push_back(newBehavior); }
 
 std::string Cell::getType() { return type; }
+
+int Cell::getAge() { return age; }
 
 int Cell::getOptionalSetting(std::string settingName)
 {
@@ -82,3 +80,5 @@ bool Cell::hasBehavior(std::string behaviorName)
 
     return false;
 }
+
+bool Cell::isFromBeing() { return fromBeing; }
