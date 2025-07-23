@@ -42,7 +42,7 @@ bool gridLineCollide(sf::Vector2u point, sf::Vector2u linePoint1, sf::Vector2u l
     }
 }
 
-bool checkCellsInLine(sf::Vector2u from, sf::Vector2i distance, sf::Vector2i direction, Grid* grid)
+bool checkCellsInLine(sf::Vector2u from, sf::Vector2i distance, sf::Vector2i direction, Grid* grid, std::vector<std::shared_ptr<Being>>* beings, int cellSize, sf::Vector2f cellOffset)
 {
     // This is the most verbose logging I have ever written.
     // The error was from not using abs() in the for loop. Negative values would skip it entirely.
@@ -90,6 +90,17 @@ bool checkCellsInLine(sf::Vector2u from, sf::Vector2i distance, sf::Vector2i dir
                     {
                         //std::cout << "It was nullptr, so I can now move to the next x coord.\n";
                     }
+
+                    if (beings->size() > 0)
+                    {
+                        for (int i = 0; i < beings->size(); i++)
+                        {
+                            if (pointBeingCollide(gridToWorldCoords(cellSize, cellOffset, currentCoord, true), (*beings)[i].get()))
+                            {
+                                return true;
+                            }
+                        }
+                    }
                 }
                 else
                 {
@@ -114,6 +125,17 @@ bool checkCellsInLine(sf::Vector2u from, sf::Vector2i distance, sf::Vector2i dir
                 {
                     return true;
                 }
+
+                if (beings->size() > 0)
+                {
+                    for (int i = 0; i < beings->size(); i++)
+                    {
+                        if (pointBeingCollide(gridToWorldCoords(cellSize, cellOffset, currentCoord, true), (*beings)[i].get()))
+                        { 
+                            return true;
+                        }
+                    }
+                }
             }
         }
     }
@@ -128,6 +150,17 @@ bool checkCellsInLine(sf::Vector2u from, sf::Vector2i distance, sf::Vector2i dir
                 if (grid->at(currentCoord) != nullptr)
                 {
                     return true;
+                }
+
+                if (beings->size() > 0)
+                {
+                    for (int i = 0; i < beings->size(); i++)
+                    {
+                        if (pointBeingCollide(gridToWorldCoords(cellSize, cellOffset, currentCoord, true), (*beings)[i].get()))
+                        {
+                            return true;
+                        }
+                    }
                 }
             }
         }
@@ -144,10 +177,22 @@ bool checkCellsInLine(sf::Vector2u from, sf::Vector2i distance, sf::Vector2i dir
 
 bool pointRectCollide(sf::Vector2f point, sf::Vector2f center, sf::Vector2f size, float rotation)
 {
+    size.x += 5;
+    size.y += 5;
+
     sf::Vector2f alignedPoint = rotateAroundPoint(point, center, -rotation);
     
     sf::Vector2f min({center.x - size.x / 2, center.y - size.y / 2});
     sf::Vector2f max({center.x + size.x / 2, center.y + size.y / 2});
 
     return (alignedPoint.x >= min.x && alignedPoint.x <= max.x && alignedPoint.y >= min.y && alignedPoint.y <= max.y);
+}
+
+bool pointBeingCollide(sf::Vector2f point, Being* being)
+{
+    sf::Vector2f center(being->getPosition());
+    sf::Vector2f size(being->getSize());
+    float rotation(being->getRotation());
+
+    return pointRectCollide(point, center, size, rotation);
 }

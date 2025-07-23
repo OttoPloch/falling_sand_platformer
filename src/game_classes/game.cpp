@@ -32,8 +32,6 @@ void Game::run()
 
         float FPS = 1.f / dt;
 
-        //std::cout << "FPS: " << FPS << "; frame time: " << dt * 1000.f << '\n';
-
         if (!isPaused)
         {
             // formula is: milliseconds since last frame / desired milliseconds per update
@@ -43,6 +41,8 @@ void Game::run()
             // if there was a big stutter, then this will run continuously until it is caught up
             while (ticksToProcess >= 1.f)
             {
+                std::cout << "FPS: " << FPS << "; frame time: " << dt * 1000.f << '\n';
+
                 tick();
 
                 ticksToProcess -= 1.f;

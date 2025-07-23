@@ -10,9 +10,9 @@ class Being
 public:
     Being();
 
-    Being(sf::Vector2f position, sf::Vector2f size, float rotation, sf::Texture* myTexture, sf::RenderWindow* window, Grid* grid);
+    Being(sf::Vector2f position, sf::Vector2f size, float rotation, sf::Texture* texture, sf::RenderWindow* window, Grid* grid);
 
-    void create(sf::Vector2f position, sf::Vector2f size, float rotation, sf::Texture* myTexture, sf::RenderWindow* window, Grid* grid);
+    void create(sf::Vector2f position, sf::Vector2f size, float rotation, sf::Texture* texture, sf::RenderWindow* window, Grid* grid);
 
     sf::Vector2f getPosition();
 

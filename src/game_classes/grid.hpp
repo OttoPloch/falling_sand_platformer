@@ -12,9 +12,9 @@ class Grid
 public:
     Grid();
 
-    Grid(unsigned int gridLength, unsigned int gridHeight);
+    Grid(unsigned int gridLength, unsigned int gridHeight, std::vector<std::shared_ptr<Being>>* beings);
 
-    void create(unsigned int gridLength, unsigned int gridHeight);
+    void create(unsigned int gridLength, unsigned int gridHeight, std::vector<std::shared_ptr<Being>>* beings);
 
     // returns a pointer to the cell at the given position
     Cell* at(sf::Vector2u position);
@@ -62,4 +62,9 @@ public:
     void updateCells(sf::Vector2u creatorPos);
 private:
     std::vector<std::vector<std::shared_ptr<Cell>>> theGrid;
+
+    int gridLength;
+    int gridHeight;
+
+    std::vector<std::shared_ptr<Being>>* beings;
 };

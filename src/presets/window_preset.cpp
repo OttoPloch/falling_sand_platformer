@@ -26,7 +26,7 @@ sf::RenderWindow& createWindowFromPreset(WindowPreset thePreset, sf::RenderWindo
         }
     }
 
-    theWindow.setFramerateLimit(60);
+    //theWindow.setFramerateLimit(60);
 
     return theWindow;
 }

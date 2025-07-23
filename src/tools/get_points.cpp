@@ -166,3 +166,13 @@ sf::Vector2f gridToWorldCoords(int cellSize, sf::Vector2f cellOffset, sf::Vector
 
     return point;
 }
+
+sf::Vector2u worldToGridCoords(int cellSize, sf::Vector2f cellOffset, sf::Vector2f worldCoord)
+{
+    sf::Vector2u point;
+
+    point.x = (worldCoord.x - cellOffset.x) / cellSize;
+    point.y = (worldCoord.y - cellOffset.y) / cellSize;
+
+    return point;
+}

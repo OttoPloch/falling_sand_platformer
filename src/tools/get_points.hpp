@@ -19,3 +19,5 @@ std::vector<sf::Vector2f> getRectAlignedPoints(int cellSize, sf::Vector2f cellOf
 // If convertCenter is true, then the returned point will be where the center of the grid Coord is,
 // otherwise it will be the top left.
 sf::Vector2f gridToWorldCoords(int cellSize, sf::Vector2f cellOffset, sf::Vector2u gridCoord, bool convertCenter);
+
+sf::Vector2u worldToGridCoords(int cellSize, sf::Vector2f cellOffset, sf::Vector2f worldCoord);

@@ -7,15 +7,15 @@
 #include "../tools/get_points.hpp"
 #include "../tools/collision.hpp"
 
-const unsigned int CELLSIZE = 10;
+const unsigned int CELLSIZE = 5;
 const int CELLOFFSETX = 0;
 const int CELLOFFSETY = 0;
 
 Grid::Grid() {}
 
-Grid::Grid(unsigned int gridLength, unsigned int gridHeight) { create(gridLength, gridHeight); }
+Grid::Grid(unsigned int gridLength, unsigned int gridHeight, std::vector<std::shared_ptr<Being>>* beings) { create(gridLength, gridHeight, beings); }
 
-void Grid::create(unsigned int gridLength, unsigned int gridHeight)
+void Grid::create(unsigned int gridLength, unsigned int gridHeight, std::vector<std::shared_ptr<Being>>* beings)
 {
     theGrid.resize(gridHeight);
 
@@ -23,10 +23,12 @@ void Grid::create(unsigned int gridLength, unsigned int gridHeight)
     {
         theGrid[i].resize(gridLength);
     }
+
+    this->beings = beings;
 }
 
 Cell* Grid::at(sf::Vector2u position) {
-    if (position.x < theGrid[position.y].size() && position.y < theGrid.size())
+    if (position.y < theGrid.size() && position.x < theGrid[position.y].size())
     {
         if (theGrid[position.y][position.x] != nullptr)
         {
@@ -43,7 +45,16 @@ Cell* Grid::at(sf::Vector2u position) {
 
 unsigned int Grid::getSize() { return theGrid.size(); }
 
-unsigned int Grid::getSizeOfRow(unsigned int rowIndex) { return theGrid[rowIndex].size(); }
+unsigned int Grid::getSizeOfRow(unsigned int rowIndex)
+{ 
+    if (rowIndex < theGrid.size()) {
+        return theGrid[rowIndex].size();
+    }
+    else
+    {
+        return 0;
+    }
+}
 
 int Grid::getCellSize() { return CELLSIZE; }
 
@@ -86,39 +97,6 @@ void Grid::makeCellsFromBeing(Being* being, std::string cellType, CellManager* c
             }
         }
     }
-
-    // for (int i = 0; i < points.size(); i++)
-    // {
-    //     sf::Vector2u gridCoord({static_cast<unsigned int>(points[i].x), static_cast<unsigned int>(points[i].y)});
-
-    //     if (gridCoord.y < getSize() && gridCoord.x < getSizeOfRow(gridCoord.y))
-    //     {
-    //         if (at(gridCoord) != nullptr && !at(gridCoord)->isFromBeing())
-    //         {
-    //             if (CELLOFFSETX + gridCoord.x * CELLSIZE > being->getPosition().x)
-    //             {
-    //                 if (!moveCell(gridCoord, {1, 0})) removeCell(gridCoord);
-    //             }
-    //             else if (CELLOFFSETX + gridCoord.x * CELLSIZE < being->getPosition().x)
-    //             {
-    //                 if (!moveCell(gridCoord, {-1, 0})) removeCell(gridCoord);
-    //             }
-    //             else
-    //             {
-    //                 if (getRandomInt(1) == 0)
-    //                 {
-    //                     if (!moveCell(gridCoord, {1, 0})) removeCell(gridCoord);
-    //                 }
-    //                 else
-    //                 {
-    //                     if (!moveCell(gridCoord, {-1, 0})) removeCell(gridCoord);
-    //                 }
-    //             }
-    //         }
-
-    //         createCell(cellManager, grid, cellType, gridCoord, true);
-    //     }
-    // }
 }        
 
 bool Grid::canMoveTo(sf::Vector2u from, sf::Vector2u to)
@@ -135,9 +113,7 @@ bool Grid::canMoveTo(sf::Vector2u from, sf::Vector2u to)
     (distance.x > 0) ? direction.x = 1 : (distance.x < 0) ? direction.x = -1 : direction.x = 0;
     (distance.y > 0) ? direction.y = 1 : (distance.y < 0) ? direction.y = -1 : direction.y = 0;
 
-    if (checkCellsInLine(from, distance, direction, this)) return false;
-
-    // TODO: check beings
+    if (checkCellsInLine(from, distance, direction, this, beings, CELLSIZE, getCellOffset())) return false;
 
     return true;
 }
@@ -152,9 +128,7 @@ bool Grid::canMoveDistance(sf::Vector2u from, sf::Vector2i distance)
     (distance.x > 0) ? direction.x = 1 : (distance.x < 0) ? direction.x = -1 : direction.x = 0;
     (distance.y > 0) ? direction.y = 1 : (distance.y < 0) ? direction.y = -1 : direction.y = 0;
 
-    if (checkCellsInLine(from, distance, direction, this)) return false;
-
-    // TODO: check beings
+    if (checkCellsInLine(from, distance, direction, this, beings, CELLSIZE, getCellOffset())) return false;
 
     return true;
 }
@@ -164,7 +138,7 @@ void Grid::createCell(CellManager* cellManager, std::string type, sf::Vector2u p
     // make sure all other necessary checks have been done before calling this function
     if (theGrid[position.y][position.x] == nullptr)
     {
-        theGrid[position.y][position.x] = std::make_unique<Cell>(cellManager, this, type, position);
+        theGrid[position.y][position.x] = std::make_shared<Cell>(cellManager, this, type, position);
     }
 }
 
@@ -234,40 +208,43 @@ void Grid::updateCells(sf::Vector2u creatorPos)
 
     // std::cout << "////////////////////////////DONE////////////////////////////\n";
 
-    // updating the grid itthis
-    for (int y = theGrid.size() - 1; y >= 0; y--)
+    // updating the grid itself
+    if (theGrid.size() > 0)
     {
-        bool rightToLeft;
-
-        // randomly decides whether to go left or right on this row,
-        // this is done to avoid a bias to one side
-        (getRandomInt(1) == 0) ? rightToLeft = true : rightToLeft = false;
-
-        for (int i = 0; i < theGrid[y].size(); i++)
+        for (int y = theGrid.size() - 1; y >= 0; y--)
         {
-            int x;
-
-            // setting the x that the grid will use to iterate based
-            // on the rightToLeft boolean variable
-            (rightToLeft) ? x = theGrid[y].size() - 1 - i : x = i;
-
-            // iterates through regular cells
-            if (theGrid[y][x] != nullptr)
+            bool rightToLeft;
+    
+            // randomly decides whether to go left or right on this row,
+            // this is done to avoid a bias to one side
+            (getRandomInt(1) == 0) ? rightToLeft = true : rightToLeft = false;
+    
+            for (int i = 0; i < theGrid[y].size(); i++)
             {
-                if (!theGrid[y][x]->hasBehavior("rise"))
+                int x;
+    
+                // setting the x that the grid will use to iterate based
+                // on the rightToLeft boolean variable
+                (rightToLeft) ? x = theGrid[y].size() - 1 - i : x = i;
+    
+                // iterates through regular cells
+                if (theGrid[y][x] != nullptr)
                 {
-                    theGrid[y][x]->update();
+                    if (!theGrid[y][x]->hasBehavior("rise"))
+                    {
+                        theGrid[y][x]->update();
+                    }
                 }
-            }
-
-            int oppY = (theGrid.size() - 1) - y;
-
-            // iterates through rising cells (like smoke)
-            if (theGrid[oppY][x] != nullptr)
-            {
-                if (theGrid[oppY][x]->hasBehavior("rise"))
+    
+                int oppY = (theGrid.size() - 1) - y;
+    
+                // iterates through rising cells (like smoke)
+                if (theGrid[oppY][x] != nullptr)
                 {
-                    theGrid[oppY][x]->update();
+                    if (theGrid[oppY][x]->hasBehavior("rise"))
+                    {
+                        theGrid[oppY][x]->update();
+                    }
                 }
             }
         }

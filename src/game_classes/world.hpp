@@ -13,10 +13,6 @@
 class World
 {
 public:
-    // temp
-    Being moon;
-    Being sun;
-
     World();
 
     void create(sf::RenderWindow* window);
@@ -44,4 +40,6 @@ private:
     ResourceManager resourceManager;
     
     Grid grid;
+
+    std::vector<std::shared_ptr<Being>> beings;
 };

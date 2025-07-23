@@ -17,11 +17,14 @@ bool HeavyBehavior::update(Grid* grid, sf::Vector2u gridPos)
         Cell* leftNeighbor = grid->at({gridPos.x - 1, gridPos.y});
         Cell* rightNeighbor = grid->at({gridPos.x + 1, gridPos.y});
 
-
         // we know that the bottom neighbor
         // is not nullptr if this comes after
         // the falling behavior
-        if (!bottomNeighbor->hasBehavior("static") && bottomNeighbor->getOptionalSetting("heavy") < myWeight)
+        //
+        // ... you fool, if only you knew the hours
+        // of time you would spend debugging to find
+        // the reference to a nullptr. Never again (7/23/25)
+        if (bottomNeighbor != nullptr && !bottomNeighbor->hasBehavior("static") && bottomNeighbor->getOptionalSetting("heavy") < myWeight)
         {
             // bottom
 

@@ -6,12 +6,12 @@
 
 Being::Being() : position({0.f, 0.f}), velocity({0.f, 0.f}), rotation(0.f) {}
 
-Being::Being(sf::Vector2f position, sf::Vector2f size, float rotation, sf::Texture* myTexture, sf::RenderWindow* window, Grid* grid)
+Being::Being(sf::Vector2f position, sf::Vector2f size, float rotation, sf::Texture* texture, sf::RenderWindow* window, Grid* grid)
 {
     create(position, size, rotation, texture, window, grid);
 }
 
-void Being::create(sf::Vector2f position, sf::Vector2f size, float rotation, sf::Texture *texture, sf::RenderWindow* window, Grid* grid)
+void Being::create(sf::Vector2f position, sf::Vector2f size, float rotation, sf::Texture*texture, sf::RenderWindow* window, Grid* grid)
 {
     this->position = position;
     this->size = size;
