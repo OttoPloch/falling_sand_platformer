@@ -1,7 +1,7 @@
 #include "game.hpp"
 
 const WindowPreset WINDOWPRESET1(sf::VideoMode({800, 600}), "game", false, false);
-const WindowPreset WINDOWPRESET2(sf::VideoMode::getDesktopMode(), "game", false, true);
+const WindowPreset WINDOWPRESET2(sf::VideoMode::getDesktopMode(), "game", false, false);
 const WindowPreset WINDOWPRESET3(sf::VideoMode::getDesktopMode(), "game", true, false);
 
 Game::Game() {}
@@ -10,6 +10,8 @@ void Game::start()
 {
     createWindowFromPreset(WINDOWPRESET1, window);
     isFullscreen = false;
+
+    isPaused = false;
 
     world.create(&window);
 
@@ -31,18 +33,18 @@ void Game::run()
         events();
 
         float FPS = 1.f / dt;
-
+        
         if (!isPaused)
         {
             // formula is: milliseconds since last frame / desired milliseconds per update
             // the last number is the desired ups (20 right now)
             ticksToProcess += (dt * 1000) / (1000 / 20.f);
-
+            
+            //std::cout << "FPS: " << FPS << "; frame time: " << dt * 1000.f << '\n';
+            
             // if there was a big stutter, then this will run continuously until it is caught up
             while (ticksToProcess >= 1.f)
             {
-                std::cout << "FPS: " << FPS << "; frame time: " << dt * 1000.f << '\n';
-
                 tick();
 
                 ticksToProcess -= 1.f;
@@ -61,6 +63,8 @@ void Game::events()
     {
         if (event->is<sf::Event::Closed>())
             window.close();
+        else if (event->is<sf::Event::Resized>())
+            window.setView(sf::View(sf::FloatRect(sf::Vector2f({0, 0}), sf::Vector2f(window.getSize()))));
         else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
         {
             //////////////////// KEYBOARD INPUT ////////////////////
@@ -78,9 +82,11 @@ void Game::events()
             {
                 if (!isFullscreen)
                 {
-                    window.setSize(WINDOWPRESET1.mode.size);
-                    window.setView(sf::View({static_cast<float>(window.getSize().x / 2), static_cast<float>(window.getSize().y / 2)}, {static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)}));
+                    createWindowFromPreset(WINDOWPRESET1, window);
                     window.setPosition({(int)((sf::VideoMode::getDesktopMode().size.x / 2) - window.getSize().x / 2), (int)((sf::VideoMode::getDesktopMode().size.y / 2) - window.getSize().y / 2)});
+                    // window.setSize(WINDOWPRESET1.mode.size);
+                    // window.setView(sf::View({static_cast<float>(window.getSize().x / 2), static_cast<float>(window.getSize().y / 2)}, {static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)}));
+                    // window.setPosition({(int)((sf::VideoMode::getDesktopMode().size.x / 2) - window.getSize().x / 2), (int)((sf::VideoMode::getDesktopMode().size.y / 2) - window.getSize().y / 2)});
                 }
             }
             
@@ -89,9 +95,11 @@ void Game::events()
             {
                 if (!isFullscreen)
                 {
-                    window.setSize(WINDOWPRESET2.mode.size);
-                    window.setView(sf::View({static_cast<float>(window.getSize().x / 2), static_cast<float>(window.getSize().y / 2)}, {static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)}));
+                    createWindowFromPreset(WINDOWPRESET2, window);
                     window.setPosition({(int)((sf::VideoMode::getDesktopMode().size.x / 2) - window.getSize().x / 2), (int)((sf::VideoMode::getDesktopMode().size.y / 2) - window.getSize().y / 2)});
+                    // window.setSize(WINDOWPRESET2.mode.size);
+                    // window.setView(sf::View({static_cast<float>(window.getSize().x / 2), static_cast<float>(window.getSize().y / 2)}, {static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)}));
+                    // window.setPosition({(int)((sf::VideoMode::getDesktopMode().size.x / 2) - window.getSize().x / 2), (int)((sf::VideoMode::getDesktopMode().size.y / 2) - window.getSize().y / 2)});
                 }
             }
 
@@ -134,6 +142,16 @@ void Game::events()
             if (code == sf::Keyboard::Key::Down && creatorPos.y < world.getGridSize().y - 1)
             {
                 creatorPos.y++;
+            }
+
+            if (code == sf::Keyboard::Key::Tab)
+            {
+                isPaused = !isPaused;
+            }
+
+            if (code == sf::Keyboard::Key::Period && isPaused)
+            {
+                tick();
             }
 
             ////////////////////////////////////////////////////////

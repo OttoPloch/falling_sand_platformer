@@ -3,8 +3,6 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-#include "cell.hpp"
-#include "../tools/get_random_number.hpp"
 #include "../managers/cell_manager.hpp"
 #include "grid.hpp"
 #include "being.hpp"

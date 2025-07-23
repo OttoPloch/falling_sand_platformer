@@ -7,7 +7,7 @@
 #include "../tools/get_points.hpp"
 #include "../tools/collision.hpp"
 
-const unsigned int CELLSIZE = 5;
+const unsigned int CELLSIZE = 10;
 const int CELLOFFSETX = 0;
 const int CELLOFFSETY = 0;
 

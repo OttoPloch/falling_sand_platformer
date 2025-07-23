@@ -1,9 +1,12 @@
 #include "world.hpp"
 
+#include "cell.hpp"
+#include "../tools/get_random_number.hpp"
 #include "../tools/collision.hpp"
+#include "../tools/get_points.hpp"
 
-const int GRIDLENGTH = 200;
-const int GRIDHEIGHT = 200;
+const int GRIDLENGTH = 100;
+const int GRIDHEIGHT = 100;
 
 World::World() {}
 
@@ -23,7 +26,8 @@ void World::tick(sf::Vector2u creatorPos)
 {
     grid.updateCells(creatorPos);
     
-    beings[0]->rotate(3);
+    beings[0]->rotate(0.25);
+    beings[1]->move({0, 1});
 
     if (beings.size() > 0)
     {
@@ -74,6 +78,8 @@ void World::update(sf::Vector2u creatorPos)
         makeACell("smoke", creatorPos);
     }
 
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) makeACell("temp", creatorPos);
+
     // delete a cell
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::X))
     {
@@ -105,6 +111,21 @@ void World::draw()
         for (int i = 0; i < beings.size(); i++)
         {
             beings[i]->draw();
+
+            // if (i == 0)
+            // {
+            //     std::vector<sf::Vector2f> points = getRectAlignedPoints(grid.getCellSize(), grid.getCellOffset(), beings[i]->getPosition(), beings[i]->getSize(), beings[i]->getRotation(), false);
+                
+            //     for (int j = 0; j < points.size(); j++)
+            //     {
+            //         sf::RectangleShape rect({static_cast<float>(grid.getCellSize()), static_cast<float>(grid.getCellSize())});
+    
+            //         rect.setFillColor(sf::Color(255, 0, 0, 50));
+            //         rect.setPosition(points[j]);
+                    
+            //         window->draw(rect);
+            //     }
+            // }
         }
     }
 }

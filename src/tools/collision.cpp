@@ -44,142 +44,82 @@ bool gridLineCollide(sf::Vector2u point, sf::Vector2u linePoint1, sf::Vector2u l
 
 bool checkCellsInLine(sf::Vector2u from, sf::Vector2i distance, sf::Vector2i direction, Grid* grid, std::vector<std::shared_ptr<Being>>* beings, int cellSize, sf::Vector2f cellOffset)
 {
-    // This is the most verbose logging I have ever written.
-    // The error was from not using abs() in the for loop. Negative values would skip it entirely.
+    int startX, startY, endX, endY;
 
-    /*
-    std::cout << "OK, from is " << from.x << ", " << from.y <<
-        ". distance is " << distance.x << ", " << distance.y <<
-        ". direction is " << direction.x << ", " << direction.y <<
-        ".\n";
-    */
-
-    if (abs(distance.y) > 0 && abs(distance.x) > 0)
+    if (abs(distance.x) > 0)
     {
-        /*
-        std::cout << "since distance.y (" << distance.y <<
-            ") as an absolute value (" << abs(distance.y) <<
-            ") is greater than 0, and distance.x ("
-            << distance.x << ") as an absolute value (" << abs(distance.x) <<
-            ") is also greater than 0, I will be doing a double for loop.\n";
-        */
-        
-        for (int y = 1; y <= abs(distance.y); y++)
-        {
-            //std::cout << "y is " << y << ". I will keep looping while it is <= distance.y (" << distance.y << "). Each loop I will add one to y.\n";
-
-            for (int x = 1; x <= abs(distance.x); x++)
-            {
-                //std::cout << "x is " << x << ". I will keep looping while it is <= distance.x (" << distance.x << "). Each loop I will add one to x.\n";
-
-                sf::Vector2u currentCoord({from.x + direction.x * x, from.y + direction.y * y});
-
-                //std::cout << "currentCoord is " << currentCoord.x << ", " << currentCoord.y << ". Calculated as {" << from.x << " + " << direction.x << " * " << x << ", " << from.y << " + " << direction.y << " * " << y << "}\n";
-
-                if (gridLineCollide(currentCoord, from, {from.x + distance.x, from.y + distance.y}))
-                {
-                    //std::cout << "A line going from " << from.x << ", " << from.y << " to " << from.x + distance.x << ", " << from.y + distance.y << " collided with point " << currentCoord.x << ", " << currentCoord.y << ". Now checking if it is nullptr.\n";
-
-                    if (grid->at(currentCoord) != nullptr)
-                    {
-                        //std::cout << "It is not, so I am returning true to indicate that there was a collision trying to go from " << from.x << ", " << from.y << " to " << from.x + distance.x << ", " << from.y + distance.y << ".\n";
-
-                        return true;
-                    }
-                    else
-                    {
-                        //std::cout << "It was nullptr, so I can now move to the next x coord.\n";
-                    }
-
-                    if (beings->size() > 0)
-                    {
-                        for (int i = 0; i < beings->size(); i++)
-                        {
-                            if (pointBeingCollide(gridToWorldCoords(cellSize, cellOffset, currentCoord, true), (*beings)[i].get()))
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    //std::cout << "There was not a collision between a line going from " << from.x << ", " << from.y << " to " << from.x + distance.x << ", " << from.y + distance.y << " and a point at " << currentCoord.x << ", " << currentCoord.y << ". Moving to the next x coord.\n";
-                }
-            }
-
-            //std::cout << "Finished this row of cells, moving to y = " << y + 1 << ".\n";
-        }
-
-        //std::cout << "Finished the double for loop and there was no collision.\n";
-    }
-    else if (abs(distance.y) > 0)
-    {
-        for (int y = 1; y <= abs(distance.y); y++)
-        {
-            sf::Vector2u currentCoord({from.x, from.y + direction.y * y});
-
-            if (gridLineCollide(currentCoord, from, {from.x, from.y + distance.y}))
-            {
-                if (grid->at(currentCoord) != nullptr)
-                {
-                    return true;
-                }
-
-                if (beings->size() > 0)
-                {
-                    for (int i = 0; i < beings->size(); i++)
-                    {
-                        if (pointBeingCollide(gridToWorldCoords(cellSize, cellOffset, currentCoord, true), (*beings)[i].get()))
-                        { 
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    else if (abs(distance.x) > 0)
-    {
-        for (int x = 1; x <= abs(distance.x); x++)
-        {
-            sf::Vector2u currentCoord({from.x + direction.x * x, from.y});
-
-            if (gridLineCollide(currentCoord, from, {from.x + distance.x, from.y}))
-            {
-                if (grid->at(currentCoord) != nullptr)
-                {
-                    return true;
-                }
-
-                if (beings->size() > 0)
-                {
-                    for (int i = 0; i < beings->size(); i++)
-                    {
-                        if (pointBeingCollide(gridToWorldCoords(cellSize, cellOffset, currentCoord, true), (*beings)[i].get()))
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
+        startX = 1;
+        endX = abs(distance.x);
     }
     else
     {
+        startX = 0;
+        endX = 0;
+    }
+
+    if (abs(distance.y) > 0)
+    {
+        startY = 1;
+        endY = abs(distance.y);
+    }
+    else
+    {
+        startY = 0;
+        endY = 0;
+    }
+
+    // Not sure what I should do here, I'll leave this for now
+    // until I enter a scenario where I need to resolve it.
+    if (distance.x == 0 && distance.y == 0)
+    {
         std::cout << "in checkCellsInLine(), a cell attempted to move a distance of 0, 0\n";
+        assert(false);
 
         return false;
     }
 
+    // Iterates through the bounding box of the line that the cell wants to go in
+    // As of writing this (7/23/25), cells only move 1 unit at a time, so at
+    // most this will run 4 times. The rising behavior allows for a greater distance,
+    // but it is not currently used. We will see how slow this gets when I add velocity.
+    for (int y = startY; y <= endY; y++)
+    {
+        for (int x = startX; x <= endX; x++)
+        {
+            // The current position that will be checked to see if
+            // it is in the line that the cell wants to go in.
+            sf::Vector2u currentCoord({from.x + direction.x * x, from.y + direction.y * y});
+
+            // This just means currentCoord has the potential to be in
+            // the way, it could still be a valid spot to move to.
+            if (gridLineCollide(currentCoord, from, {from.x + distance.x, from.y + distance.y}))
+            {
+                // Cell collision
+                if (grid->at(currentCoord) != nullptr)
+                {
+                    return true;
+                }
+
+                // Being collision
+                if (beings->size() > 0)
+                {
+                    for (int i = 0; i < beings->size(); i++)
+                    {
+                        if (pointBeingCollide(gridToWorldCoords(cellSize, cellOffset, currentCoord, true), (*beings)[i].get(), {static_cast<float>(cellSize), static_cast<float>(cellSize)}))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     return false;
 }
 
 bool pointRectCollide(sf::Vector2f point, sf::Vector2f center, sf::Vector2f size, float rotation)
 {
-    size.x += 5;
-    size.y += 5;
-
     sf::Vector2f alignedPoint = rotateAroundPoint(point, center, -rotation);
     
     sf::Vector2f min({center.x - size.x / 2, center.y - size.y / 2});
@@ -188,11 +128,17 @@ bool pointRectCollide(sf::Vector2f point, sf::Vector2f center, sf::Vector2f size
     return (alignedPoint.x >= min.x && alignedPoint.x <= max.x && alignedPoint.y >= min.y && alignedPoint.y <= max.y);
 }
 
-bool pointBeingCollide(sf::Vector2f point, Being* being)
+bool pointBeingCollide(sf::Vector2f point, Being* being, sf::Vector2f inflateSize = {0, 0})
 {
     sf::Vector2f center(being->getPosition());
     sf::Vector2f size(being->getSize());
     float rotation(being->getRotation());
+
+    if (inflateSize != sf::Vector2f({0, 0}))
+    {
+        size.x += inflateSize.x;
+        size.y += inflateSize.y;
+    }
 
     return pointRectCollide(point, center, size, rotation);
 }

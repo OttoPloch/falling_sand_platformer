@@ -18,7 +18,7 @@ sf::RenderWindow& createWindowFromPreset(WindowPreset thePreset, sf::RenderWindo
     {
         if (!thePreset.fullscreen)
         {
-            theWindow.create(thePreset.mode, thePreset.title, sf::Style::Close);    
+            theWindow.create(thePreset.mode, thePreset.title, sf::Style::Default);    
         }
         else
         {
@@ -26,7 +26,7 @@ sf::RenderWindow& createWindowFromPreset(WindowPreset thePreset, sf::RenderWindo
         }
     }
 
-    //theWindow.setFramerateLimit(60);
+    theWindow.setFramerateLimit(60);
 
     return theWindow;
 }
