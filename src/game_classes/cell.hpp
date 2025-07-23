@@ -13,9 +13,9 @@ class Cell
 public:
     Cell();
 
-    Cell(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position, bool fromBeing);
+    Cell(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position);
 
-    void create(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position, bool fromBeing);
+    void create(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position);
 
     void update();
 
@@ -38,8 +38,6 @@ public:
     sf::Color getColor();
 
     bool hasBehavior(std::string behaviorName);
-
-    bool isFromBeing();
 private:
     CellManager* cellManager;
 
@@ -48,10 +46,6 @@ private:
     std::string type;
 
     sf::Vector2u position;
-
-    int age;
-
-    bool fromBeing;
-
+    
     CellPreset myPreset;
 };

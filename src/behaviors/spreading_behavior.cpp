@@ -6,14 +6,14 @@ bool SpreadingBehavior::update(Grid* grid, sf::Vector2u gridPos)
 {
     std::vector<sf::Vector2i> openSpots;
 
-    if (gridPos.x > 0 && gridPos.y > 0 && grid->at({gridPos.x - 1, gridPos.y - 1}) == nullptr) { openSpots.push_back({-1, -1}); }
-    if (gridPos.y > 0 && grid->at({gridPos.x, gridPos.y - 1}) == nullptr) { openSpots.push_back({0, -1}); }
-    if (gridPos.x < grid->getSizeOfRow(gridPos.y) - 1 && gridPos.y > 0 && grid->at({gridPos.x + 1, gridPos.y - 1}) == nullptr) { openSpots.push_back({1, -1}); }
-    if (gridPos.x > 0 && grid->at({gridPos.x - 1, gridPos.y}) == nullptr) { openSpots.push_back({-1, 0}); }
-    if (gridPos.x < grid->getSizeOfRow(gridPos.y) - 1 && grid->at({gridPos.x + 1, gridPos.y}) == nullptr) { openSpots.push_back({1, 0}); }
-    if (gridPos.x > 0 && gridPos.y < grid->getSize() - 1 && grid->at({gridPos.x - 1, gridPos.y + 1}) == nullptr) { openSpots.push_back({-1, 1}); }
-    if (gridPos.y < grid->getSize() - 1 && grid->at({gridPos.x, gridPos.y + 1}) == nullptr) { openSpots.push_back({0, 1}); }
-    if (gridPos.x < grid->getSizeOfRow(gridPos.y) - 1 && gridPos.y < grid->getSize() - 1 && grid->at({gridPos.x + 1, gridPos.y + 1}) == nullptr) { openSpots.push_back({1, 1}); }
+    if (grid->canMoveDistance(gridPos, {-1, -1})) { openSpots.push_back({-1, -1}); }
+    if (grid->canMoveDistance(gridPos, {0, -1})) { openSpots.push_back({0, -1}); }
+    if (grid->canMoveDistance(gridPos, {1, -1})) { openSpots.push_back({1, -1}); }
+    if (grid->canMoveDistance(gridPos, {-1, 0})) { openSpots.push_back({-1, 0}); }
+    if (grid->canMoveDistance(gridPos, {1, 0})) { openSpots.push_back({1, 0}); }
+    if (grid->canMoveDistance(gridPos, {-1, 1})) { openSpots.push_back({-1, 1}); }
+    if (grid->canMoveDistance(gridPos, {0, 1})) { openSpots.push_back({0, 1}); }
+    if (grid->canMoveDistance(gridPos, {1, 1})) { openSpots.push_back({1, 1}); }
 
     if (openSpots.size() > 0)
     {

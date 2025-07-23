@@ -1,7 +1,9 @@
 #include "world.hpp"
 
-const int GRIDLENGTH = 100;
-const int GRIDHEIGHT = 100;
+#include "../tools/collision.hpp"
+
+const int GRIDLENGTH = 300;
+const int GRIDHEIGHT = 300;
 
 World::World() {}
 
@@ -20,9 +22,6 @@ void World::create(sf::RenderWindow* window)
 void World::tick(sf::Vector2u creatorPos)
 {
     grid.updateCells(creatorPos);
-    
-    grid.makeBeingCells(&moon, moon.getAlignedPoints(true), "being", &cellManager, &grid);
-    grid.makeBeingCells(&sun, sun.getAlignedPoints(true), "being", &cellManager, &grid);
     
     sun.rotate(3);
 
@@ -151,6 +150,6 @@ int World::getCellSize() { return grid.getCellSize(); }
 
 int World::getCellCount() { return grid.getCellCount(); }
 
-void World::makeACell(std::string type, sf::Vector2u position) { grid.createCell(&cellManager, &grid, type, position, false); }
+void World::makeACell(std::string type, sf::Vector2u position) { grid.createCell(&cellManager, type, position); }
 
 void World::deleteACell(sf::Vector2u position) { grid.removeCell(position); }

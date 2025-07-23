@@ -37,6 +37,8 @@ src/behaviors/rising_behavior.cpp
 src/game_classes/being.cpp
 src/managers/resource_manager.cpp
 src/tools/get_points.cpp
+src/tools/collision.cpp
 )
+
 target_compile_features(app PRIVATE cxx_std_17)
 target_link_libraries(app PRIVATE SFML::Graphics)

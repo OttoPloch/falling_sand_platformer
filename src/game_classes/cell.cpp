@@ -2,12 +2,12 @@
 
 Cell::Cell() {}
 
-Cell::Cell(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position, bool fromBeing)
+Cell::Cell(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position)
 {
-    create(cellManager, grid, type, position, fromBeing);
+    create(cellManager, grid, type, position);
 }
 
-void Cell::create(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position, bool fromBeing)
+void Cell::create(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position)
 {
     this->cellManager = cellManager;
     this->grid = grid;
@@ -15,10 +15,6 @@ void Cell::create(CellManager* cellManager, Grid* grid, std::string type, sf::Ve
     this->position = position;
 
     myPreset = cellManager->presets[type];
-
-    age = 0;
-
-    this->fromBeing = fromBeing;
 }
 
 void Cell::update()
@@ -33,8 +29,6 @@ void Cell::update()
             }
         }
     }
-
-    age++;
 }
 
 void Cell::setPos(sf::Vector2u newPos) { position = newPos; }
@@ -53,8 +47,6 @@ void Cell::addStartBehavior(std::shared_ptr<Behavior> newBehavior) { myPreset.be
 void Cell::addEndBehavior(std::shared_ptr<Behavior> newBehavior) { myPreset.behaviors.push_back(newBehavior); }
 
 std::string Cell::getType() { return type; }
-
-int Cell::getAge() { return age; }
 
 int Cell::getOptionalSetting(std::string settingName)
 {
@@ -80,5 +72,3 @@ bool Cell::hasBehavior(std::string behaviorName)
 
     return false;
 }
-
-bool Cell::isFromBeing() { return fromBeing; }

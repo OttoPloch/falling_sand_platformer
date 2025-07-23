@@ -3,6 +3,9 @@
 #include "cell.hpp"
 #include "../managers/cell_manager.hpp"
 #include "being.hpp"
+#include "../tools/get_random_number.hpp"
+#include "../tools/get_points.hpp"
+#include "../tools/collision.hpp"
 
 const unsigned int CELLSIZE = 10;
 const int CELLOFFSETX = 0;
@@ -44,7 +47,7 @@ unsigned int Grid::getSizeOfRow(unsigned int rowIndex) { return theGrid[rowIndex
 
 int Grid::getCellSize() { return CELLSIZE; }
 
-sf::Vector2i Grid::getCellOffset() { return {CELLOFFSETX, CELLOFFSETY}; }
+sf::Vector2f Grid::getCellOffset() { return {CELLOFFSETX, CELLOFFSETY}; }
 
 unsigned int Grid::getCellCount()
 {
@@ -64,50 +67,104 @@ unsigned int Grid::getCellCount()
     return cells;
 }
 
-void Grid::makeBeingCells(Being* being, std::vector<sf::Vector2f> points, std::string cellType, CellManager* cellManager, Grid* grid)
+void Grid::makeCellsFromBeing(Being* being, std::string cellType, CellManager* cellManager)
 {
-    for (int i = 0; i < points.size(); i++)
+    sf::FloatRect bBox = getRectBoundingBox(CELLSIZE, getCellOffset(), being->getPosition(), being->getSize(), being->getRotation(), true);
+
+    int startX = static_cast<int>(std::floor(bBox.position.x));
+    int startY = static_cast<int>(std::floor(bBox.position.y));
+    int endX = static_cast<int>(std::floor(bBox.position.x + bBox.size.x));
+    int endY = static_cast<int>(std::floor(bBox.position.y + bBox.size.y));
+
+    for (int y = startY; y < endY; y++)
     {
-        sf::Vector2u gridCoord({static_cast<unsigned int>(points[i].x), static_cast<unsigned int>(points[i].y)});
-
-        if (gridCoord.y < getSize() && gridCoord.x < getSizeOfRow(gridCoord.y))
+        for (int x = startX; x < endX; x++)
         {
-            if (at(gridCoord) != nullptr && !at(gridCoord)->isFromBeing())
+            if (pointRectCollide(gridToWorldCoords(CELLSIZE, getCellOffset(), {static_cast<unsigned int>(x), static_cast<unsigned int>(y)}, true), being->getPosition(), being->getSize(), being->getRotation()))
             {
-                if (CELLOFFSETX + gridCoord.x * CELLSIZE > being->getPosition().x)
-                {
-                    if (!moveCell(gridCoord, {1, 0})) removeCell(gridCoord);
-                }
-                else if (CELLOFFSETX + gridCoord.x * CELLSIZE < being->getPosition().x)
-                {
-                    if (!moveCell(gridCoord, {-1, 0})) removeCell(gridCoord);
-                }
-                else
-                {
-                    if (getRandomInt(1) == 0)
-                    {
-                        if (!moveCell(gridCoord, {1, 0})) removeCell(gridCoord);
-                    }
-                    else
-                    {
-                        if (!moveCell(gridCoord, {-1, 0})) removeCell(gridCoord);
-                    }
-                }
+                createCell(cellManager, cellType, {static_cast<unsigned int>(x), static_cast<unsigned int>(y)});
             }
-
-            createCell(cellManager, grid, cellType, gridCoord, true);
         }
     }
+
+    // for (int i = 0; i < points.size(); i++)
+    // {
+    //     sf::Vector2u gridCoord({static_cast<unsigned int>(points[i].x), static_cast<unsigned int>(points[i].y)});
+
+    //     if (gridCoord.y < getSize() && gridCoord.x < getSizeOfRow(gridCoord.y))
+    //     {
+    //         if (at(gridCoord) != nullptr && !at(gridCoord)->isFromBeing())
+    //         {
+    //             if (CELLOFFSETX + gridCoord.x * CELLSIZE > being->getPosition().x)
+    //             {
+    //                 if (!moveCell(gridCoord, {1, 0})) removeCell(gridCoord);
+    //             }
+    //             else if (CELLOFFSETX + gridCoord.x * CELLSIZE < being->getPosition().x)
+    //             {
+    //                 if (!moveCell(gridCoord, {-1, 0})) removeCell(gridCoord);
+    //             }
+    //             else
+    //             {
+    //                 if (getRandomInt(1) == 0)
+    //                 {
+    //                     if (!moveCell(gridCoord, {1, 0})) removeCell(gridCoord);
+    //                 }
+    //                 else
+    //                 {
+    //                     if (!moveCell(gridCoord, {-1, 0})) removeCell(gridCoord);
+    //                 }
+    //             }
+    //         }
+
+    //         createCell(cellManager, grid, cellType, gridCoord, true);
+    //     }
+    // }
 }        
 
-void Grid::createCell(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position, bool fromBeing)
+bool Grid::canMoveTo(sf::Vector2u from, sf::Vector2u to)
+{
+    if (to.y > getSize() - 1 || to.x > getSizeOfRow(to.y) - 1) return false;
+
+    sf::Vector2i distance;
+
+    distance.x = abs(from.x - to.x);
+    distance.y = abs(from.y - to.y);
+
+    sf::Vector2i direction;
+
+    (distance.x > 0) ? direction.x = 1 : (distance.x < 0) ? direction.x = -1 : direction.x = 0;
+    (distance.y > 0) ? direction.y = 1 : (distance.y < 0) ? direction.y = -1 : direction.y = 0;
+
+    if (checkCellsInLine(from, distance, direction, this)) return false;
+
+    // TODO: check beings
+
+    return true;
+}
+
+bool Grid::canMoveDistance(sf::Vector2u from, sf::Vector2i distance)
+{
+    if (from.y + distance.y < 0 || from.x + distance.x < 0) return false;
+    if (from.y + distance.y > getSize() - 1 || from.x + distance.x > getSizeOfRow(from.y + distance.y) - 1) return false;
+
+    sf::Vector2i direction;
+
+    (distance.x > 0) ? direction.x = 1 : (distance.x < 0) ? direction.x = -1 : direction.x = 0;
+    (distance.y > 0) ? direction.y = 1 : (distance.y < 0) ? direction.y = -1 : direction.y = 0;
+
+    if (checkCellsInLine(from, distance, direction, this)) return false;
+
+    // TODO: check beings
+
+    return true;
+}
+
+void Grid::createCell(CellManager* cellManager, std::string type, sf::Vector2u position)
 {
     // make sure all other necessary checks have been done before calling this function
     if (theGrid[position.y][position.x] == nullptr)
     {
-        theGrid[position.y][position.x] = std::make_unique<Cell>(cellManager, grid, type, position, fromBeing);
-
-        if (fromBeing) beingCells.push_back({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)});
+        theGrid[position.y][position.x] = std::make_unique<Cell>(cellManager, this, type, position);
     }
 }
 
@@ -116,21 +173,11 @@ void Grid::removeCell(sf::Vector2u gridPos)
     theGrid[gridPos.y][gridPos.x].reset();
 }
 
-bool Grid::moveCell(sf::Vector2u gridPos, sf::Vector2i distance)
+void Grid::moveCell(sf::Vector2u gridPos, sf::Vector2i distance)
 {
     // make sure all other necessary checks have been done before calling this function
-    if (gridPos.y + distance.y < getSize() && gridPos.x + distance.x < getSizeOfRow(gridPos.y + distance.y))
-    {
-        if (theGrid[gridPos.y + distance.y][gridPos.x + distance.x] == nullptr)
-        {
-            theGrid[gridPos.y][gridPos.x]->changePos(distance);
-            theGrid[gridPos.y + distance.y][gridPos.x + distance.x] = std::move(theGrid[gridPos.y][gridPos.x]);
-
-            return true;
-        }
-    }
-
-    return false;
+    theGrid[gridPos.y][gridPos.x]->changePos(distance);
+    theGrid[gridPos.y + distance.y][gridPos.x + distance.x] = std::move(theGrid[gridPos.y][gridPos.x]);
 }
 
 void Grid::swap(sf::Vector2u gridPos1, sf::Vector2u gridPos2)
@@ -175,10 +222,6 @@ void Grid::updateCells(sf::Vector2u creatorPos)
     //             {
     //                 std::cout << "\e[90m**\e[39m";
     //             }
-    //             else if (theGrid[y][x]->getType() == "being")
-    //             {
-    //                 std::cout << "  ";
-    //             }
     //         }
     //         else
     //         {
@@ -191,7 +234,7 @@ void Grid::updateCells(sf::Vector2u creatorPos)
 
     // std::cout << "////////////////////////////DONE////////////////////////////\n";
 
-    // updating the grid itself
+    // updating the grid itthis
     for (int y = theGrid.size() - 1; y >= 0; y--)
     {
         bool rightToLeft;
@@ -228,15 +271,5 @@ void Grid::updateCells(sf::Vector2u creatorPos)
                 }
             }
         }
-    }
-
-    if (beingCells.size() > 0)
-    {
-        for (int i = 0; i < beingCells.size(); i++)
-        {
-            removeCell(beingCells[i]);
-        }
-
-        beingCells.clear();
     }
 }

@@ -21,7 +21,7 @@ bool SettlingBehavior::update(Grid* grid, sf::Vector2u gridPos)
 
     if ((gridPos.y < grid->getSize() - 1 && fallDirection == 1) || (gridPos.y > 0 && fallDirection == -1))
     {
-        if (gridPos.x > 0 && gridPos.x < grid->getSizeOfRow(gridPos.y) - 1 && grid->at({gridPos.x - 1, gridPos.y + fallDirection}) == nullptr && grid->at({gridPos.x + 1, gridPos.y + fallDirection}) == nullptr)
+        if (grid->canMoveDistance(gridPos, {-1, fallDirection}) && grid->canMoveDistance(gridPos, {1, fallDirection}))
         {
             if (getRandomInt(1) == 0)
             {
@@ -34,13 +34,13 @@ bool SettlingBehavior::update(Grid* grid, sf::Vector2u gridPos)
 
             return true;
         }
-        else if (gridPos.x > 0 && grid->at({gridPos.x - 1, gridPos.y + fallDirection}) == nullptr)
+        else if (grid->canMoveDistance(gridPos, {-1, fallDirection}))
         {
             grid->moveCell(gridPos, {-1, fallDirection});
 
             return true;
         }
-        else if (gridPos.x < grid->getSizeOfRow(gridPos.y) - 1 && grid->at({gridPos.x + 1, gridPos.y + fallDirection}) == nullptr)
+        else if (grid->canMoveDistance(gridPos, {1, fallDirection}))
         {
             grid->moveCell(gridPos, {1, fallDirection});
 

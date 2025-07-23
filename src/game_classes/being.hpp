@@ -1,12 +1,9 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <filesystem>
-#include <iostream>
 #include <memory>
 
 #include "grid.hpp"
-#include "../tools/get_points.hpp"
 
 class Being
 {
@@ -22,8 +19,6 @@ public:
     sf::Vector2f getSize();
 
     float getRotation();
-
-    std::vector<sf::Vector2f> getAlignedPoints(bool asGridCoords);
 
     void move(sf::Vector2f amount);
 

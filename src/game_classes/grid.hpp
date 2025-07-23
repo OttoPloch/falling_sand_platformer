@@ -3,8 +3,6 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-#include "../tools/get_random_number.hpp"
-
 class Cell;
 class CellManager;
 class Being;
@@ -32,23 +30,30 @@ public:
     int getCellSize();
 
     // returns the offset that cells will be placed at in the world
-    sf::Vector2i getCellOffset();
+    sf::Vector2f getCellOffset();
 
     // gets the current amount of cells on the grid
     unsigned int getCellCount();
     
-    // creates the cells that a being uses to interact with the grid
-    void makeBeingCells(Being* being, std::vector<sf::Vector2f> points, std::string cellType, CellManager* cellManager, Grid* grid);
+    // Fills an area with cells where a being is located
+    // (as of right now, this doesn't exist, but i plan to add a toggle for beings that turn off their cell interaction,
+    // which would be the only case that this could be used since otherwise there would be no valid spaces to make cells)
+    void makeCellsFromBeing(Being* being, std::string cellType, CellManager* cellManager);
+
+    // Just checking if a cell can move to another location
+    bool canMoveTo(sf::Vector2u from, sf::Vector2u to);
+
+    // Same as canMoveTo, but takes a distance
+    bool canMoveDistance(sf::Vector2u from, sf::Vector2i distance);
 
     // makes the cell, no checks other than for nullptr
-    void createCell(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position, bool fromBeing);
+    void createCell(CellManager* cellManager, std::string type, sf::Vector2u position);
 
     // removes a cell from the grid
     void removeCell(sf::Vector2u gridPos);
 
-    // moves a cell a given distance, no checks other than for nullptr and bounds.
-    // if success, return true else return false
-    bool moveCell(sf::Vector2u gridPos, sf::Vector2i distance);
+    // moves a cell a given distance, make sure all checks are done beforehand.
+    void moveCell(sf::Vector2u gridPos, sf::Vector2i distance);
 
     // swaps two cells
     void swap(sf::Vector2u gridPos1, sf::Vector2u gridPos2);
@@ -57,6 +62,4 @@ public:
     void updateCells(sf::Vector2u creatorPos);
 private:
     std::vector<std::vector<std::shared_ptr<Cell>>> theGrid;
-
-    std::vector<sf::Vector2u> beingCells;
 };

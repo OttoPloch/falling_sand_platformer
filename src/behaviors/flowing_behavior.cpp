@@ -4,7 +4,7 @@ FlowingBehavior::FlowingBehavior() : Behavior("flow", -1) {}
 
 bool FlowingBehavior::update(Grid* grid, sf::Vector2u gridPos)
 {
-    if (gridPos.x > 0 && gridPos.x < grid->getSizeOfRow(gridPos.y) - 1 && grid->at({gridPos.x - 1, gridPos.y}) == nullptr && grid->at({gridPos.x + 1, gridPos.y}) == nullptr)
+    if (grid->canMoveDistance(gridPos, {-1, 0}) && grid->canMoveDistance(gridPos, {1, 0}))
     {
         if (getRandomInt(1) == 0)
         {
@@ -17,13 +17,13 @@ bool FlowingBehavior::update(Grid* grid, sf::Vector2u gridPos)
 
         return true;
     }
-    else if (gridPos.x > 0 && grid->at({gridPos.x - 1, gridPos.y}) == nullptr)
+    else if (grid->canMoveDistance(gridPos, {-1, 0}))
     {
         grid->moveCell(gridPos, {-1, 0});
 
         return true;
     }
-    else if (gridPos.x < grid->getSizeOfRow(gridPos.y) - 1 && grid->at({gridPos.x + 1, gridPos.y}) == nullptr)
+    else if (grid->canMoveDistance(gridPos, {1, 0}))
     {
         grid->moveCell(gridPos, {1, 0});
 

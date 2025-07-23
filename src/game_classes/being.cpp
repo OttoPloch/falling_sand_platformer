@@ -1,5 +1,9 @@
 #include "being.hpp"
 
+#include <iostream>
+#include "../tools/get_points.hpp"
+#include <cmath>
+
 Being::Being() : position({0.f, 0.f}), velocity({0.f, 0.f}), rotation(0.f) {}
 
 Being::Being(sf::Vector2f position, sf::Vector2f size, float rotation, sf::Texture* myTexture, sf::RenderWindow* window, Grid* grid)
@@ -33,8 +37,6 @@ sf::Vector2f Being::getPosition() { return position; }
 sf::Vector2f Being::getSize() { return size; }
 
 float Being::getRotation() { return rotation; }
-
-std::vector<sf::Vector2f> Being::getAlignedPoints(bool asGridCoords) { return getRectAlignedPoints(grid->getCellSize(), grid->getCellOffset(), position, size, rotation, asGridCoords); }
 
 void Being::move(sf::Vector2f amount) { position = {position.x + amount.x, position.y + amount.y}; }
 

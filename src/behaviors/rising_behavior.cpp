@@ -21,7 +21,7 @@ bool RisingBehavior::update(Grid* grid, sf::Vector2u gridPos)
                     break;
                 }
 
-                if (grid->at({gridPos.x, gridPos.y - i}) == nullptr)
+                if (grid->canMoveDistance(gridPos, {0, -i}))
                 {
                     validSpacesUp++;
                 }
