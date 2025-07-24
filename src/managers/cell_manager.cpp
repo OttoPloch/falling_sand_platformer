@@ -18,9 +18,11 @@ const CellPreset FIREPRESET(sf::Color(255, 0, 0), {std::make_shared<BurningBehav
 const CellPreset WOODPRESET(sf::Color(99, 64, 28), {std::make_shared<FlammableBehavior>(100), std::make_shared<StaticBehavior>()});
 const CellPreset SMOKEPRESET(sf::Color(55, 55, 55), {std::make_shared<RisingBehavior>(1), std::make_shared<SettlingBehavior>()});
 
-const CellPreset TEMPPRESET(sf::Color(255, 255, 255), {std::make_shared<FallingBehavior>()});
+const CellPreset TEMPPRESET(sf::Color(255, 255, 255), {std::make_shared<FallingBehavior>(), std::make_shared<HeavyBehavior>(5)});
 
-CellManager::CellManager()
+CellManager::CellManager() {}
+
+CellManager::CellManager(float cellSize, sf::Vector2f cellOffset, Grid* grid)
 {
     presets = {
         {"sand", SANDPRESET},
@@ -30,4 +32,12 @@ CellManager::CellManager()
         {"smoke", SMOKEPRESET},
         {"temp", TEMPPRESET}
     };
+
+    this->grid = grid;
+    
+    this->cellSize = cellSize;
+    
+    this->cellOffset = cellOffset;
+
+    beingRectInflationSize = {cellSize, cellSize};
 }

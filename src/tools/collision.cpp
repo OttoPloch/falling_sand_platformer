@@ -42,7 +42,7 @@ bool gridLineCollide(sf::Vector2u point, sf::Vector2u linePoint1, sf::Vector2u l
     }
 }
 
-bool checkCellsInLine(sf::Vector2u from, sf::Vector2i distance, sf::Vector2i direction, Grid* grid, std::vector<std::shared_ptr<Being>>* beings, int cellSize, sf::Vector2f cellOffset)
+bool checkCellsInLine(CellManager* cellManager, sf::Vector2u from, sf::Vector2i distance, sf::Vector2i direction, std::vector<std::shared_ptr<Being>>* beings)
 {
     int startX, startY, endX, endY;
 
@@ -95,7 +95,7 @@ bool checkCellsInLine(sf::Vector2u from, sf::Vector2i distance, sf::Vector2i dir
             if (gridLineCollide(currentCoord, from, {from.x + distance.x, from.y + distance.y}))
             {
                 // Cell collision
-                if (grid->at(currentCoord) != nullptr)
+                if (cellManager->grid->at(currentCoord) != nullptr)
                 {
                     return true;
                 }
@@ -105,7 +105,7 @@ bool checkCellsInLine(sf::Vector2u from, sf::Vector2i distance, sf::Vector2i dir
                 {
                     for (int i = 0; i < beings->size(); i++)
                     {
-                        if (pointBeingCollide(gridToWorldCoords(cellSize, cellOffset, currentCoord, true), (*beings)[i].get(), {static_cast<float>(cellSize), static_cast<float>(cellSize)}))
+                        if (pointBeingCollide(gridToWorldCoords(cellManager, {static_cast<int>(currentCoord.x), static_cast<int>(currentCoord.y)}, true), (*beings)[i].get(), cellManager->beingRectInflationSize))
                         {
                             return true;
                         }

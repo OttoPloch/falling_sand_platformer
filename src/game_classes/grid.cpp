@@ -7,15 +7,14 @@
 #include "../tools/get_points.hpp"
 #include "../tools/collision.hpp"
 
-const unsigned int CELLSIZE = 10;
-const int CELLOFFSETX = 0;
-const int CELLOFFSETY = 0;
-
 Grid::Grid() {}
 
-Grid::Grid(unsigned int gridLength, unsigned int gridHeight, std::vector<std::shared_ptr<Being>>* beings) { create(gridLength, gridHeight, beings); }
+Grid::Grid(unsigned int gridLength, unsigned int gridHeight, std::vector<std::shared_ptr<Being>>* beings, CellManager* cellManager)
+{
+    create(gridLength, gridHeight, beings, cellManager);
+}
 
-void Grid::create(unsigned int gridLength, unsigned int gridHeight, std::vector<std::shared_ptr<Being>>* beings)
+void Grid::create(unsigned int gridLength, unsigned int gridHeight, std::vector<std::shared_ptr<Being>>* beings, CellManager* cellManager)
 {
     theGrid.resize(gridHeight);
 
@@ -25,6 +24,8 @@ void Grid::create(unsigned int gridLength, unsigned int gridHeight, std::vector<
     }
 
     this->beings = beings;
+
+    this->cellManager = cellManager;
 }
 
 Cell* Grid::at(sf::Vector2u position) {
@@ -56,10 +57,6 @@ unsigned int Grid::getSizeOfRow(unsigned int rowIndex)
     }
 }
 
-int Grid::getCellSize() { return CELLSIZE; }
-
-sf::Vector2f Grid::getCellOffset() { return {CELLOFFSETX, CELLOFFSETY}; }
-
 unsigned int Grid::getCellCount()
 {
     int cells = 0;
@@ -78,9 +75,9 @@ unsigned int Grid::getCellCount()
     return cells;
 }
 
-void Grid::makeCellsFromBeing(Being* being, std::string cellType, CellManager* cellManager)
+void Grid::makeCellsFromBeing(Being* being, std::string cellType)
 {
-    sf::FloatRect bBox = getRectBoundingBox(CELLSIZE, getCellOffset(), being->getPosition(), being->getSize(), being->getRotation(), true);
+    sf::FloatRect bBox = getRectBoundingBox(cellManager, being->getPosition(), being->getSize(), being->getRotation(), true);
 
     int startX = static_cast<int>(std::floor(bBox.position.x));
     int startY = static_cast<int>(std::floor(bBox.position.y));
@@ -91,9 +88,9 @@ void Grid::makeCellsFromBeing(Being* being, std::string cellType, CellManager* c
     {
         for (int x = startX; x < endX; x++)
         {
-            if (pointRectCollide(gridToWorldCoords(CELLSIZE, getCellOffset(), {static_cast<unsigned int>(x), static_cast<unsigned int>(y)}, true), being->getPosition(), being->getSize(), being->getRotation()))
+            if (pointRectCollide(gridToWorldCoords(cellManager, {x, y}, true), being->getPosition(), being->getSize(), being->getRotation()))
             {
-                createCell(cellManager, cellType, {static_cast<unsigned int>(x), static_cast<unsigned int>(y)});
+                createCell(cellType, {static_cast<unsigned int>(x), static_cast<unsigned int>(y)});
             }
         }
     }
@@ -105,15 +102,15 @@ bool Grid::canMoveTo(sf::Vector2u from, sf::Vector2u to)
 
     sf::Vector2i distance;
 
-    distance.x = abs(from.x - to.x);
-    distance.y = abs(from.y - to.y);
+    distance.x = abs(static_cast<int>(from.x - to.x));
+    distance.y = abs(static_cast<int>(from.y - to.y));
 
     sf::Vector2i direction;
 
     (distance.x > 0) ? direction.x = 1 : (distance.x < 0) ? direction.x = -1 : direction.x = 0;
     (distance.y > 0) ? direction.y = 1 : (distance.y < 0) ? direction.y = -1 : direction.y = 0;
 
-    if (checkCellsInLine(from, distance, direction, this, beings, CELLSIZE, getCellOffset())) return false;
+    if (checkCellsInLine(cellManager, from, distance, direction, beings)) return false;
 
     return true;
 }
@@ -128,13 +125,21 @@ bool Grid::canMoveDistance(sf::Vector2u from, sf::Vector2i distance)
     (distance.x > 0) ? direction.x = 1 : (distance.x < 0) ? direction.x = -1 : direction.x = 0;
     (distance.y > 0) ? direction.y = 1 : (distance.y < 0) ? direction.y = -1 : direction.y = 0;
 
-    if (checkCellsInLine(from, distance, direction, this, beings, CELLSIZE, getCellOffset())) return false;
+    if (checkCellsInLine(cellManager, from, distance, direction, beings)) return false;
 
     return true;
 }
 
-void Grid::createCell(CellManager* cellManager, std::string type, sf::Vector2u position)
+void Grid::createCell(std::string type, sf::Vector2u position)
 {
+    for (int i = 0; i < beings->size(); i++)
+    {
+        if (pointBeingCollide(gridToWorldCoords(cellManager, {static_cast<int>(position.x), static_cast<int>(position.y)}, true), (*beings)[i].get(), cellManager->beingRectInflationSize))
+        {
+            return;
+        }   
+    }   
+
     // make sure all other necessary checks have been done before calling this function
     if (theGrid[position.y][position.x] == nullptr)
     {

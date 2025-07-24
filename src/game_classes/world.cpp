@@ -8,11 +8,18 @@
 const int GRIDLENGTH = 100;
 const int GRIDHEIGHT = 100;
 
+const float CELLSIZE = 10;
+
+const float CELLOFFSETX = 0;
+const float CELLOFFSETY = 0;
+
 World::World() {}
 
 void World::create(sf::RenderWindow* window)
 {
-    grid.create(GRIDLENGTH, GRIDHEIGHT, &beings);
+    cellManager = CellManager(CELLSIZE, {CELLOFFSETX, CELLOFFSETY}, &grid);
+
+    grid.create(GRIDLENGTH, GRIDHEIGHT, &beings, &cellManager);
     
     resourceManager.load();
 
@@ -26,7 +33,7 @@ void World::tick(sf::Vector2u creatorPos)
 {
     grid.updateCells(creatorPos);
     
-    beings[0]->rotate(0.25);
+    beings[0]->rotate(1);
     beings[1]->move({0, 1});
 
     if (beings.size() > 0)
@@ -96,10 +103,10 @@ void World::draw()
         {
             if (grid.at({j, i}) != nullptr)
             {
-                sf::RectangleShape rect({static_cast<float>(getCellSize()), static_cast<float>(getCellSize())});
+                sf::RectangleShape rect({getCellSize(), getCellSize()});
     
                 rect.setFillColor(grid.at({j, i})->getColor());
-                rect.setPosition({(float)(j * getCellSize()), (float)(i * getCellSize())});
+                rect.setPosition({j * getCellSize(), i * getCellSize()});
     
                 window->draw(rect);
             }
@@ -114,13 +121,13 @@ void World::draw()
 
             // if (i == 0)
             // {
-            //     std::vector<sf::Vector2f> points = getRectAlignedPoints(grid.getCellSize(), grid.getCellOffset(), beings[i]->getPosition(), beings[i]->getSize(), beings[i]->getRotation(), false);
+            //     std::vector<sf::Vector2f> points = getRectAlignedPoints(CELLSIZE, cellManager->cellOffset, beings[i]->getPosition(), beings[i]->getSize(), beings[i]->getRotation(), false);
                 
             //     for (int j = 0; j < points.size(); j++)
             //     {
-            //         sf::RectangleShape rect({static_cast<float>(grid.getCellSize()), static_cast<float>(grid.getCellSize())});
+            //         sf::RectangleShape rect({CELLSIZE, CELLSIZE});
     
-            //         rect.setFillColor(sf::Color(255, 0, 0, 50));
+            //         rect.setFillColor(sf::Color(255, 0, 0, 100));
             //         rect.setPosition(points[j]);
                     
             //         window->draw(rect);
@@ -132,10 +139,10 @@ void World::draw()
 
 sf::Vector2u World::getGridSize() { return {grid.getSize(), grid.getSizeOfRow(0)}; }
 
-int World::getCellSize() { return grid.getCellSize(); }
+float World::getCellSize() { return CELLSIZE; }
 
 int World::getCellCount() { return grid.getCellCount(); }
 
-void World::makeACell(std::string type, sf::Vector2u position) { grid.createCell(&cellManager, type, position); }
+void World::makeACell(std::string type, sf::Vector2u position) { grid.createCell(type, position); }
 
 void World::deleteACell(sf::Vector2u position) { grid.removeCell(position); }

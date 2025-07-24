@@ -4,6 +4,14 @@ const WindowPreset WINDOWPRESET1(sf::VideoMode({800, 600}), "game", false, false
 const WindowPreset WINDOWPRESET2(sf::VideoMode::getDesktopMode(), "game", false, false);
 const WindowPreset WINDOWPRESET3(sf::VideoMode::getDesktopMode(), "game", true, false);
 
+// TODO: Cell Velocity
+// TODO: Being Acceleration Value, Rotational Acceleration, Rotational Velocity
+// TODO: Being Gravity
+// TODO: Struct for Being Settings (disableGravity, disableCollision, etc)
+// TODO: Align Being Draw with Grid for better Coherence with Beings + Cells (Collision funcs could stay the same just use grid aligned coords).
+// I really like this idea /\/\/\ but it may take a bit to get splitting up the texture and drawing in aligned spots working.
+// TODO: Fix Being/Cell Interaction
+
 Game::Game() {}
 
 void Game::start()
@@ -178,11 +186,11 @@ void Game::draw()
     world.draw();
 
     // TEMP
-    sf::RectangleShape creatorOutline({static_cast<float>(world.getCellSize()), static_cast<float>(world.getCellSize())});
+    sf::RectangleShape creatorOutline({world.getCellSize(), world.getCellSize()});
     creatorOutline.setFillColor(sf::Color::Transparent);
     creatorOutline.setOutlineColor(sf::Color::Green);
     creatorOutline.setOutlineThickness(2.f);
-    creatorOutline.setPosition({static_cast<float>(creatorPos.x * world.getCellSize()), static_cast<float>(creatorPos.y * world.getCellSize())});
+    creatorOutline.setPosition({creatorPos.x * world.getCellSize(), creatorPos.y * world.getCellSize()});
     window.draw(creatorOutline);
 
     window.display();

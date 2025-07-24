@@ -4,6 +4,8 @@
 #include <iostream>
 #include <algorithm>
 
+#include "collision.hpp"
+
 sf::Vector2f getRotatedPoint(sf::Vector2f point, float distance, float rotation)
 {
     float theta = rotation * (M_PI / 180.f);
@@ -14,9 +16,9 @@ sf::Vector2f getRotatedPoint(sf::Vector2f point, float distance, float rotation)
     return {rx, ry};
 }
 
-sf::Vector2f rotateAroundPoint(sf::Vector2f point, sf::Vector2f origin, float rotationAmount)
+sf::Vector2f rotateAroundPoint(sf::Vector2f point, sf::Vector2f origin, float rotation)
 {
-    float theta = rotationAmount * (M_PI / 180.f);
+    float theta = rotation * (M_PI / 180.f);
 
     sf::Vector2f translated;
 
@@ -41,7 +43,7 @@ sf::Vector2f getRectCorner(sf::Vector2f center, sf::Vector2f offset, float rotat
     return point;
 }
 
-sf::FloatRect getRectBoundingBox(int cellSize, sf::Vector2f cellOffset, sf::Vector2f center, sf::Vector2f size, float rotation, bool asGridCoords)
+sf::FloatRect getRectBoundingBox(CellManager* cellManager, sf::Vector2f center, sf::Vector2f size, float rotation, bool asGridCoords)
 {
     sf::Vector2f tl = getRectCorner(center, {-size.x / 2, -size.y / 2}, rotation);
     sf::Vector2f tr = getRectCorner(center, {size.x / 2, -size.y / 2}, rotation);
@@ -61,118 +63,72 @@ sf::FloatRect getRectBoundingBox(int cellSize, sf::Vector2f cellOffset, sf::Vect
 
     if (asGridCoords)
     {
-        boundingBox.position.x -= cellOffset.x;
-        boundingBox.position.y -= cellOffset.y;
+        boundingBox.position.x -= cellManager->cellOffset.x;
+        boundingBox.position.y -= cellManager->cellOffset.y;
 
-        boundingBox.position.x /= cellSize;
-        boundingBox.position.y /= cellSize;
+        boundingBox.position.x /= cellManager->cellSize;
+        boundingBox.position.y /= cellManager->cellSize;
 
-        boundingBox.size.x /= cellSize;
-        boundingBox.size.y /= cellSize;
+        boundingBox.size.x /= cellManager->cellSize;
+        boundingBox.size.y /= cellManager->cellSize;
     }
 
     return boundingBox;
 }
 
-std::vector<sf::Vector2f> getRectAlignedPoints(int cellSize, sf::Vector2f cellOffset, sf::Vector2f center, sf::Vector2f size, float rotation, bool asGridCoords)
+std::vector<sf::Vector2f> getRectAlignedPoints(CellManager* cellManager, sf::Vector2f center, sf::Vector2f size, float rotation, bool asGridCoords)
 {   
-    int lengthInCells = std::floor(size.x / cellSize);
-    int widthInCells = std::floor(size.y / cellSize);
+    int lengthInCells = std::floor(size.x / cellManager->cellSize);
+    int widthInCells = std::floor(size.y / cellManager->cellSize);
 
-    sf::Vector2f tl = getRectCorner(center, {-size.x / 2, -size.y / 2}, rotation);
+    sf::FloatRect bBox = getRectBoundingBox(cellManager, center, size, rotation, true);
     
-    // This offsets all the points by a bit
-    //tl = getRotatedPoint(tl, sqrt(2) * cellSize, -45 + rotation);
+    int startX, startY, endX, endY;
 
-    // Puts all the points in the center instead of the top left.
-    // Writing this line a while after the one above, turns out
-    // this really helps in odd cases like movement + rotation,
-    // since a point will round to the next spot at a different time
-    // due to the unrounded coord being in the middle rather than corner.
-    // This helps the points be more aligned with the center and not stick
-    // out on a few sides.
-    tl = getRotatedPoint(tl, sqrt(2) * cellSize / 2, 135 + rotation);
-    
-    sf::Vector2f lastPoint = tl;
-    sf::Vector2f firstOfLastColumn = tl;
+    startX = bBox.position.x;
+    startY = bBox.position.y;
 
-
+    endX = bBox.position.x + bBox.size.x - 1;
+    endY = bBox.position.y + bBox.size.y - 1;
 
     std::vector<sf::Vector2f> points;
-    std::vector<sf::Vector2f> finalPoints;
-    
-    for (int y = 0; y < widthInCells; y++)
+
+    for (int y = startY; y <= endY; y++)
     {
-        for (int x = 0; x < lengthInCells; x++)
+        for (int x = startX; x <= endX; x++)
         {
-            if (x == 0)
+            if (pointRectCollide(gridToWorldCoords(cellManager, {x, y}, true), center, {size.x + cellManager->beingRectInflationSize.x, size.y + cellManager->beingRectInflationSize.y}, rotation))
             {
-                if (y == 0)
-                {
-                    points.emplace_back(tl);
-                }
-                else
-                {
-                    points.emplace_back(getRotatedPoint(firstOfLastColumn, cellSize, 180 + rotation));
-
-                    lastPoint = points.back();
-                }
-
-                firstOfLastColumn = points.back();
-            }
-            else
-            {
-                points.emplace_back(getRotatedPoint(lastPoint, cellSize, 90 + rotation));
-
-                lastPoint = points.back();
-            }
-
-            points.back().x -= std::fmod(points.back().x, cellSize);
-            points.back().y -= std::fmod(points.back().y, cellSize);
-
-            if (asGridCoords)
-            {
-                points.back().x -= cellOffset.x;
-                points.back().y -= cellOffset.y;
-                
-                points.back().x /= cellSize;
-                points.back().y /= cellSize;
-            }
-
-            auto uniquePoint = std::find(points.begin(), points.end(), points.back());
-
-            if (uniquePoint != points.end())
-            {
-                if (uniquePoint == points.begin() + points.size() - 1) finalPoints.push_back(points.back());
+                asGridCoords ? points.emplace_back(x, y) : points.emplace_back(x * cellManager->cellSize, y * cellManager->cellSize);
             }
         }
     }
 
-    return finalPoints;
+    return points;
 }
 
-sf::Vector2f gridToWorldCoords(int cellSize, sf::Vector2f cellOffset, sf::Vector2u gridCoord, bool convertCenter)
+sf::Vector2f gridToWorldCoords(CellManager* cellManager, sf::Vector2i gridCoord, bool convertCenter)
 {
     sf::Vector2f point;
 
-    point.x = cellOffset.x + gridCoord.x * cellSize;
-    point.y = cellOffset.y + gridCoord.y * cellSize;
+    point.x = cellManager->cellOffset.x + gridCoord.x * cellManager->cellSize;
+    point.y = cellManager->cellOffset.y + gridCoord.y * cellManager->cellSize;
 
     if (convertCenter)
     {
-        point.x += cellSize / 2;
-        point.y += cellSize / 2;
+        point.x += cellManager->cellSize / 2;
+        point.y += cellManager->cellSize / 2;
     }
 
     return point;
 }
 
-sf::Vector2u worldToGridCoords(int cellSize, sf::Vector2f cellOffset, sf::Vector2f worldCoord)
+sf::Vector2u worldToGridCoords(CellManager* cellManager, sf::Vector2f worldCoord)
 {
     sf::Vector2u point;
 
-    point.x = (worldCoord.x - cellOffset.x) / cellSize;
-    point.y = (worldCoord.y - cellOffset.y) / cellSize;
+    point.x = (worldCoord.x - cellManager->cellOffset.x) / cellManager->cellSize;
+    point.y = (worldCoord.y - cellManager->cellOffset.y) / cellManager->cellSize;
 
     return point;
 }

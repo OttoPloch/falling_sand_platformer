@@ -23,7 +23,7 @@ public:
 
     sf::Vector2u getGridSize();
 
-    int getCellSize();
+    float getCellSize();
 
     int getCellCount();
 
