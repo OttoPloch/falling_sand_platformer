@@ -13,9 +13,11 @@ const WindowPreset WINDOWPRESET3(sf::VideoMode::getDesktopMode(), "game", true, 
 // TODO: BeingManager? This would help for tracking constants like gravity for \/\/\/
 // TODO: Being Gravity
 // TODO: Struct for Being Settings (disableGravity, disableCollision, etc)
+// TODO: Fix Being/Cell Interaction
 // TODO: Align Being Draw with Grid for better Coherence with Beings + Cells (Collision funcs could stay the same just use grid aligned coords).
 // I really like this idea /\/\/\ but it may take a bit to get splitting up the texture and drawing in aligned spots working.
-// TODO: Fix Being/Cell Interaction
+// Also, beings will have to be smaller than their real size and not show their entire texture, so that the squares showing them don't
+// have any black/blank parts when the being is rotated. Still, this idea has a lot of potential to make a very immersive feature.
 
 Game::Game() {}
 
