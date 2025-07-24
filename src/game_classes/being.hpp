@@ -35,8 +35,14 @@ private:
     sf::Vector2f position;
 
     sf::Vector2f velocity;
+
+    sf::Vector2f acceleration;
     
     float rotation;
+
+    float rotationalVelocity;
+
+    float rotationalAcceleration;
 
     sf::Vector2f size;
 
@@ -49,4 +55,6 @@ private:
     Grid* grid;
 
     void spriteInit();
+
+    void forcesInit();
 };

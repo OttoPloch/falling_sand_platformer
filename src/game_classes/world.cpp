@@ -119,20 +119,20 @@ void World::draw()
         {
             beings[i]->draw();
 
-            // if (i == 0)
-            // {
-            //     std::vector<sf::Vector2f> points = getRectAlignedPoints(CELLSIZE, cellManager->cellOffset, beings[i]->getPosition(), beings[i]->getSize(), beings[i]->getRotation(), false);
+            if (i == 0)
+            {
+                std::vector<sf::Vector2f> points = getRectAlignedPoints(&cellManager, beings[i]->getPosition(), beings[i]->getSize(), beings[i]->getRotation(), false);
                 
-            //     for (int j = 0; j < points.size(); j++)
-            //     {
-            //         sf::RectangleShape rect({CELLSIZE, CELLSIZE});
+                for (int j = 0; j < points.size(); j++)
+                {
+                    sf::RectangleShape rect({CELLSIZE, CELLSIZE});
     
-            //         rect.setFillColor(sf::Color(255, 0, 0, 100));
-            //         rect.setPosition(points[j]);
+                    rect.setFillColor(sf::Color(255, 0, 0, 100));
+                    rect.setPosition(points[j]);
                     
-            //         window->draw(rect);
-            //     }
-            // }
+                    window->draw(rect);
+                }
+            }
         }
     }
 }

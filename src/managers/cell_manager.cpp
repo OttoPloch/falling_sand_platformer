@@ -39,5 +39,13 @@ CellManager::CellManager(float cellSize, sf::Vector2f cellOffset, Grid* grid)
     
     this->cellOffset = cellOffset;
 
-    beingRectInflationSize = {cellSize, cellSize};
+    // This is about what the max effective size of the being could be
+    // given the same coded size if I implemented drawing beings in squares aligned
+    // to the grid. This is because any bigger size would cause some edge pieces to
+    // be partially black when the being is rotated. So, we can only use a section of
+    // the texture if it can take up a full cell of space. Holy yap fest.
+    //beingRectInflationSize = {-cellSize, -cellSize};
+
+    // The - 1 is so that a flat surface will not have an extra layer of collision
+    beingRectInflationSize = {cellSize - 1, cellSize - 1};
 }

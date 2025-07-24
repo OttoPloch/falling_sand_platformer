@@ -81,15 +81,15 @@ std::vector<sf::Vector2f> getRectAlignedPoints(CellManager* cellManager, sf::Vec
     int lengthInCells = std::floor(size.x / cellManager->cellSize);
     int widthInCells = std::floor(size.y / cellManager->cellSize);
 
-    sf::FloatRect bBox = getRectBoundingBox(cellManager, center, size, rotation, true);
+    sf::FloatRect bBox = getRectBoundingBox(cellManager, center, {size.x + cellManager->beingRectInflationSize.x, size.y + cellManager->beingRectInflationSize.y}, rotation, true);
     
     int startX, startY, endX, endY;
 
-    startX = bBox.position.x;
-    startY = bBox.position.y;
+    startX = std::floor(bBox.position.x);
+    startY = std::floor(bBox.position.y);
 
-    endX = bBox.position.x + bBox.size.x - 1;
-    endY = bBox.position.y + bBox.size.y - 1;
+    endY = std::ceil(bBox.position.y + bBox.size.y - 1);
+    endX = std::ceil(bBox.position.x + bBox.size.x - 1);
 
     std::vector<sf::Vector2f> points;
 
