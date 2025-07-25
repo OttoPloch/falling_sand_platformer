@@ -33,7 +33,6 @@ src/behaviors/flammable_behavior.cpp
 src/behaviors/static_behavior.cpp
 src/behaviors/burning_behavior.cpp
 src/behaviors/cooling_behavior.cpp
-src/behaviors/rising_behavior.cpp
 src/game_classes/being.cpp
 src/managers/resource_manager.cpp
 src/tools/get_points.cpp
