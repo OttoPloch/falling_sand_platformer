@@ -24,7 +24,7 @@ void World::create(sf::RenderWindow* window)
     resourceManager.load();
 
     beings.emplace_back(std::make_shared<Being>(sf::Vector2f(200, 300), sf::Vector2f(100, 100), 0, resourceManager.getTexture("moon"), window, &grid));
-    beings.emplace_back(std::make_shared<Being>(sf::Vector2f(800, 800), sf::Vector2f(500, 500), -30, resourceManager.getTexture("sun"), window, &grid));
+    //beings.emplace_back(std::make_shared<Being>(sf::Vector2f(800, 800), sf::Vector2f(500, 500), -30, resourceManager.getTexture("sun"), window, &grid));
 
     this->window = window;
 }
@@ -34,7 +34,7 @@ void World::tick(sf::Vector2u creatorPos)
     grid.updateCells(creatorPos);
     
     //beings[0]->rotate(3);
-    beings[1]->move({0, 1});
+    //beings[1]->move({0, 1});
 
     if (beings.size() > 0)
     {

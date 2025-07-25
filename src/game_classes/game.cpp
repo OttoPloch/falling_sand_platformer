@@ -10,6 +10,7 @@ const WindowPreset WINDOWPRESET3(sf::VideoMode::getDesktopMode(), "game", true, 
 // DONE: Cell Velocity
 // DONE: Fix SinkBehavior so it accounts for RisingBehavior
 
+// TODO: Interpolate updating being sprites and drawing cells (might need to actually properly draw cells for this)
 // TODO: BeingManager? This would help for tracking constants like gravity for \/\/\/
 // TODO: Being Gravity
 // TODO: Struct for Being Settings (disableGravity, disableCollision, etc)
