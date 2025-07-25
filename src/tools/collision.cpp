@@ -84,9 +84,6 @@ bool checkCellsInLine(CellManager* cellManager, sf::Vector2u from, sf::Vector2i 
     }
 
     // Iterates through the bounding box of the line that the cell wants to go in
-    // As of writing this (7/23/25), cells only move 1 unit at a time, so at
-    // most this will run 4 times. The rising behavior allows for a greater distance,
-    // but it is not currently used. We will see how slow this gets when I add velocity.
     for (int y = startY; y <= endY; y++)
     {
         for (int x = startX; x <= endX; x++)
