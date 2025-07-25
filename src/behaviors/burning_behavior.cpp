@@ -6,22 +6,22 @@ BurningBehavior::BurningBehavior() : Behavior("burning", -1) {}
 
 BurningBehavior::BurningBehavior(int smokeChance) : Behavior("burning", smokeChance) {}
 
-bool BurningBehavior::update(Grid* grid, sf::Vector2u gridPos)
+bool BurningBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 {
     std::vector<sf::Vector2i> Neighbors;
 
-    if (gridPos.x > 0 && gridPos.y > 0 && grid->at({gridPos.x - 1, gridPos.y - 1}) != nullptr && grid->at({gridPos.x - 1, gridPos.y - 1})->hasBehavior("cooling")) { grid->removeCell(gridPos); return true; }
-    if (gridPos.y > 0 && grid->at({gridPos.x, gridPos.y - 1}) != nullptr && grid->at({gridPos.x, gridPos.y - 1})->hasBehavior("cooling")) { grid->removeCell(gridPos); return true; }
-    if (gridPos.x < grid->getSizeOfRow(gridPos.y) - 1 && gridPos.y > 0 && grid->at({gridPos.x + 1, gridPos.y - 1}) != nullptr && grid->at({gridPos.x + 1, gridPos.y - 1})->hasBehavior("cooling")) { grid->removeCell(gridPos); return true; }
-    if (gridPos.x > 0 && grid->at({gridPos.x - 1, gridPos.y}) != nullptr && grid->at({gridPos.x - 1, gridPos.y})->hasBehavior("cooling")) { grid->removeCell(gridPos); }
-    if (gridPos.x < grid->getSizeOfRow(gridPos.y) - 1 && grid->at({gridPos.x + 1, gridPos.y}) != nullptr && grid->at({gridPos.x + 1, gridPos.y})->hasBehavior("cooling")) { grid->removeCell(gridPos); return true; }
-    if (gridPos.x > 0 && gridPos.y < grid->getSize() - 1 && grid->at({gridPos.x - 1, gridPos.y + 1}) != nullptr && grid->at({gridPos.x - 1, gridPos.y + 1})->hasBehavior("cooling")) { grid->removeCell(gridPos); return true; }
-    if (gridPos.y < grid->getSize() - 1 && grid->at({gridPos.x, gridPos.y + 1}) != nullptr && grid->at({gridPos.x, gridPos.y + 1})->hasBehavior("cooling")) { grid->removeCell(gridPos); return true; }
-    if (gridPos.x < grid->getSizeOfRow(gridPos.y) - 1 && gridPos.y < grid->getSize() - 1 && grid->at({gridPos.x + 1, gridPos.y + 1}) != nullptr && grid->at({gridPos.x + 1, gridPos.y + 1})->hasBehavior("cooling")) { grid->removeCell(gridPos); return true; }
+    if (gridPos.x > 0 && gridPos.y > 0 && cellManager->grid->at({gridPos.x - 1, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x - 1, gridPos.y - 1})->hasBehavior("cooling")) { cellManager->grid->removeCell(gridPos); return true; }
+    if (gridPos.y > 0 && cellManager->grid->at({gridPos.x, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x, gridPos.y - 1})->hasBehavior("cooling")) { cellManager->grid->removeCell(gridPos); return true; }
+    if (gridPos.x < cellManager->grid->getSizeOfRow(gridPos.y) - 1 && gridPos.y > 0 && cellManager->grid->at({gridPos.x + 1, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x + 1, gridPos.y - 1})->hasBehavior("cooling")) { cellManager->grid->removeCell(gridPos); return true; }
+    if (gridPos.x > 0 && cellManager->grid->at({gridPos.x - 1, gridPos.y}) != nullptr && cellManager->grid->at({gridPos.x - 1, gridPos.y})->hasBehavior("cooling")) { cellManager->grid->removeCell(gridPos); }
+    if (gridPos.x < cellManager->grid->getSizeOfRow(gridPos.y) - 1 && cellManager->grid->at({gridPos.x + 1, gridPos.y}) != nullptr && cellManager->grid->at({gridPos.x + 1, gridPos.y})->hasBehavior("cooling")) { cellManager->grid->removeCell(gridPos); return true; }
+    if (gridPos.x > 0 && gridPos.y < cellManager->grid->getSize() - 1 && cellManager->grid->at({gridPos.x - 1, gridPos.y + 1}) != nullptr && cellManager->grid->at({gridPos.x - 1, gridPos.y + 1})->hasBehavior("cooling")) { cellManager->grid->removeCell(gridPos); return true; }
+    if (gridPos.y < cellManager->grid->getSize() - 1 && cellManager->grid->at({gridPos.x, gridPos.y + 1}) != nullptr && cellManager->grid->at({gridPos.x, gridPos.y + 1})->hasBehavior("cooling")) { cellManager->grid->removeCell(gridPos); return true; }
+    if (gridPos.x < cellManager->grid->getSizeOfRow(gridPos.y) - 1 && gridPos.y < cellManager->grid->getSize() - 1 && cellManager->grid->at({gridPos.x + 1, gridPos.y + 1}) != nullptr && cellManager->grid->at({gridPos.x + 1, gridPos.y + 1})->hasBehavior("cooling")) { cellManager->grid->removeCell(gridPos); return true; }
     
-    if (getRandomInt(999) + 1 <= grid->at(gridPos)->getOptionalSetting("burning"))
+    if (getRandomInt(999) + 1 <= cellManager->grid->at(gridPos)->getOptionalSetting("burning"))
     {
-        grid->at(gridPos)->changeType("smoke");
+        cellManager->grid->at(gridPos)->changeType("smoke");
 
         return true;
     }

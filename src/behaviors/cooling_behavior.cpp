@@ -2,7 +2,7 @@
 
 CoolingBehavior::CoolingBehavior() : Behavior("cooling", -1) {}
 
-bool CoolingBehavior::update(Grid* grid, sf::Vector2u gridPos)
+bool CoolingBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 {
     return false;
 }

@@ -105,12 +105,7 @@ bool Grid::canMoveTo(sf::Vector2u from, sf::Vector2u to)
     distance.x = abs(static_cast<int>(from.x - to.x));
     distance.y = abs(static_cast<int>(from.y - to.y));
 
-    sf::Vector2i direction;
-
-    (distance.x > 0) ? direction.x = 1 : (distance.x < 0) ? direction.x = -1 : direction.x = 0;
-    (distance.y > 0) ? direction.y = 1 : (distance.y < 0) ? direction.y = -1 : direction.y = 0;
-
-    if (checkCellsInLine(cellManager, from, distance, direction, beings)) return false;
+    if (checkCellsInLine(cellManager, from, distance)) return false;
 
     return true;
 }
@@ -120,12 +115,7 @@ bool Grid::canMoveDistance(sf::Vector2u from, sf::Vector2i distance)
     if (from.y + distance.y < 0 || from.x + distance.x < 0) return false;
     if (from.y + distance.y > getSize() - 1 || from.x + distance.x > getSizeOfRow(from.y + distance.y) - 1) return false;
 
-    sf::Vector2i direction;
-
-    (distance.x > 0) ? direction.x = 1 : (distance.x < 0) ? direction.x = -1 : direction.x = 0;
-    (distance.y > 0) ? direction.y = 1 : (distance.y < 0) ? direction.y = -1 : direction.y = 0;
-
-    if (checkCellsInLine(cellManager, from, distance, direction, beings)) return false;
+    if (checkCellsInLine(cellManager, from, distance)) return false;
 
     return true;
 }
@@ -143,7 +133,7 @@ void Grid::createCell(std::string type, sf::Vector2u position)
     // make sure all other necessary checks have been done before calling this function
     if (theGrid[position.y][position.x] == nullptr)
     {
-        theGrid[position.y][position.x] = std::make_shared<Cell>(cellManager, this, type, position);
+        theGrid[position.y][position.x] = std::make_shared<Cell>(cellManager, this, beings, type, position);
     }
 }
 
@@ -235,9 +225,9 @@ void Grid::updateCells(sf::Vector2u creatorPos)
                 // iterates through regular cells
                 if (theGrid[y][x] != nullptr)
                 {
-                    if (!theGrid[y][x]->hasBehavior("rise"))
+                    if (theGrid[y][x]->getWeight() > -1)
                     {
-                        theGrid[y][x]->update();
+                        theGrid[y][x]->tick();
                     }
                 }
     
@@ -246,9 +236,9 @@ void Grid::updateCells(sf::Vector2u creatorPos)
                 // iterates through rising cells (like smoke)
                 if (theGrid[oppY][x] != nullptr)
                 {
-                    if (theGrid[oppY][x]->hasBehavior("rise"))
+                    if (theGrid[oppY][x]->getWeight() < 0)
                     {
-                        theGrid[oppY][x]->update();
+                        theGrid[oppY][x]->tick();
                     }
                 }
             }

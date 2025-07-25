@@ -26,7 +26,7 @@ src/behaviors/base/behavior.cpp
 src/behaviors/falling_behavior.cpp
 src/behaviors/settling_behavior.cpp
 src/behaviors/flowing_behavior.cpp
-src/behaviors/heavy_behavior.cpp
+src/behaviors/sink_behavior.cpp
 src/behaviors/spreading_behavior.cpp
 src/behaviors/flaming_behavior.cpp
 src/behaviors/flammable_behavior.cpp

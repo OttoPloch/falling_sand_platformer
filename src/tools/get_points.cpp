@@ -132,3 +132,19 @@ sf::Vector2u worldToGridCoords(CellManager* cellManager, sf::Vector2f worldCoord
 
     return point;
 }
+
+float getDistance(sf::Vector2i vector)
+{
+    return sqrt(pow(vector.x, 2) + pow(vector.y, 2));
+}
+
+float getRotation(sf::Vector2i vector)
+{
+    float degrees = std::atan2(vector.y, vector.x) * (180.f / M_PI);
+
+    if (degrees < 0.f) degrees += 360.f;
+    degrees = 90.f + degrees;
+    if (degrees >= 360.f) degrees -= 360.f;
+
+    return degrees;
+}

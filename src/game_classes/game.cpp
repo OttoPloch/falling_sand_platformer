@@ -5,11 +5,11 @@ const WindowPreset WINDOWPRESET2(sf::VideoMode::getDesktopMode(), "game", false,
 const WindowPreset WINDOWPRESET3(sf::VideoMode::getDesktopMode(), "game", true, false);
 
 // DONE: Being Acceleration Value, Rotational Acceleration, Rotational Velocity
-
-// TODO: Give each Cell a Weight value which HeavyBehavior (probably rename) will use to calculate
+// DONE: Give each Cell a Weight value which HeavyBehavior (probably rename) will use to calculate
 // (this /\/\/\ will also have to be done for Cell Velocity \/\/\/ to calculate Acceleration)
-// TODO: Cell Velocity
-// TODO: Fix HeavyBehavior so it accounts for RisingBehavior
+// DONE: Cell Velocity
+// DONE: Fix SinkBehavior so it accounts for RisingBehavior
+
 // TODO: BeingManager? This would help for tracking constants like gravity for \/\/\/
 // TODO: Being Gravity
 // TODO: Struct for Being Settings (disableGravity, disableCollision, etc)
@@ -178,7 +178,7 @@ void Game::tick()
 {
     world.tick(creatorPos);
 
-    //std::cout << "cells: " << world.getCellCount() << '\n';
+    std::cout << "cells: " << world.getCellCount() << '\n';
 }
 
 void Game::update()

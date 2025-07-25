@@ -2,47 +2,47 @@
 
 SettlingBehavior::SettlingBehavior() : Behavior("settle", -1) {}
 
-bool SettlingBehavior::update(Grid* grid, sf::Vector2u gridPos)
+bool SettlingBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 {
     int fallDirection;
 
-    if (grid->at(gridPos)->hasBehavior("fall"))
+    if (cellManager->grid->at(gridPos)->getWeight() > 0)
     {
         fallDirection = 1;
     }
-    else if (grid->at(gridPos)->hasBehavior("rise"))
+    else if (cellManager->grid->at(gridPos)->getWeight() < 0)
     {
         fallDirection = -1;
     }
     else
     {
-        std::cout << "Cell at " << gridPos.x << ", " << gridPos.y << " of type " << grid->at(gridPos)->getType() << " has the settle behavior but does not rise or fall\n";
+        std::cout << gridPos.x << ", " << gridPos.y << " of type " << cellManager->grid->at(gridPos)->getType() << " has settle behavior but has a weight of 0\n";
     }
 
-    if ((gridPos.y < grid->getSize() - 1 && fallDirection == 1) || (gridPos.y > 0 && fallDirection == -1))
+    if ((gridPos.y < cellManager->grid->getSize() - 1 && fallDirection == 1) || (gridPos.y > 0 && fallDirection == -1))
     {
-        if (grid->canMoveDistance(gridPos, {-1, fallDirection}) && grid->canMoveDistance(gridPos, {1, fallDirection}))
+        if (cellManager->grid->canMoveDistance(gridPos, {-1, fallDirection}) && cellManager->grid->canMoveDistance(gridPos, {1, fallDirection}))
         {
             if (getRandomInt(1) == 0)
             {
-                grid->moveCell(gridPos, {-1, fallDirection});
+                cellManager->grid->moveCell(gridPos, {-1, fallDirection});
             }
             else
             {
-                grid->moveCell(gridPos, {1, fallDirection});
+                cellManager->grid->moveCell(gridPos, {1, fallDirection});
             }
 
             return true;
         }
-        else if (grid->canMoveDistance(gridPos, {-1, fallDirection}))
+        else if (cellManager->grid->canMoveDistance(gridPos, {-1, fallDirection}))
         {
-            grid->moveCell(gridPos, {-1, fallDirection});
+            cellManager->grid->moveCell(gridPos, {-1, fallDirection});
 
             return true;
         }
-        else if (grid->canMoveDistance(gridPos, {1, fallDirection}))
+        else if (cellManager->grid->canMoveDistance(gridPos, {1, fallDirection}))
         {
-            grid->moveCell(gridPos, {1, fallDirection});
+            cellManager->grid->moveCell(gridPos, {1, fallDirection});
 
             return true;
         }

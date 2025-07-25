@@ -2,7 +2,7 @@
 
 StaticBehavior::StaticBehavior() : Behavior("static", -1) {}
 
-bool StaticBehavior::update(Grid* grid, sf::Vector2u gridPos)
+bool StaticBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 {
     return false;
 }

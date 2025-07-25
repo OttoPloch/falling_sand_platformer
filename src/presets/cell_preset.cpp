@@ -2,16 +2,15 @@
 
 CellPreset::CellPreset() {}
 
-CellPreset::CellPreset(sf::Color color, std::vector<std::shared_ptr<Behavior>> behaviors)
+CellPreset::CellPreset(int weight, sf::Color color, std::vector<std::shared_ptr<Behavior>> behaviors)
 {
+    this->weight = weight;
     this->color = color;
     this->behaviors = behaviors;
 
     optionalSettings = {
-        {"heavy", -1},
         {"flammable", -1},
         {"burning", -1},
-        {"rise", -1}
     };
 
     for (auto i : optionalSettings)

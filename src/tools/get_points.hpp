@@ -24,3 +24,8 @@ std::vector<sf::Vector2f> getRectAlignedPoints(CellManager* cellManager, sf::Vec
 sf::Vector2f gridToWorldCoords(CellManager* cellManager, sf::Vector2i gridCoord, bool convertCenter);
 
 sf::Vector2u worldToGridCoords(CellManager* cellManager, sf::Vector2f worldCoord);
+
+float getDistance(sf::Vector2i vector);
+
+// Up is considered 0, and it continues clockwise
+float getRotation(sf::Vector2i vector);

@@ -11,8 +11,10 @@ struct CellPreset
 {
     CellPreset();
 
-    CellPreset(sf::Color color,  std::vector<std::shared_ptr<Behavior>> behaviors);
+    CellPreset(int weight, sf::Color color, std::vector<std::shared_ptr<Behavior>> behaviors);
     
+    int weight;
+
     sf::Color color;
     
     std::vector<std::shared_ptr<Behavior>> behaviors;

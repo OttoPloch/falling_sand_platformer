@@ -17,7 +17,7 @@ World::World() {}
 
 void World::create(sf::RenderWindow* window)
 {
-    cellManager = CellManager(CELLSIZE, {CELLOFFSETX, CELLOFFSETY}, &grid);
+    cellManager = CellManager(CELLSIZE, {CELLOFFSETX, CELLOFFSETY}, &grid, &beings);
 
     grid.create(GRIDLENGTH, GRIDHEIGHT, &beings, &cellManager);
     
@@ -33,7 +33,7 @@ void World::tick(sf::Vector2u creatorPos)
 {
     grid.updateCells(creatorPos);
     
-    beings[0]->rotate(1);
+    //beings[0]->rotate(3);
     beings[1]->move({0, 1});
 
     if (beings.size() > 0)
@@ -119,7 +119,7 @@ void World::draw()
         {
             beings[i]->draw();
 
-            if (i == 0)
+            if (i != -1)
             {
                 std::vector<sf::Vector2f> points = getRectAlignedPoints(&cellManager, beings[i]->getPosition(), beings[i]->getSize(), beings[i]->getRotation(), false);
                 

@@ -2,30 +2,30 @@
 
 FlowingBehavior::FlowingBehavior() : Behavior("flow", -1) {}
 
-bool FlowingBehavior::update(Grid* grid, sf::Vector2u gridPos)
+bool FlowingBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 {
-    if (grid->canMoveDistance(gridPos, {-1, 0}) && grid->canMoveDistance(gridPos, {1, 0}))
+    if (cellManager->grid->canMoveDistance(gridPos, {-1, 0}) && cellManager->grid->canMoveDistance(gridPos, {1, 0}))
     {
         if (getRandomInt(1) == 0)
         {
-            grid->moveCell(gridPos, {-1, 0});
+            cellManager->grid->moveCell(gridPos, {-1, 0});
         }
         else
         {
-            grid->moveCell(gridPos, {1, 0});
+            cellManager->grid->moveCell(gridPos, {1, 0});
         }
 
         return true;
     }
-    else if (grid->canMoveDistance(gridPos, {-1, 0}))
+    else if (cellManager->grid->canMoveDistance(gridPos, {-1, 0}))
     {
-        grid->moveCell(gridPos, {-1, 0});
+        cellManager->grid->moveCell(gridPos, {-1, 0});
 
         return true;
     }
-    else if (grid->canMoveDistance(gridPos, {1, 0}))
+    else if (cellManager->grid->canMoveDistance(gridPos, {1, 0}))
     {
-        grid->moveCell(gridPos, {1, 0});
+        cellManager->grid->moveCell(gridPos, {1, 0});
 
         return true;
     }

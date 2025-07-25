@@ -13,11 +13,15 @@ class Cell
 public:
     Cell();
 
-    Cell(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position);
+    Cell(CellManager* cellManager, Grid* grid, std::vector<std::shared_ptr<Being>>* beings, std::string type, sf::Vector2u position);
 
-    void create(CellManager* cellManager, Grid* grid, std::string type, sf::Vector2u position);
+    void create(CellManager* cellManager, Grid* grid, std::vector<std::shared_ptr<Being>>* beings, std::string type, sf::Vector2u position);
+
+    void tick();
 
     void update();
+
+    void changeVelocity(sf::Vector2i amount);
 
     void setPos(sf::Vector2u newPos);
 
@@ -31,9 +35,11 @@ public:
 
     std::string getType();
 
-    int getAge();
+    sf::Vector2i getVelocity();
 
     int getOptionalSetting(std::string settingName);
+
+    int getWeight();
 
     sf::Color getColor();
 
@@ -43,9 +49,15 @@ private:
 
     Grid* grid;
     
+    std::vector<std::shared_ptr<Being>>* beings;
+    
     std::string type;
 
     sf::Vector2u position;
     
+    sf::Vector2i velocity;
+
+    int weight;
+
     CellPreset myPreset;
 };

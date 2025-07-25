@@ -42,8 +42,13 @@ bool gridLineCollide(sf::Vector2u point, sf::Vector2u linePoint1, sf::Vector2u l
     }
 }
 
-bool checkCellsInLine(CellManager* cellManager, sf::Vector2u from, sf::Vector2i distance, sf::Vector2i direction, std::vector<std::shared_ptr<Being>>* beings)
+bool checkCellsInLine(CellManager* cellManager, sf::Vector2u from, sf::Vector2i distance)
 {
+    sf::Vector2i direction;
+
+    (distance.x > 0) ? direction.x = 1 : (distance.x < 0) ? direction.x = -1 : direction.x = 0;
+    (distance.y > 0) ? direction.y = 1 : (distance.y < 0) ? direction.y = -1 : direction.y = 0;
+
     int startX, startY, endX, endY;
 
     if (abs(distance.x) > 0)
@@ -101,11 +106,11 @@ bool checkCellsInLine(CellManager* cellManager, sf::Vector2u from, sf::Vector2i 
                 }
 
                 // Being collision
-                if (beings->size() > 0)
+                if (cellManager->beings->size() > 0)
                 {
-                    for (int i = 0; i < beings->size(); i++)
+                    for (int i = 0; i < cellManager->beings->size(); i++)
                     {
-                        if (pointBeingCollide(gridToWorldCoords(cellManager, {static_cast<int>(currentCoord.x), static_cast<int>(currentCoord.y)}, true), (*beings)[i].get(), cellManager->beingRectInflationSize))
+                        if (pointBeingCollide(gridToWorldCoords(cellManager, {static_cast<int>(currentCoord.x), static_cast<int>(currentCoord.y)}, true), (*cellManager->beings)[i].get(), cellManager->beingRectInflationSize))
                         {
                             return true;
                         }
@@ -141,4 +146,33 @@ bool pointBeingCollide(sf::Vector2f point, Being* being, sf::Vector2f inflateSiz
     }
 
     return pointRectCollide(point, center, size, rotation);
+}
+
+sf::Vector2i maxMovableDistance(CellManager* cellManager, sf::Vector2u from, sf::Vector2i distance)
+{
+    if (cellManager->grid->canMoveDistance(from, distance))
+    {
+        return distance;
+    }
+    else
+    {
+        float vectorRotation = getRotation(distance);
+
+        float distanceLength = getDistance(distance) - 1.f;
+
+        sf::Vector2f modifiedDistance = getRotatedPoint({0, 0}, distanceLength, vectorRotation);
+
+        if (modifiedDistance == sf::Vector2f({0, 0})) return {0, 0};
+
+        while (checkCellsInLine(cellManager, from, {static_cast<int>(modifiedDistance.x), static_cast<int>(modifiedDistance.y)}) || from.x + modifiedDistance.x < 0 || from.x + modifiedDistance.x > cellManager->grid->getSizeOfRow(from.x) - 1 || from.y + modifiedDistance.y < 0 || from.y + modifiedDistance.y > cellManager->grid->getSize() - 1)
+        {
+            distanceLength -= 1.f;
+
+            modifiedDistance = getRotatedPoint({0, 0}, distanceLength, vectorRotation);
+
+            if (modifiedDistance == sf::Vector2f({0, 0})) return {0, 0};
+        }
+
+        return {static_cast<int>(modifiedDistance.x), static_cast<int>(modifiedDistance.y)};
+    }
 }
