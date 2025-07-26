@@ -26,6 +26,102 @@ void Grid::create(unsigned int gridLength, unsigned int gridHeight, std::vector<
     this->beings = beings;
 
     this->cellManager = cellManager;
+
+    verticesInit();
+}
+
+void Grid::verticesInit()
+{
+    vertexArray.setPrimitiveType(sf::PrimitiveType::Triangles);
+    vertexArray.resize(getSizeOfRow(0) * getSize() * 6);
+
+    for (int y = 0; y < getSize(); y++)
+    {
+        for (int x = 0; x < getSizeOfRow(y); x++)
+        {
+            int index = (x + y * getSizeOfRow(y)) * 6;
+
+            vertexArray[index].position     = {x * cellManager->cellSize, y * cellManager->cellSize};
+            vertexArray[index + 1].position = {x * cellManager->cellSize + cellManager->cellSize, y * cellManager->cellSize};
+            vertexArray[index + 2].position = {x * cellManager->cellSize, y * cellManager->cellSize + cellManager->cellSize};
+            vertexArray[index + 3].position = {x * cellManager->cellSize, y * cellManager->cellSize + cellManager->cellSize};
+            vertexArray[index + 4].position = {x * cellManager->cellSize + cellManager->cellSize, y * cellManager->cellSize};
+            vertexArray[index + 5].position = {x * cellManager->cellSize + cellManager->cellSize, y * cellManager->cellSize + cellManager->cellSize};
+
+            if (at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)}) != nullptr)
+            {
+                vertexArray[index].color     = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
+                vertexArray[index + 1].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
+                vertexArray[index + 2].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
+                vertexArray[index + 3].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
+                vertexArray[index + 4].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
+                vertexArray[index + 5].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
+            }
+            else
+            {
+                vertexArray[index].color     = sf::Color::Transparent;
+                vertexArray[index + 1].color = sf::Color::Transparent;
+                vertexArray[index + 2].color = sf::Color::Transparent;
+                vertexArray[index + 3].color = sf::Color::Transparent;
+                vertexArray[index + 4].color = sf::Color::Transparent;
+                vertexArray[index + 5].color = sf::Color::Transparent;
+            }
+        }
+    }
+}
+
+void Grid::updateVertices()
+{
+    for (int y = 0; y < getSize(); y++)
+    {
+        for (int x = 0; x < getSizeOfRow(y); x++)
+        {
+            int index = (x + y * getSizeOfRow(y)) * 6;
+
+            if (at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)}) != nullptr)
+            {
+                vertexArray[index].color     = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
+                vertexArray[index + 1].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
+                vertexArray[index + 2].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
+                vertexArray[index + 3].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
+                vertexArray[index + 4].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
+                vertexArray[index + 5].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
+            }
+            else
+            {
+                vertexArray[index].color     = sf::Color::Transparent;
+                vertexArray[index + 1].color = sf::Color::Transparent;
+                vertexArray[index + 2].color = sf::Color::Transparent;
+                vertexArray[index + 3].color = sf::Color::Transparent;
+                vertexArray[index + 4].color = sf::Color::Transparent;
+                vertexArray[index + 5].color = sf::Color::Transparent;
+            }
+        }
+    }
+}
+
+void Grid::updateSpecificVertices(sf::Vector2u position)
+{
+    int index = (position.x + position.y * getSizeOfRow(position.y)) * 6;
+
+    if (at({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)}) != nullptr)
+    {
+        vertexArray[index].color     = at({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)})->getColor();
+        vertexArray[index + 1].color = at({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)})->getColor();
+        vertexArray[index + 2].color = at({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)})->getColor();
+        vertexArray[index + 3].color = at({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)})->getColor();
+        vertexArray[index + 4].color = at({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)})->getColor();
+        vertexArray[index + 5].color = at({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)})->getColor();
+    }
+    else
+    {
+        vertexArray[index].color     = sf::Color::Transparent;
+        vertexArray[index + 1].color = sf::Color::Transparent;
+        vertexArray[index + 2].color = sf::Color::Transparent;
+        vertexArray[index + 3].color = sf::Color::Transparent;
+        vertexArray[index + 4].color = sf::Color::Transparent;
+        vertexArray[index + 5].color = sf::Color::Transparent;
+    }
 }
 
 Cell* Grid::at(sf::Vector2u position) {
@@ -134,12 +230,14 @@ void Grid::createCell(std::string type, sf::Vector2u position)
     if (theGrid[position.y][position.x] == nullptr)
     {
         theGrid[position.y][position.x] = std::make_shared<Cell>(cellManager, this, beings, type, position);
+        updateSpecificVertices(position);
     }
 }
 
 void Grid::removeCell(sf::Vector2u gridPos)
 {
     theGrid[gridPos.y][gridPos.x].reset();
+    updateSpecificVertices(gridPos);
 }
 
 void Grid::moveCell(sf::Vector2u gridPos, sf::Vector2i distance)
@@ -204,7 +302,9 @@ void Grid::updateCells(sf::Vector2u creatorPos)
     // std::cout << "////////////////////////////DONE////////////////////////////\n";
 
     // updating the grid itself
-    if (theGrid.size() > 0)
+    bool gridHasChanged = false;
+
+    if (theGrid.size() > 0 && theGrid[0].size() > 0)
     {
         for (int y = theGrid.size() - 1; y >= 0; y--)
         {
@@ -227,7 +327,7 @@ void Grid::updateCells(sf::Vector2u creatorPos)
                 {
                     if (theGrid[y][x]->getWeight() > -1)
                     {
-                        theGrid[y][x]->tick();
+                        if (theGrid[y][x]->tick()) gridHasChanged = true;
                     }
                 }
     
@@ -238,10 +338,19 @@ void Grid::updateCells(sf::Vector2u creatorPos)
                 {
                     if (theGrid[oppY][x]->getWeight() < 0)
                     {
-                        theGrid[oppY][x]->tick();
+                        if (theGrid[oppY][x]->tick()) gridHasChanged = true;
                     }
                 }
             }
         }
     }
+
+    if (gridHasChanged) updateVertices();
+}
+
+void Grid::draw(sf::RenderWindow& window)
+{
+    if (cellManager->cellOffset != sf::Vector2f({0, 0})) states.transform.translate(cellManager->cellOffset);
+
+    window.draw(&vertexArray[0], vertexArray.getVertexCount(), sf::PrimitiveType::Triangles, states);
 }

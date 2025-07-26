@@ -17,7 +17,7 @@ public:
 
     void create(CellManager* cellManager, Grid* grid, std::vector<std::shared_ptr<Being>>* beings, std::string type, sf::Vector2u position);
 
-    void tick();
+    bool tick(bool log = false);
 
     void update();
 

@@ -25,14 +25,20 @@ void Cell::create(CellManager* cellManager, Grid* grid, std::vector<std::shared_
     myPreset = cellManager->presets[type];
 }
 
-void Cell::tick()
+bool Cell::tick(bool log)
 {
+    bool hasChanged = false;
+
     if (myPreset.behaviors.size() > 0)
     {
         for (int i = 0; i < myPreset.behaviors.size(); i++)
         {
             if (myPreset.behaviors[i]->update(cellManager, position))
             {
+                if (log) std::cout << myPreset.behaviors[i]->getName() << " was a success\n";
+
+                hasChanged = true;
+
                 break;
             }
         }
@@ -40,13 +46,23 @@ void Cell::tick()
 
     if (velocity != sf::Vector2i({0, 0}))
     {
+        if (log) std::cout << "Velocity is not 0, 0. Specifically it is " << velocity.x << ", " << velocity.y << '\n';
+
         if (grid->canMoveDistance(position, velocity))
         {
+            if (log) std::cout << "can move " << velocity.x << ", " << velocity.y << '\n';
+
+            hasChanged = true;
+            
             grid->moveCell(position, {static_cast<int>(velocity.x), static_cast<int>(velocity.y)});
         }
         else
         {
-            sf::Vector2i maxDistance = maxMovableDistance(cellManager, position, velocity);
+            sf::Vector2i maxDistance = maxMovableDistance(cellManager, position, velocity, log);
+
+            if (log) std::cout << "max distance is " << maxDistance.x << ", " << maxDistance.y << '\n';
+
+            hasChanged = true;
 
             grid->moveCell(position, maxDistance);
 
@@ -54,6 +70,8 @@ void Cell::tick()
             if ((velocity.y > 0 && !grid->canMoveDistance(position, {0, 1})) || (velocity.y < 0 && !grid->canMoveDistance(position, {0, -1}))) velocity.y = 0;
         }
     }
+
+    return hasChanged;
 }
 
 void Cell::update()

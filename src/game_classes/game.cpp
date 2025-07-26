@@ -4,6 +4,9 @@ const WindowPreset WINDOWPRESET1(sf::VideoMode({800, 600}), "game", false, false
 const WindowPreset WINDOWPRESET2(sf::VideoMode::getDesktopMode(), "game", false, false);
 const WindowPreset WINDOWPRESET3(sf::VideoMode::getDesktopMode(), "game", true, false);
 
+// Temp
+const WindowPreset gridSizedWindowPreset(sf::VideoMode({1000, 1000}), "game", false, false);
+
 // DONE: Being Acceleration Value, Rotational Acceleration, Rotational Velocity
 // DONE: Give each Cell a Weight value which HeavyBehavior (probably rename) will use to calculate
 // (this /\/\/\ will also have to be done for Cell Velocity \/\/\/ to calculate Acceleration)
@@ -24,7 +27,7 @@ Game::Game() {}
 
 void Game::start()
 {
-    createWindowFromPreset(WINDOWPRESET1, window);
+    createWindowFromPreset(gridSizedWindowPreset, window);
     isFullscreen = false;
 
     isPaused = false;
@@ -56,12 +59,12 @@ void Game::run()
             // the last number is the desired ups (20 right now)
             ticksToProcess += (dt * 1000) / (1000 / 20.f);
             
-            //std::cout << "FPS: " << FPS << "; frame time: " << dt * 1000.f << '\n';
-            
             // if there was a big stutter, then this will run continuously until it is caught up
             while (ticksToProcess >= 1.f)
             {
                 tick();
+                
+                std::cout << "FPS: " << FPS << "; frame time: " << dt * 1000.f << '\n';
 
                 ticksToProcess -= 1.f;
             }

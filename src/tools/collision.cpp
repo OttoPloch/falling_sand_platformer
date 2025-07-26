@@ -130,7 +130,7 @@ bool pointRectCollide(sf::Vector2f point, sf::Vector2f center, sf::Vector2f size
     return (alignedPoint.x >= min.x && alignedPoint.x <= max.x && alignedPoint.y >= min.y && alignedPoint.y <= max.y);
 }
 
-bool pointBeingCollide(sf::Vector2f point, Being* being, sf::Vector2f inflateSize = {0, 0})
+bool pointBeingCollide(sf::Vector2f point, Being* being, sf::Vector2f inflateSize)
 {
     sf::Vector2f center(being->getPosition());
     sf::Vector2f size(being->getSize());
@@ -145,10 +145,12 @@ bool pointBeingCollide(sf::Vector2f point, Being* being, sf::Vector2f inflateSiz
     return pointRectCollide(point, center, size, rotation);
 }
 
-sf::Vector2i maxMovableDistance(CellManager* cellManager, sf::Vector2u from, sf::Vector2i distance)
+sf::Vector2i maxMovableDistance(CellManager* cellManager, sf::Vector2u from, sf::Vector2i distance, bool log)
 {
     if (cellManager->grid->canMoveDistance(from, distance))
     {
+        if (log) std::cout << "can move the max distance of " << distance.x << ", " << distance.y << " from " << from.x << ", " << from.y << '\n';
+
         return distance;
     }
     else
@@ -159,6 +161,8 @@ sf::Vector2i maxMovableDistance(CellManager* cellManager, sf::Vector2u from, sf:
 
         sf::Vector2f modifiedDistance = getRotatedPoint({0, 0}, distanceLength, vectorRotation);
 
+        if (log) std::cout << "starting rotation is " << vectorRotation << "; starting distanceLength is " << distanceLength << "; starting modifiedDistance is " << modifiedDistance.x << ", " << modifiedDistance.y << '\n';
+
         if (modifiedDistance == sf::Vector2f({0, 0})) return {0, 0};
 
         while (checkCellsInLine(cellManager, from, {static_cast<int>(modifiedDistance.x), static_cast<int>(modifiedDistance.y)}) || from.x + modifiedDistance.x < 0 || from.x + modifiedDistance.x > cellManager->grid->getSizeOfRow(from.x) - 1 || from.y + modifiedDistance.y < 0 || from.y + modifiedDistance.y > cellManager->grid->getSize() - 1)
@@ -167,8 +171,12 @@ sf::Vector2i maxMovableDistance(CellManager* cellManager, sf::Vector2u from, sf:
 
             modifiedDistance = getRotatedPoint({0, 0}, distanceLength, vectorRotation);
 
+            if (log) std::cout << "failure; new distanceLength is " << distanceLength << "; new modifiedDistance is " << modifiedDistance.x << ", " << modifiedDistance.y << '\n';
+
             if (modifiedDistance == sf::Vector2f({0, 0})) return {0, 0};
         }
+
+        if (log) std::cout << "returning " << static_cast<int>(modifiedDistance.x) << ", " << static_cast<int>(modifiedDistance.x) << '\n';
 
         return {static_cast<int>(modifiedDistance.x), static_cast<int>(modifiedDistance.y)};
     }

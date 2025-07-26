@@ -16,6 +16,12 @@ public:
 
     void create(unsigned int gridLength, unsigned int gridHeight, std::vector<std::shared_ptr<Being>>* beings, CellManager* cellManager);
 
+    void verticesInit();
+
+    void updateVertices();
+
+    void updateSpecificVertices(sf::Vector2u position);
+    
     // returns a pointer to the cell at the given position
     Cell* at(sf::Vector2u position);
 
@@ -54,13 +60,17 @@ public:
 
     // iterates through the grid and updates cells
     void updateCells(sf::Vector2u creatorPos);
+
+    // this actually draws the grid, believe it or not
+    void draw(sf::RenderWindow& window);
 private:
     std::vector<std::vector<std::shared_ptr<Cell>>> theGrid;
-
-    int gridLength;
-    int gridHeight;
 
     std::vector<std::shared_ptr<Being>>* beings;
 
     CellManager* cellManager;
+
+    sf::VertexArray vertexArray;
+
+    sf::RenderStates states;
 };

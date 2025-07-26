@@ -8,17 +8,20 @@
 
 sf::Vector2f getRotatedPoint(sf::Vector2f point, float distance, float rotation)
 {
-    float theta = rotation * (M_PI / 180.f);
+    float theta = rotation * (3.1415926535f / 180.f);
 
     float rx = point.x + distance * std::sin(theta);
     float ry = point.y - distance * std::cos(theta);
+
+    if (abs(rx) < 0.0001f) rx = 0;
+    if (abs(ry) < 0.0001f) ry = 0;
 
     return {rx, ry};
 }
 
 sf::Vector2f rotateAroundPoint(sf::Vector2f point, sf::Vector2f origin, float rotation)
 {
-    float theta = rotation * (M_PI / 180.f);
+    float theta = rotation * (3.1415926535f / 180.f);
 
     sf::Vector2f translated;
 
@@ -33,7 +36,7 @@ sf::Vector2f rotateAroundPoint(sf::Vector2f point, sf::Vector2f origin, float ro
 
 sf::Vector2f getRectCorner(sf::Vector2f center, sf::Vector2f offset, float rotation)
 {
-    float theta = rotation * (M_PI / 180.f);
+    float theta = rotation * (3.1415926535f / 180.f);
 
     sf::Vector2f point;
 
@@ -140,7 +143,7 @@ float getDistance(sf::Vector2i vector)
 
 float getRotation(sf::Vector2i vector)
 {
-    float degrees = std::atan2(vector.y, vector.x) * (180.f / M_PI);
+    float degrees = std::atan2(vector.y, vector.x) * (180.f / 3.1415926535f);
 
     if (degrees < 0.f) degrees += 360.f;
     degrees = 90.f + degrees;
