@@ -13,6 +13,7 @@ const WindowPreset gridSizedWindowPreset(sf::VideoMode({1000, 1000}), "game", fa
 // DONE: Cell Velocity
 // DONE: Fix SinkBehavior so it accounts for RisingBehavior
 
+// TODO: Remove cells from the vertex array when they are moving visually, create a placeholder square to represent it and interpolate \/\/\/, then put the vertices back in the new spot
 // TODO: Interpolate updating being sprites and drawing cells (might need to actually properly draw cells for this)
 // TODO: BeingManager? This would help for tracking constants like gravity for \/\/\/
 // TODO: Being Gravity
