@@ -22,6 +22,13 @@ public:
 
     void updateSpecificVertices(sf::Vector2u position);
     
+    // this is for the movingCells vector
+    void updateMovingVertices();
+
+    void addMovingVertices(sf::Vector2u currentPos, sf::Vector2u targetPos, sf::Color color);
+
+    void snapToRealPos();
+
     // returns a pointer to the cell at the given position
     Cell* at(sf::Vector2u position);
 
@@ -61,6 +68,9 @@ public:
     // iterates through the grid and updates cells
     void updateCells(sf::Vector2u creatorPos);
 
+    // updates a single cell, returns whether or not a change occured
+    bool updateACell(sf::Vector2u position);
+
     // this actually draws the grid, believe it or not
     void draw(sf::RenderWindow& window);
 private:
@@ -71,6 +81,10 @@ private:
     CellManager* cellManager;
 
     sf::VertexArray vertexArray;
+
+    // example:
+    // [0]: ( vertices of a cell, vector of target GRID positions )
+    std::vector<std::pair<std::array<sf::Vertex, 6>, std::vector<sf::Vector2u>>> movingCells;
 
     sf::RenderStates states;
 };

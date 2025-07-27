@@ -22,6 +22,8 @@ public:
     void update();
 
     void draw();
+
+    bool getPaused();
 private:
     sf::RenderWindow window;
 

@@ -16,12 +16,18 @@
 //
 //          const CellPreset PRESETNAME(weight, color, { vector of behaviors as shared ptrs });
 //
+//     - Some behaviors, like CoolingBehavior or FlammableBehavior, have no real code in them and always return false.
+//       These behaviors still can have settings tied to them or provide information to other behaviors.
+//       For example, FlamingBehavior checks for cells around it with FlammableBehavior, and BurningBehavior checks
+//       for cells around it with CoolingBehavior.
 //     - FallingBehavior accounts for rising as well (if the cell has a negative weight)
 //     - Sinkbehavior also accounts for negative weights
 //     - If a cell is heavier than another cell, but does not have SinkBehavior, it will not sink
+//     - The FlowingBehavior optionalSetting is the chance that the cell will flow if it can flow both ways, if it can only go one side it will
+//     - Behaviors that use their optionalSetting as a chance use x/1000, where x is the optionalSetting (1 is least likely, 1000 is most, 0 is never or leave blank)
 
 const CellPreset SANDPRESET(3, sf::Color(252, 191, 98), {std::make_shared<FallingBehavior>(), std::make_shared<SinkBehavior>(), std::make_shared<SettlingBehavior>()});
-const CellPreset WATERPRESET(2, sf::Color(19, 94, 186), {std::make_shared<FallingBehavior>(), std::make_shared<SinkBehavior>(), std::make_shared<FlowingBehavior>(), std::make_shared<CoolingBehavior>()});
+const CellPreset WATERPRESET(2, sf::Color(19, 94, 186), {std::make_shared<FallingBehavior>(), std::make_shared<SinkBehavior>(), std::make_shared<FlowingBehavior>(10), std::make_shared<CoolingBehavior>()});
 const CellPreset FIREPRESET(0, sf::Color(255, 0, 0), {std::make_shared<BurningBehavior>(30), std::make_shared<FlamingBehavior>(), std::make_shared<SpreadingBehavior>()});
 const CellPreset WOODPRESET(0, sf::Color(99, 64, 28), {std::make_shared<FlammableBehavior>(100), std::make_shared<StaticBehavior>()});
 const CellPreset SMOKEPRESET(-1, sf::Color(55, 55, 55), {std::make_shared<FallingBehavior>(), std::make_shared<SinkBehavior>(), std::make_shared<SettlingBehavior>()});

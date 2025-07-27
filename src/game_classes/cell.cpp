@@ -25,8 +25,10 @@ void Cell::create(CellManager* cellManager, Grid* grid, std::vector<std::shared_
     myPreset = cellManager->presets[type];
 }
 
-bool Cell::tick(bool log)
+std::pair<sf::Vector2u, bool> Cell::tick(bool log)
 {
+    sf::Vector2u lastPos = position;
+
     bool hasChanged = false;
 
     if (myPreset.behaviors.size() > 0)
@@ -71,7 +73,12 @@ bool Cell::tick(bool log)
         }
     }
 
-    return hasChanged;
+    if (lastPos != position)
+    {
+        return std::pair(position, hasChanged);
+    }
+
+    return std::pair(sf::Vector2u({0, 0}), hasChanged);
 }
 
 void Cell::update()

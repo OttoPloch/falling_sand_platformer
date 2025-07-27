@@ -23,8 +23,8 @@ void World::create(sf::RenderWindow* window)
     
     resourceManager.load();
 
-    //beings.emplace_back(std::make_shared<Being>(sf::Vector2f(200, 300), sf::Vector2f(100, 100), 0, resourceManager.getTexture("moon"), window, &grid));
-    //beings.emplace_back(std::make_shared<Being>(sf::Vector2f(800, 800), sf::Vector2f(500, 500), -30, resourceManager.getTexture("sun"), window, &grid));
+    beings.emplace_back(std::make_shared<Being>(sf::Vector2f(200, 300), sf::Vector2f(100, 100), 0, resourceManager.getTexture("moon"), window, &grid));
+    beings.emplace_back(std::make_shared<Being>(sf::Vector2f(800, 800), sf::Vector2f(500, 500), -30, resourceManager.getTexture("sun"), window, &grid));
 
     this->window = window;
 }
@@ -33,8 +33,8 @@ void World::tick(sf::Vector2u creatorPos)
 {
     grid.updateCells(creatorPos);
     
-    //beings[0]->rotate(3);
-    //beings[1]->move({0, 1});
+    beings[0]->rotate(3);
+    beings[1]->move({0, 1});
 
     if (beings.size() > 0)
     {
@@ -104,23 +104,25 @@ void World::draw()
         {
             beings[i]->draw();
 
-            if (i != -1)
-            {
-                std::vector<sf::Vector2f> points = getRectAlignedPoints(&cellManager, beings[i]->getPosition(), beings[i]->getSize(), beings[i]->getRotation(), false);
+            // if (i != -1)
+            // {
+            //     std::vector<sf::Vector2f> points = getRectAlignedPoints(&cellManager, beings[i]->getPosition(), beings[i]->getSize(), beings[i]->getRotation(), false);
                 
-                for (int j = 0; j < points.size(); j++)
-                {
-                    sf::RectangleShape rect({CELLSIZE, CELLSIZE});
+            //     for (int j = 0; j < points.size(); j++)
+            //     {
+            //         sf::RectangleShape rect({CELLSIZE, CELLSIZE});
     
-                    rect.setFillColor(sf::Color(255, 0, 0, 100));
-                    rect.setPosition(points[j]);
+            //         rect.setFillColor(sf::Color(255, 0, 0, 100));
+            //         rect.setPosition(points[j]);
                     
-                    window->draw(rect);
-                }
-            }
+            //         window->draw(rect);
+            //     }
+            // }
         }
     }
 }
+
+void World::snapGridMovingCells() { grid.snapToRealPos(); }
 
 sf::Vector2u World::getGridSize() { return {grid.getSize(), grid.getSizeOfRow(0)}; }
 

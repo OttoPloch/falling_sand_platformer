@@ -11,6 +11,7 @@ CellPreset::CellPreset(int weight, sf::Color color, std::vector<std::shared_ptr<
     optionalSettings = {
         {"flammable", -1},
         {"burning", -1},
+        {"flow", -1}
     };
 
     for (auto i : optionalSettings)

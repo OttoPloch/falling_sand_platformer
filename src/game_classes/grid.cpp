@@ -35,6 +35,8 @@ void Grid::verticesInit()
     vertexArray.setPrimitiveType(sf::PrimitiveType::Triangles);
     vertexArray.resize(getSizeOfRow(0) * getSize() * 6);
 
+    movingCells.resize(0);
+
     for (int y = 0; y < getSize(); y++)
     {
         for (int x = 0; x < getSizeOfRow(y); x++)
@@ -48,24 +50,7 @@ void Grid::verticesInit()
             vertexArray[index + 4].position = {x * cellManager->cellSize + cellManager->cellSize, y * cellManager->cellSize};
             vertexArray[index + 5].position = {x * cellManager->cellSize + cellManager->cellSize, y * cellManager->cellSize + cellManager->cellSize};
 
-            if (at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)}) != nullptr)
-            {
-                vertexArray[index].color     = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
-                vertexArray[index + 1].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
-                vertexArray[index + 2].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
-                vertexArray[index + 3].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
-                vertexArray[index + 4].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
-                vertexArray[index + 5].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
-            }
-            else
-            {
-                vertexArray[index].color     = sf::Color::Transparent;
-                vertexArray[index + 1].color = sf::Color::Transparent;
-                vertexArray[index + 2].color = sf::Color::Transparent;
-                vertexArray[index + 3].color = sf::Color::Transparent;
-                vertexArray[index + 4].color = sf::Color::Transparent;
-                vertexArray[index + 5].color = sf::Color::Transparent;
-            }
+            updateSpecificVertices({static_cast<unsigned int>(x), static_cast<unsigned int>(y)});
         }
     }
 }
@@ -76,26 +61,7 @@ void Grid::updateVertices()
     {
         for (int x = 0; x < getSizeOfRow(y); x++)
         {
-            int index = (x + y * getSizeOfRow(y)) * 6;
-
-            if (at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)}) != nullptr)
-            {
-                vertexArray[index].color     = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
-                vertexArray[index + 1].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
-                vertexArray[index + 2].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
-                vertexArray[index + 3].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
-                vertexArray[index + 4].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
-                vertexArray[index + 5].color = at({static_cast<unsigned int>(x), static_cast<unsigned int>(y)})->getColor();
-            }
-            else
-            {
-                vertexArray[index].color     = sf::Color::Transparent;
-                vertexArray[index + 1].color = sf::Color::Transparent;
-                vertexArray[index + 2].color = sf::Color::Transparent;
-                vertexArray[index + 3].color = sf::Color::Transparent;
-                vertexArray[index + 4].color = sf::Color::Transparent;
-                vertexArray[index + 5].color = sf::Color::Transparent;
-            }
+            updateSpecificVertices({static_cast<unsigned int>(x), static_cast<unsigned int>(y)});
         }
     }
 }
@@ -104,24 +70,197 @@ void Grid::updateSpecificVertices(sf::Vector2u position)
 {
     int index = (position.x + position.y * getSizeOfRow(position.y)) * 6;
 
+    // If a cell is here
     if (at({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)}) != nullptr)
     {
-        vertexArray[index].color     = at({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)})->getColor();
-        vertexArray[index + 1].color = at({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)})->getColor();
-        vertexArray[index + 2].color = at({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)})->getColor();
-        vertexArray[index + 3].color = at({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)})->getColor();
-        vertexArray[index + 4].color = at({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)})->getColor();
-        vertexArray[index + 5].color = at({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)})->getColor();
+        // Make sure that cell is not being visually interpolated
+        bool isAMovingCell = false;
+        
+        if (movingCells.size() > 0)
+        {
+            for (int i = 0; i < movingCells.size(); i++)
+            {
+                if (movingCells[i].second[0] == position)
+                {
+                    isAMovingCell = true;
+                    
+                    break;
+                }
+            }
+        }
+
+        if (!isAMovingCell)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                vertexArray[index + i].color = at({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)})->getColor();
+            }
+
+            return;
+        }
     }
-    else
+
+    // this will get called if either this cell is nullptr OR this cell is being interpolated to AND a cell is being interpolated FROM it.
+    // the second case occurs when, for example, two sand are falling from the same spot and one is one tick behind the other (it is above).
+    // in the next tick, since the cell is being interpolated to (it is the target position of a moving cell), it does not get updated to that
+    // cell's color yet, HOWEVER since the cell that is ahead just left that spot, the checks above don't consider whether another cell has just
+    // moved there, and assumes it is nullptr and will get made transparent because of that. But, we must also consider this case where it isn't.
+    // Just wanted to explain the logic of that, also this could be an else statement to "if (!isAMovingCell)" above, but it can be combined with
+    // the first case here using a return statement.
+    for (int i = 0; i < 6; i++)
     {
-        vertexArray[index].color     = sf::Color::Transparent;
-        vertexArray[index + 1].color = sf::Color::Transparent;
-        vertexArray[index + 2].color = sf::Color::Transparent;
-        vertexArray[index + 3].color = sf::Color::Transparent;
-        vertexArray[index + 4].color = sf::Color::Transparent;
-        vertexArray[index + 5].color = sf::Color::Transparent;
+        vertexArray[index + i].color = sf::Color::Transparent;
     }
+
+}
+
+void Grid::updateMovingVertices()
+{
+    if (movingCells.size() > 0)
+    {
+        std::vector<int> movingCellsToErase(0);
+
+        for (int i = 0; i < movingCells.size(); i++)
+        {
+            float xDiff = gridToWorldCoords(cellManager, {static_cast<int>(movingCells[i].second[0].x), static_cast<int>(movingCells[i].second[0].y)}, false).x - movingCells[i].first[0].position.x;
+            float yDiff = gridToWorldCoords(cellManager, {static_cast<int>(movingCells[i].second[0].x), static_cast<int>(movingCells[i].second[0].y)}, false).y - movingCells[i].first[0].position.y;
+
+            if (abs(xDiff) < .1f && abs(yDiff) < .1f)
+            {
+                if (movingCells[i].second.size() > 1)
+                {
+                    movingCells[i].second.erase(movingCells[i].second.begin());
+                }
+                else
+                {
+                    movingCellsToErase.emplace_back(i);
+                }
+            }
+            else
+            {
+                for (int j = 0; j < 6; j++)
+                {
+                    if (sqrt(pow(xDiff, 2) + pow(yDiff, 2)) > cellManager->cellSize * 10)
+                    {
+                        movingCells[i].first[j].position.x += xDiff / 3.f;
+                        movingCells[i].first[j].position.y += yDiff / 3.f;
+                    }
+                    else if (sqrt(pow(xDiff, 2) + pow(yDiff, 2)) > cellManager->cellSize * 5)
+                    {
+                        movingCells[i].first[j].position.x += xDiff / 2.f;
+                        movingCells[i].first[j].position.y += yDiff / 2.f;
+                    }
+                    else if (sqrt(pow(xDiff, 2) + pow(yDiff, 2)) > cellManager->cellSize * 2)
+                    {
+                        movingCells[i].first[j].position.x += xDiff / 1.2f;
+                        movingCells[i].first[j].position.y += yDiff / 1.2f;
+                    }
+                    else
+                    {
+                        movingCells[i].first[j].position.x += xDiff / 1.15f;
+                        movingCells[i].first[j].position.y += yDiff / 1.15f;
+                    }
+                }
+            }
+        }
+
+        if (movingCellsToErase.size() > 0)
+        {
+            while (movingCellsToErase.size() > 0)
+            {
+                // maybe there's a better way to do this than a double for loop but this is more fun
+                
+                // grab the position of the moving cell
+                sf::Vector2u posToUpdate = movingCells[movingCellsToErase[0]].second[0];
+
+                // erase the moving cell
+                movingCells.erase(movingCells.begin() + movingCellsToErase[0]);
+
+                // erase the identifier that we just used above
+                movingCellsToErase.erase(movingCellsToErase.begin());
+
+                // decrement other identifiers to reflect the new 
+                for (int j = 0; j < movingCellsToErase.size(); j++)
+                {
+                    movingCellsToErase[j]--;
+                }
+
+                updateSpecificVertices(posToUpdate);
+            }
+        }
+    }
+}
+
+void Grid::addMovingVertices(sf::Vector2u currentPos, sf::Vector2u targetPos, sf::Color color)
+{  
+    sf::Vector2f screenCurrentPos = {currentPos.x * cellManager->cellSize, currentPos.y * cellManager->cellSize};
+    sf::Vector2f screenTargetPos = {targetPos.x * cellManager->cellSize, targetPos.y * cellManager->cellSize};
+    
+    // If this cell is already being tracked by another moving cell
+    if (movingCells.size() > 0)
+    {
+        for (int i = 0; i < movingCells.size(); i++)
+        {
+            if (movingCells[i].second.back() == currentPos)
+            {
+                for (int j = 0; j < 6; j++)
+                {
+                    movingCells[i].first[j].color = color;
+                }
+
+                sf::Vector2u targetBeforeLast;
+
+                if (movingCells[i].second.size() > 1)
+                {
+                    // if the moving cell is going many places, it will be here eventually \/
+                    targetBeforeLast = movingCells[i].second[movingCells[i].second.size() - 2];
+                }
+                else
+                {
+                    // if the moving cell has only one target, we use it to check for a straight line
+                    targetBeforeLast = worldToGridCoords(cellManager, movingCells[i].first[0].position);
+                }
+
+                // If the moving cell is going in a vertical or horizontal line towards currentPos
+                if (targetBeforeLast.x == currentPos.x || targetBeforeLast.y == currentPos.y)
+                {
+                    movingCells[i].second.back() = targetPos;
+
+                    return;
+                }
+
+                movingCells[i].second.emplace_back(targetPos);
+
+                return;
+            }
+        }
+    }
+
+    // This cell is not currently being represented by a moving cell
+    std::array<sf::Vertex, 6> newVertices;
+
+    for (int i = 0; i < 6; i++)
+    {
+        newVertices[i].color = color;
+    }
+
+    newVertices[0].position = {screenCurrentPos.x, screenCurrentPos.y};
+    newVertices[1].position = {screenCurrentPos.x + cellManager->cellSize, screenCurrentPos.y};
+    newVertices[2].position = {screenCurrentPos.x, screenCurrentPos.y + cellManager->cellSize};
+    newVertices[3].position = {screenCurrentPos.x, screenCurrentPos.y + cellManager->cellSize};
+    newVertices[4].position = {screenCurrentPos.x + cellManager->cellSize, screenCurrentPos.y};
+    newVertices[5].position = {screenCurrentPos.x + cellManager->cellSize, screenCurrentPos.y + cellManager->cellSize};
+
+    std::vector<sf::Vector2u> targetPositions = {targetPos};
+
+    movingCells.emplace_back(newVertices, targetPositions);
+}
+
+void Grid::snapToRealPos()
+{
+    movingCells.clear();
+
+    updateVertices();
 }
 
 Cell* Grid::at(sf::Vector2u position) {
@@ -322,25 +461,31 @@ void Grid::updateCells(sf::Vector2u creatorPos)
                 // on the rightToLeft boolean variable
                 (rightToLeft) ? x = theGrid[y].size() - 1 - i : x = i;
     
-                // iterates through regular cells
-                if (theGrid[y][x] != nullptr)
-                {
-                    if (theGrid[y][x]->getWeight() > -1)
+                    // iterates through falling cells
+                    if (theGrid[y][x] != nullptr)
                     {
-                        if (theGrid[y][x]->tick()) gridHasChanged = true;
+                        if (theGrid[y][x]->getWeight() > -1)
+                        {
+                            if (updateACell({static_cast<unsigned int>(x), static_cast<unsigned int>(y)}))
+                            {
+                                gridHasChanged = true;
+                            }
+                        }
                     }
-                }
-    
-                int oppY = (theGrid.size() - 1) - y;
-    
-                // iterates through rising cells (like smoke)
-                if (theGrid[oppY][x] != nullptr)
-                {
-                    if (theGrid[oppY][x]->getWeight() < 0)
+                    
+                    int oppY = (getSize() - 1) - y;
+
+                    // iterates through rising cells
+                    if (theGrid[oppY][x] != nullptr)
                     {
-                        if (theGrid[oppY][x]->tick()) gridHasChanged = true;
+                        if (theGrid[oppY][x]->getWeight() < 0)
+                        {
+                            if (updateACell({static_cast<unsigned int>(x), static_cast<unsigned int>(oppY)}))
+                            {
+                                gridHasChanged = true;
+                            }
+                        }
                     }
-                }
             }
         }
     }
@@ -348,9 +493,45 @@ void Grid::updateCells(sf::Vector2u creatorPos)
     if (gridHasChanged) updateVertices();
 }
 
+bool Grid::updateACell(sf::Vector2u position)
+{
+    if (position.y < getSize() && position.x < getSizeOfRow(position.y))
+    {
+        if (theGrid[position.y][position.x] != nullptr)
+        {
+            std::pair<sf::Vector2u, bool> tickReturns = theGrid[position.y][position.x]->tick();
+            
+            if (tickReturns.first != sf::Vector2u({0, 0}))
+            {
+                // This will check for duplicate movingCells on its own
+                addMovingVertices({static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y)}, tickReturns.first, theGrid[tickReturns.first.y][tickReturns.first.x]->getColor());
+            }
+
+            if (tickReturns.second)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 void Grid::draw(sf::RenderWindow& window)
 {
+    // TODO: Fix this. This will not work
     if (cellManager->cellOffset != sf::Vector2f({0, 0})) states.transform.translate(cellManager->cellOffset);
 
     window.draw(&vertexArray[0], vertexArray.getVertexCount(), sf::PrimitiveType::Triangles, states);
+
+    if (movingCells.size() > 0)
+    {
+        updateMovingVertices();
+
+        // TODO: combine into one vertex array
+        for (int i = 0; i < movingCells.size(); i++)
+        {
+            window.draw(&movingCells[i].first[0], 6, sf::PrimitiveType::Triangles, states);
+        }
+    }
 }

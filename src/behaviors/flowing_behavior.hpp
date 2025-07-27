@@ -9,6 +9,8 @@ class FlowingBehavior : public Behavior
 public:
     FlowingBehavior();
 
+    FlowingBehavior(int flowChance);
+
     // overrides the parent class's update method
     bool update(CellManager* cellManager, sf::Vector2u gridPos) override;
 };
