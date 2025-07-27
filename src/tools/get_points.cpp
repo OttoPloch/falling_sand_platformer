@@ -100,7 +100,7 @@ std::vector<sf::Vector2f> getRectAlignedPoints(CellManager* cellManager, sf::Vec
     {
         for (int x = startX; x <= endX; x++)
         {
-            if (pointRectCollide(gridToWorldCoords(cellManager, {x, y}, true), center, {size.x + cellManager->beingRectInflationSize.x, size.y + cellManager->beingRectInflationSize.y}, rotation))
+            if (pointRectCollide(gridToWorldCoords(cellManager, sf::Vector2i(x, y), true), center, {size.x + cellManager->beingRectInflationSize.x, size.y + cellManager->beingRectInflationSize.y}, rotation))
             {
                 asGridCoords ? points.emplace_back(x, y) : points.emplace_back(x * cellManager->cellSize, y * cellManager->cellSize);
             }
@@ -111,6 +111,22 @@ std::vector<sf::Vector2f> getRectAlignedPoints(CellManager* cellManager, sf::Vec
 }
 
 sf::Vector2f gridToWorldCoords(CellManager* cellManager, sf::Vector2i gridCoord, bool convertCenter)
+{
+    sf::Vector2f point;
+
+    point.x = cellManager->cellOffset.x + gridCoord.x * cellManager->cellSize;
+    point.y = cellManager->cellOffset.y + gridCoord.y * cellManager->cellSize;
+
+    if (convertCenter)
+    {
+        point.x += cellManager->cellSize / 2;
+        point.y += cellManager->cellSize / 2;
+    }
+
+    return point;
+}
+
+sf::Vector2f gridToWorldCoords(CellManager* cellManager, sf::Vector2u gridCoord, bool convertCenter)
 {
     sf::Vector2f point;
 
@@ -137,6 +153,11 @@ sf::Vector2u worldToGridCoords(CellManager* cellManager, sf::Vector2f worldCoord
 }
 
 float getDistance(sf::Vector2i vector)
+{
+    return sqrt(pow(vector.x, 2) + pow(vector.y, 2));
+}
+
+float getDistance(sf::Vector2f vector)
 {
     return sqrt(pow(vector.x, 2) + pow(vector.y, 2));
 }

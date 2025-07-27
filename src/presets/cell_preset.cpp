@@ -2,9 +2,10 @@
 
 CellPreset::CellPreset() {}
 
-CellPreset::CellPreset(int weight, sf::Color color, std::vector<std::shared_ptr<Behavior>> behaviors)
+CellPreset::CellPreset(float weight, bool canSmooth, sf::Color color, std::vector<std::shared_ptr<Behavior>> behaviors)
 {
     this->weight = weight;
+    this->canSmooth = canSmooth;
     this->color = color;
     this->behaviors = behaviors;
 

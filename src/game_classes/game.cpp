@@ -1,5 +1,10 @@
 #include "game.hpp"
 
+
+#include <algorithm>
+
+
+
 const WindowPreset WINDOWPRESET1(sf::VideoMode({800, 600}), "game", false, false);
 const WindowPreset WINDOWPRESET2(sf::VideoMode::getDesktopMode(), "game", false, false);
 const WindowPreset WINDOWPRESET3(sf::VideoMode::getDesktopMode(), "game", true, false);
@@ -12,10 +17,11 @@ const WindowPreset gridSizedWindowPreset(sf::VideoMode({1000, 1000}), "game", fa
 // (this /\/\/\ will also have to be done for Cell Velocity \/\/\/ to calculate Acceleration)
 // DONE: Cell Velocity
 // DONE: Fix SinkBehavior so it accounts for RisingBehavior
+// DONE: Change cell weight values to floats for more control of fall speed
 // DONE: Remove cells from the vertex array when they are moving visually, create a placeholder square to represent it and interpolate \/\/\/, then put the vertices back in the new spot
 // DONE: Interpolate updating being sprites and drawing cells (might need to actually properly draw cells for this)
+// DONE: Try to fix the "flickering" issue with cells like water that always move, especially when iterating while paused. Could be as simple as them moving too fast
 
-// TODO: Try to fix the "flickering" issue with cells like water that always move, especially when iterating while paused. Could be as simple as them moving too fast
 // TODO: BeingManager? This would help for tracking constants like gravity for \/\/\/
 // TODO: Being Gravity
 // TODO: Struct for Being Settings (disableGravity, disableCollision, etc)
@@ -168,8 +174,6 @@ void Game::events()
             if (code == sf::Keyboard::Key::Tab)
             {
                 isPaused = !isPaused;
-
-                world.snapGridMovingCells();
             }
 
             if (code == sf::Keyboard::Key::Period && isPaused)

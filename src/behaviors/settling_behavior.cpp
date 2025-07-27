@@ -6,11 +6,11 @@ bool SettlingBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 {
     int fallDirection;
 
-    if (cellManager->grid->at(gridPos)->getWeight() > 0)
+    if (cellManager->grid->at(gridPos)->getWeight() > 0.f)
     {
         fallDirection = 1;
     }
-    else if (cellManager->grid->at(gridPos)->getWeight() < 0)
+    else if (cellManager->grid->at(gridPos)->getWeight() < 0.f)
     {
         fallDirection = -1;
     }
@@ -19,7 +19,7 @@ bool SettlingBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
         std::cout << gridPos.x << ", " << gridPos.y << " of type " << cellManager->grid->at(gridPos)->getType() << " has settle behavior but has a weight of 0\n";
     }
 
-    if ((gridPos.y < cellManager->grid->getSize() - 1 && fallDirection == 1) || (gridPos.y > 0 && fallDirection == -1))
+    if ((gridPos.y < cellManager->grid->getHeight() - 1 && fallDirection == 1) || (gridPos.y > 0 && fallDirection == -1))
     {
         if (cellManager->grid->canMoveDistance(gridPos, {-1, fallDirection}) && cellManager->grid->canMoveDistance(gridPos, {1, fallDirection}))
         {

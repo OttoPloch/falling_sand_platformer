@@ -107,7 +107,7 @@ bool checkCellsInLine(CellManager* cellManager, sf::Vector2u from, sf::Vector2i 
                 {
                     for (int i = 0; i < cellManager->beings->size(); i++)
                     {
-                        if (pointBeingCollide(gridToWorldCoords(cellManager, {static_cast<int>(currentCoord.x), static_cast<int>(currentCoord.y)}, true), (*cellManager->beings)[i].get(), cellManager->beingRectInflationSize))
+                        if (pointBeingCollide(gridToWorldCoords(cellManager, currentCoord, true), (*cellManager->beings)[i].get(), cellManager->beingRectInflationSize))
                         {
                             return true;
                         }
@@ -165,7 +165,7 @@ sf::Vector2i maxMovableDistance(CellManager* cellManager, sf::Vector2u from, sf:
 
         if (modifiedDistance == sf::Vector2f({0, 0})) return {0, 0};
 
-        while (checkCellsInLine(cellManager, from, {static_cast<int>(modifiedDistance.x), static_cast<int>(modifiedDistance.y)}) || from.x + modifiedDistance.x < 0 || from.x + modifiedDistance.x > cellManager->grid->getSizeOfRow(from.x) - 1 || from.y + modifiedDistance.y < 0 || from.y + modifiedDistance.y > cellManager->grid->getSize() - 1)
+        while (checkCellsInLine(cellManager, from, {static_cast<int>(modifiedDistance.x), static_cast<int>(modifiedDistance.y)}) || from.x + modifiedDistance.x < 0 || from.x + modifiedDistance.x > cellManager->grid->getLength() - 1 || from.y + modifiedDistance.y < 0 || from.y + modifiedDistance.y > cellManager->grid->getHeight() - 1)
         {
             distanceLength -= 1.f;
 

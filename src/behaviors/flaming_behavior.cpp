@@ -10,12 +10,12 @@ bool FlamingBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 
     if (gridPos.x > 0 && gridPos.y > 0 && cellManager->grid->at({gridPos.x - 1, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x - 1, gridPos.y - 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({-1, -1}); }
     if (gridPos.y > 0 && cellManager->grid->at({gridPos.x, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x, gridPos.y - 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({0, -1}); }
-    if (gridPos.x < cellManager->grid->getSizeOfRow(gridPos.y) - 1 && gridPos.y > 0 && cellManager->grid->at({gridPos.x + 1, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x + 1, gridPos.y - 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({1, -1}); }
+    if (gridPos.x < cellManager->grid->getLength() - 1 && gridPos.y > 0 && cellManager->grid->at({gridPos.x + 1, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x + 1, gridPos.y - 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({1, -1}); }
     if (gridPos.x > 0 && cellManager->grid->at({gridPos.x - 1, gridPos.y}) != nullptr && cellManager->grid->at({gridPos.x - 1, gridPos.y})->hasBehavior("flammable")) { flammableNeighbors.push_back({-1, 0}); }
-    if (gridPos.x < cellManager->grid->getSizeOfRow(gridPos.y) - 1 && cellManager->grid->at({gridPos.x + 1, gridPos.y}) != nullptr && cellManager->grid->at({gridPos.x + 1, gridPos.y})->hasBehavior("flammable")) { flammableNeighbors.push_back({1, 0}); }
-    if (gridPos.x > 0 && gridPos.y < cellManager->grid->getSize() - 1 && cellManager->grid->at({gridPos.x - 1, gridPos.y + 1}) != nullptr && cellManager->grid->at({gridPos.x - 1, gridPos.y + 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({-1, 1}); }
-    if (gridPos.y < cellManager->grid->getSize() - 1 && cellManager->grid->at({gridPos.x, gridPos.y + 1}) != nullptr && cellManager->grid->at({gridPos.x, gridPos.y + 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({0, 1}); }
-    if (gridPos.x < cellManager->grid->getSizeOfRow(gridPos.y) - 1 && gridPos.y < cellManager->grid->getSize() - 1 && cellManager->grid->at({gridPos.x + 1, gridPos.y + 1}) != nullptr && cellManager->grid->at({gridPos.x + 1, gridPos.y + 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({1, 1}); }
+    if (gridPos.x < cellManager->grid->getLength() - 1 && cellManager->grid->at({gridPos.x + 1, gridPos.y}) != nullptr && cellManager->grid->at({gridPos.x + 1, gridPos.y})->hasBehavior("flammable")) { flammableNeighbors.push_back({1, 0}); }
+    if (gridPos.x > 0 && gridPos.y < cellManager->grid->getHeight() - 1 && cellManager->grid->at({gridPos.x - 1, gridPos.y + 1}) != nullptr && cellManager->grid->at({gridPos.x - 1, gridPos.y + 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({-1, 1}); }
+    if (gridPos.y < cellManager->grid->getHeight() - 1 && cellManager->grid->at({gridPos.x, gridPos.y + 1}) != nullptr && cellManager->grid->at({gridPos.x, gridPos.y + 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({0, 1}); }
+    if (gridPos.x < cellManager->grid->getLength() - 1 && gridPos.y < cellManager->grid->getHeight() - 1 && cellManager->grid->at({gridPos.x + 1, gridPos.y + 1}) != nullptr && cellManager->grid->at({gridPos.x + 1, gridPos.y + 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({1, 1}); }
 
     if (flammableNeighbors.size() > 0)
     {   

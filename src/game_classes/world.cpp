@@ -31,7 +31,7 @@ void World::create(sf::RenderWindow* window)
 
 void World::tick(sf::Vector2u creatorPos)
 {
-    grid.updateCells(creatorPos);
+    grid.tick(creatorPos);
     
     beings[0]->rotate(3);
     beings[1]->move({0, 1});
@@ -54,6 +54,8 @@ void World::update(sf::Vector2u creatorPos)
             beings[i]->update();
         }
     }
+
+    grid.update();
 
     // creates a sand cell; temporary for testing
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
@@ -122,9 +124,7 @@ void World::draw()
     }
 }
 
-void World::snapGridMovingCells() { grid.snapToRealPos(); }
-
-sf::Vector2u World::getGridSize() { return {grid.getSize(), grid.getSizeOfRow(0)}; }
+sf::Vector2u World::getGridSize() { return {grid.getLength(), grid.getHeight()}; }
 
 float World::getCellSize() { return CELLSIZE; }
 

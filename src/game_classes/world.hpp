@@ -21,8 +21,6 @@ public:
 
     void draw();
 
-    void snapGridMovingCells();
-
     sf::Vector2u getGridSize();
 
     float getCellSize();

@@ -17,10 +17,8 @@ public:
 
     void create(CellManager* cellManager, Grid* grid, std::vector<std::shared_ptr<Being>>* beings, std::string type, sf::Vector2u position);
 
-    // new position (will return 0, 0 if no change), has changed at all
-    std::pair<sf::Vector2u, bool> tick(bool log = false);
-
-    void update();
+    // ptr to this cell, hasChanged
+    std::pair<Cell*, bool> tick(bool log = false);
 
     void changeVelocity(sf::Vector2i amount);
 
@@ -34,17 +32,27 @@ public:
 
     void addEndBehavior(std::shared_ptr<Behavior> newBehavior);
 
+    sf::Vector2u getPosition();
+
     std::string getType();
 
     sf::Vector2i getVelocity();
 
     int getOptionalSetting(std::string settingName);
 
-    int getWeight();
+    float getWeight();
+
+    int getWeightCounterInt();
+
+    int incrementWeightCounter();
+
+    int decrementWeightCounter();
 
     sf::Color getColor();
 
     bool hasBehavior(std::string behaviorName);
+
+    bool canSmooth();
 private:
     CellManager* cellManager;
 
@@ -58,7 +66,10 @@ private:
     
     sf::Vector2i velocity;
 
-    int weight;
+    float weight;
+
+    // if weight has a decimal, this gets incremented to add more precision
+    float weightCounter;
 
     CellPreset myPreset;
 };

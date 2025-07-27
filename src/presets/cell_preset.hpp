@@ -11,9 +11,13 @@ struct CellPreset
 {
     CellPreset();
 
-    CellPreset(int weight, sf::Color color, std::vector<std::shared_ptr<Behavior>> behaviors);
+    CellPreset(float weight, bool canSmooth, sf::Color color, std::vector<std::shared_ptr<Behavior>> behaviors);
     
-    int weight;
+    float weight;
+
+    // Whether or not the grid can use moving cells to interpolate.
+    // This needs to be disabled for things like fire that move rapidly
+    bool canSmooth;
 
     sf::Color color;
     

@@ -23,10 +23,10 @@ public:
     std::string getName();
 
     int getSpecialAttribute();
-protected:
+private:
     std::string name;
 
-    // this would be like weight or flamability,
+    // this would be like flamability,
     // something that gets passed in the preset constructor
     int specialAttribute;
 };

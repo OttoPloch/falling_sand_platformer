@@ -3,6 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
+#include "grid_vertices.hpp"
+
 class Cell;
 class CellManager;
 class Being;
@@ -16,28 +18,12 @@ public:
 
     void create(unsigned int gridLength, unsigned int gridHeight, std::vector<std::shared_ptr<Being>>* beings, CellManager* cellManager);
 
-    void verticesInit();
-
-    void updateVertices();
-
-    void updateSpecificVertices(sf::Vector2u position);
-    
-    // this is for the movingCells vector
-    void updateMovingVertices();
-
-    void addMovingVertices(sf::Vector2u currentPos, sf::Vector2u targetPos, sf::Color color);
-
-    void snapToRealPos();
-
     // returns a pointer to the cell at the given position
     Cell* at(sf::Vector2u position);
 
-    // gets the size/height of the grid
-    unsigned int getSize();
+    unsigned int getLength();
 
-    // gets the width of the grid at a specific row,
-    // though I doubt a non-rectangular grid will happen
-    unsigned int getSizeOfRow(unsigned int rowIndex);
+    unsigned int getHeight();
 
     // gets the current amount of cells on the grid
     unsigned int getCellCount();
@@ -66,25 +52,23 @@ public:
     void swap(sf::Vector2u gridPos1, sf::Vector2u gridPos2);
 
     // iterates through the grid and updates cells
-    void updateCells(sf::Vector2u creatorPos);
+    void tick(sf::Vector2u creatorPos);
 
     // updates a single cell, returns whether or not a change occured
-    bool updateACell(sf::Vector2u position);
+    bool tickCell(sf::Vector2u position);
+
+    void update();
 
     // this actually draws the grid, believe it or not
     void draw(sf::RenderWindow& window);
 private:
+    int gridLength, gridHeight;
+
     std::vector<std::vector<std::shared_ptr<Cell>>> theGrid;
 
     std::vector<std::shared_ptr<Being>>* beings;
 
     CellManager* cellManager;
 
-    sf::VertexArray vertexArray;
-
-    // example:
-    // [0]: ( vertices of a cell, vector of target GRID positions )
-    std::vector<std::pair<std::array<sf::Vertex, 6>, std::vector<sf::Vector2u>>> movingCells;
-
-    sf::RenderStates states;
+    GridVertices gridVertices;
 };

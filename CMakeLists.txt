@@ -37,6 +37,7 @@ src/game_classes/being.cpp
 src/managers/resource_manager.cpp
 src/tools/get_points.cpp
 src/tools/collision.cpp
+src/game_classes/grid_vertices.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

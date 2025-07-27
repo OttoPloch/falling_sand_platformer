@@ -21,14 +21,13 @@ void Cell::create(CellManager* cellManager, Grid* grid, std::vector<std::shared_
     velocity = {0, 0};
 
     weight = cellManager->presets[type].weight;
+    weightCounter = 0;
 
     myPreset = cellManager->presets[type];
 }
 
-std::pair<sf::Vector2u, bool> Cell::tick(bool log)
+std::pair<Cell*, bool> Cell::tick(bool log)
 {
-    sf::Vector2u lastPos = position;
-
     bool hasChanged = false;
 
     if (myPreset.behaviors.size() > 0)
@@ -73,17 +72,7 @@ std::pair<sf::Vector2u, bool> Cell::tick(bool log)
         }
     }
 
-    if (lastPos != position)
-    {
-        return std::pair(position, hasChanged);
-    }
-
-    return std::pair(sf::Vector2u({0, 0}), hasChanged);
-}
-
-void Cell::update()
-{
-
+    return std::pair(this, hasChanged);
 }
 
 void Cell::changeVelocity(sf::Vector2i amount) { velocity += amount; }
@@ -105,6 +94,8 @@ void Cell::addStartBehavior(std::shared_ptr<Behavior> newBehavior) { myPreset.be
 
 void Cell::addEndBehavior(std::shared_ptr<Behavior> newBehavior) { myPreset.behaviors.push_back(newBehavior); }
 
+sf::Vector2u Cell::getPosition() { return position; }
+
 std::string Cell::getType() { return type; }
 
 sf::Vector2i Cell::getVelocity() { return velocity; }
@@ -119,7 +110,29 @@ int Cell::getOptionalSetting(std::string settingName)
     return -2;
 }
 
-int Cell::getWeight() { return weight; }
+float Cell::getWeight() { return weight; }
+
+int Cell::getWeightCounterInt() { return static_cast<int>(weightCounter); }
+
+int Cell::incrementWeightCounter()
+{
+    weightCounter += weight;
+
+    return weight;
+}
+
+int Cell::decrementWeightCounter()
+{
+    int prevCounter = static_cast<int>(weightCounter);
+
+    int direction;
+
+    (weight > 0.f) ? direction = 1 : (weight < 0.f) ? direction = -1 : direction = 0;
+
+    weightCounter -= 1 * direction;
+
+    return prevCounter;
+}
 
 sf::Color Cell::getColor() { return myPreset.color; }
 
@@ -135,3 +148,5 @@ bool Cell::hasBehavior(std::string behaviorName)
 
     return false;
 }
+
+bool Cell::canSmooth() { return myPreset.canSmooth; }

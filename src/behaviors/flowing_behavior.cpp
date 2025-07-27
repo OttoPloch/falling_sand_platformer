@@ -10,7 +10,7 @@ bool FlowingBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 {
     if (cellManager->grid->canMoveDistance(gridPos, {-1, 0}) && cellManager->grid->canMoveDistance(gridPos, {1, 0}))
     {
-        if (getRandomBalancedInt(999) + 1 <= cellManager->grid->at(gridPos)->getOptionalSetting("flow"))
+        if (getRandomInt(999) + 1 <= cellManager->grid->at(gridPos)->getOptionalSetting("flow"))
         {
             if (getRandomInt(1) == 0)
             {
