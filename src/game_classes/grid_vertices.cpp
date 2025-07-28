@@ -243,7 +243,7 @@ void GridVertices::addMovingCell(unsigned int x, unsigned int y, sf::Vector2u ta
     // This cell is not currently being represented by a moving cell
 
     // performance and visuals (right now it really helps with large bodies of water)
-    if (getDistance(sf::Vector2i(abs(x - targetPos.x), abs(y - targetPos.y))) <= 1.42f) return;
+    if (getDistance(sf::Vector2i(abs(static_cast<float>(x - targetPos.x)), abs(static_cast<float>(y - targetPos.y)))) <= 1.42f) return;
 
     std::array<sf::Vertex, 6> newVertices;
     
