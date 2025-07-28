@@ -35,7 +35,7 @@ void Game::start()
 
     isPaused = false;
 
-    world.create(&window);
+    world.create(&window, &states);
 
     creatorPos = {static_cast<unsigned int>(world.getGridSize().x / 2), 1};
 
@@ -73,7 +73,7 @@ void Game::run()
             }
         }
 
-        update();
+        update(dt);
 
         draw();
     }
@@ -185,12 +185,12 @@ void Game::tick()
 {
     world.tick(creatorPos);
 
-    std::cout << "cells: " << world.getCellCount() << '\n';
+    // std::cout << "cells: " << world.getCellCount() << '\n';
 }
 
-void Game::update()
+void Game::update(float dt)
 {
-    world.update(creatorPos);
+    world.update(creatorPos, dt);
 }
 
 void Game::draw()
@@ -205,7 +205,7 @@ void Game::draw()
     creatorOutline.setOutlineColor(sf::Color::Green);
     creatorOutline.setOutlineThickness(2.f);
     creatorOutline.setPosition({creatorPos.x * world.getCellSize(), creatorPos.y * world.getCellSize()});
-    window.draw(creatorOutline);
+    window.draw(creatorOutline, states);
 
     window.display();
 }

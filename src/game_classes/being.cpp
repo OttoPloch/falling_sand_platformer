@@ -76,7 +76,7 @@ void Being::update()
     sprite->setRotation(sf::degrees(rotation));
 }
 
-void Being::draw()
+void Being::draw(sf::RenderStates& states)
 {
-    window->draw(*sprite);
+    window->draw(*sprite, states);
 }

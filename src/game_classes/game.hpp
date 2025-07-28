@@ -19,13 +19,15 @@ public:
 
     void tick();
 
-    void update();
+    void update(float dt);
 
     void draw();
 
     bool getPaused();
 private:
     sf::RenderWindow window;
+
+    sf::RenderStates states;
 
     sf::Clock dtClock;
 

@@ -103,15 +103,9 @@ bool checkCellsInLine(CellManager* cellManager, sf::Vector2u from, sf::Vector2i 
                 }
 
                 // Being collision
-                if (cellManager->beings->size() > 0)
+                if (pointAllBeingsCollide(gridToWorldCoords(cellManager, currentCoord, true), cellManager->beings, cellManager->beingRectInflationSize))
                 {
-                    for (int i = 0; i < cellManager->beings->size(); i++)
-                    {
-                        if (pointBeingCollide(gridToWorldCoords(cellManager, currentCoord, true), (*cellManager->beings)[i].get(), cellManager->beingRectInflationSize))
-                        {
-                            return true;
-                        }
-                    }
+                    return true;
                 }
             }
         }
@@ -132,6 +126,12 @@ bool pointRectCollide(sf::Vector2f point, sf::Vector2f center, sf::Vector2f size
 
 bool pointBeingCollide(sf::Vector2f point, Being* being, sf::Vector2f inflateSize)
 {
+    // simple optimization, I would assume this helps
+    if (getDistance(point, being->getPosition()) > std::max(being->getSize().x, being->getSize().y) * sqrt(2))
+    {
+        return false;
+    }
+
     sf::Vector2f center(being->getPosition());
     sf::Vector2f size(being->getSize());
     float rotation(being->getRotation());
@@ -143,6 +143,22 @@ bool pointBeingCollide(sf::Vector2f point, Being* being, sf::Vector2f inflateSiz
     }
 
     return pointRectCollide(point, center, size, rotation);
+}
+
+bool pointAllBeingsCollide(sf::Vector2f point, std::vector<std::shared_ptr<Being>>* beings, sf::Vector2f inflateSize)
+{
+    if (beings->size() > 0)
+    {
+        for (int i = 0; i < beings->size(); i++)
+        {
+            if (pointBeingCollide(point, (*beings)[i].get(), inflateSize))
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 sf::Vector2i maxMovableDistance(CellManager* cellManager, sf::Vector2u from, sf::Vector2i distance, bool log)

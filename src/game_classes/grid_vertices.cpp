@@ -100,11 +100,9 @@ void GridVertices::updateStatic()
             updateSquare(x, y);
         }
     }
-    
-    std::cout << "updated vertices\n";
 }
 
-void GridVertices::updateMoving()
+void GridVertices::updateMoving(float dt)
 {
     if (movingCells.size() > 0)
     {
@@ -135,8 +133,9 @@ void GridVertices::updateMoving()
             {
                 for (int j = 0; j < 6; j++)
                 {
-                    (*vertices)[j].position.x += xDiff / 2.f;
-                    (*vertices)[j].position.y += yDiff / 2.f;
+                    // replace constants with variable
+                    (*vertices)[j].position.x += 20 * xDiff * dt;
+                    (*vertices)[j].position.y += 20 * yDiff * dt;
 
                     (*vertices)[j].color = cell->getColor();
                 }
@@ -165,18 +164,9 @@ void GridVertices::updateMoving()
     }
 }
 
-void GridVertices::draw(sf::RenderWindow& window)
+void GridVertices::draw(sf::RenderWindow& window, sf::RenderStates& states)
 {
-    if (cellManager->cellOffset != sf::Vector2f({0, 0}))
-    {
-        sf::Transform newTransform;
-
-        newTransform.translate(cellManager->cellOffset);
-
-        states.transform = newTransform;
-    }
-
-    window.draw(&vertices[0], vertices.getVertexCount(), vertices.getPrimitiveType());
+    window.draw(&vertices[0], vertices.getVertexCount(), vertices.getPrimitiveType(), states);
 
     // TODO: try to avoid a draw call for each moving cell
     for (int i = 0; i < movingCells.size(); i++)
@@ -197,17 +187,26 @@ void GridVertices::addMovingCell(unsigned int x, unsigned int y, sf::Vector2u ta
     if (movingCells.size() > 0)
     {
         for (int i = 0; i < movingCells.size(); i++)
-        {
+        {   
+            // If this moving cell does not represent that same one as the argument
+            if (!(std::get<2>(movingCells[i]) == cell))
+            {
+                continue;
+            }
+
             // if the last target pos of the moving cell is equal to the start of this one
-            if (std::get<1>(movingCells[i]).back() == sf::Vector2u(x, y) && std::get<2>(movingCells[i]) == cell)
+            if (std::get<1>(movingCells[i]).back() == sf::Vector2u(x, y))
             {
                 std::array<sf::Vertex, 6>* vertices = &std::get<0>(movingCells[i]);
                 std::vector<sf::Vector2u>* targetPositions = &std::get<1>(movingCells[i]);
-                Cell* cell = std::get<2>(movingCells[i]);
+                Cell* currentCell = std::get<2>(movingCells[i]);
 
-                for (int j = 0; j < 6; j++)
+                if ((*vertices)[0].color != currentCell->getColor())
                 {
-                    (*vertices)[j].color = cell->getColor();
+                    for (int j = 0; j < 6; j++)
+                    {
+                        (*vertices)[j].color = currentCell->getColor();
+                    }
                 }
 
                 sf::Vector2u targetBeforeLast;
@@ -219,8 +218,8 @@ void GridVertices::addMovingCell(unsigned int x, unsigned int y, sf::Vector2u ta
                 }
                 else
                 {
-                    // if the moving cell has only one target, we use it to check for a straight line
-                    targetBeforeLast = worldToGridCoords(cellManager, (*vertices)[0].position);
+                    // if the moving cell has only one target, we resort to that one
+                    targetBeforeLast =(*targetPositions)[targetPositions->size() - 1];
                 }
 
                 // on a vertical, horizontal, or diagonal line, can combine target positions
@@ -233,7 +232,7 @@ void GridVertices::addMovingCell(unsigned int x, unsigned int y, sf::Vector2u ta
                     return;
                 }
 
-                // not a vertical or horizontal line, adding new target position
+                // otherwise, add a new target;
                 targetPositions->emplace_back(targetPos);
 
                 return;
@@ -242,6 +241,9 @@ void GridVertices::addMovingCell(unsigned int x, unsigned int y, sf::Vector2u ta
     }
 
     // This cell is not currently being represented by a moving cell
+
+    // performance and visuals (right now it really helps with large bodies of water)
+    if (getDistance(sf::Vector2i(abs(x - targetPos.x), abs(y - targetPos.y))) <= 1.42f) return;
 
     std::array<sf::Vertex, 6> newVertices;
     

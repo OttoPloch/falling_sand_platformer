@@ -1,5 +1,8 @@
 #include "sink_behavior.hpp"
 
+#include "../tools/collision.hpp"
+#include "../tools/get_points.hpp"
+
 SinkBehavior::SinkBehavior() : Behavior("sink", -1) {}
 
 bool SinkBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
@@ -33,8 +36,6 @@ bool SinkBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
             return false;
         }
 
-        Cell* bottomNeighbor = cellManager->grid->at({gridPos.x, gridPos.y + sinkDirection});
-
         // we know that the bottom neighbor
         // is not nullptr if this comes after
         // the falling behavior
@@ -42,13 +43,24 @@ bool SinkBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
         // ... you fool, if only you knew the hours
         // of time you would spend debugging to find
         // the reference to a nullptr. Never again (7/23/25)
-        if (bottomNeighbor != nullptr && !bottomNeighbor->hasBehavior("static") && bottomNeighbor->getWeight() < weight)
+        if (cell->hasBehavior("fall"))
         {
-            // bottom
+            Cell* bottomNeighbor = cellManager->grid->at({gridPos.x, gridPos.y + sinkDirection});
 
-            cellManager->grid->swap(gridPos, {gridPos.x, gridPos.y + sinkDirection});
+            if (bottomNeighbor != nullptr && !bottomNeighbor->hasBehavior("static") && bottomNeighbor->getWeight() < weight)
+            {
+                if (!pointAllBeingsCollide(gridToWorldCoords(cellManager, sf::Vector2u(gridPos.x, gridPos.y + sinkDirection), true), cellManager->beings, cellManager->beingRectInflationSize))
+                {
+                    // bottom
+
+                    cellManager->grid->swap(gridPos, {gridPos.x, gridPos.y + sinkDirection});
+    
+                    return true;
+                }
+            }
         }
-        else if (cell->hasBehavior("settle"))
+
+        if (cell->hasBehavior("settle"))
         {
             // if this cell settles
 
@@ -57,37 +69,52 @@ bool SinkBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 
             if (bottomLeftNeighbor != nullptr && bottomRightNeighbor != nullptr && !bottomLeftNeighbor->hasBehavior("static") && !bottomRightNeighbor->hasBehavior("static") && bottomLeftNeighbor->getWeight() < weight && bottomRightNeighbor->getWeight() < weight)
             {
-                // if both bottom left and bottom right are valid
-
-                if (getRandomInt(1) == 0)
+                if (!pointAllBeingsCollide(gridToWorldCoords(cellManager, sf::Vector2u(gridPos.x - 1, gridPos.y + sinkDirection), true), cellManager->beings, cellManager->beingRectInflationSize))
                 {
+                    if (!pointAllBeingsCollide(gridToWorldCoords(cellManager, sf::Vector2u(gridPos.x + 1, gridPos.y + sinkDirection), true), cellManager->beings, cellManager->beingRectInflationSize))
+                    {
+                        // if both bottom left and bottom right are valid
+                        
+                        if (getRandomInt(1) == 0)
+                        {
+                            cellManager->grid->swap(gridPos, {gridPos.x - 1, gridPos.y + sinkDirection});
+                        }
+                        else
+                        {
+                            cellManager->grid->swap(gridPos, {gridPos.x + 1, gridPos.y + sinkDirection});
+                        }
+
+                        return true;
+                    }
+                }
+            }
+            
+            if (bottomLeftNeighbor != nullptr && !bottomLeftNeighbor->hasBehavior("static") && bottomLeftNeighbor->getWeight() < weight)
+            {
+                if (!pointAllBeingsCollide(gridToWorldCoords(cellManager, sf::Vector2u(gridPos.x - 1, gridPos.y + sinkDirection), true), cellManager->beings, cellManager->beingRectInflationSize))
+                {
+                    // bottom left
+    
                     cellManager->grid->swap(gridPos, {gridPos.x - 1, gridPos.y + sinkDirection});
+    
+                    return true;
                 }
-                else
+            }
+            
+            if (bottomRightNeighbor != nullptr && !bottomRightNeighbor->hasBehavior("static") && bottomRightNeighbor->getWeight() < weight)
+            {
+                if (!pointAllBeingsCollide(gridToWorldCoords(cellManager, sf::Vector2u(gridPos.x + 1, gridPos.y + sinkDirection), true), cellManager->beings, cellManager->beingRectInflationSize))
                 {
+                    // bottom right
+    
                     cellManager->grid->swap(gridPos, {gridPos.x + 1, gridPos.y + sinkDirection});
+    
+                    return true;
                 }
-
-                return true;
-            }
-            else if (bottomLeftNeighbor != nullptr && !bottomLeftNeighbor->hasBehavior("static") && bottomLeftNeighbor->getWeight() < weight)
-            {
-                // bottom left
-
-                cellManager->grid->swap(gridPos, {gridPos.x - 1, gridPos.y + sinkDirection});
-
-                return true;
-            }
-            else if (bottomRightNeighbor != nullptr && !bottomRightNeighbor->hasBehavior("static") && bottomRightNeighbor->getWeight() < weight)
-            {
-                // bottom right
-
-                cellManager->grid->swap(gridPos, {gridPos.x + 1, gridPos.y + sinkDirection});
-
-                return true;
             }
         }
-        else if (cell->hasBehavior("flow"))
+        
+        if (cell->hasBehavior("flow"))
         {
             // if this cell flows
 
@@ -96,34 +123,46 @@ bool SinkBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 
             if (leftNeighbor != nullptr && rightNeighbor != nullptr && !leftNeighbor->hasBehavior("static") && !rightNeighbor->hasBehavior("static") && leftNeighbor->getWeight() < weight && rightNeighbor->getWeight() < weight)
             {
-                // if both left and right are valid
-
-                if (getRandomInt(1) == 0)
+                if (!pointAllBeingsCollide(gridToWorldCoords(cellManager, sf::Vector2u(gridPos.x - 1, gridPos.y), true), cellManager->beings, cellManager->beingRectInflationSize))
                 {
-                    cellManager->grid->swap(gridPos, {gridPos.x - 1, gridPos.y});
+                    if (!pointAllBeingsCollide(gridToWorldCoords(cellManager, sf::Vector2u(gridPos.x + 1, gridPos.y), true), cellManager->beings, cellManager->beingRectInflationSize))
+                    {
+                        // if both left and right are valid
+        
+                        if (getRandomInt(1) == 0)
+                        {
+                            cellManager->grid->swap(gridPos, {gridPos.x - 1, gridPos.y});
+                        }
+                        else
+                        {
+                            cellManager->grid->swap(gridPos, {gridPos.x + 1, gridPos.y});
+                        }
+        
+                        return true;
+                    }
                 }
-                else
-                {
-                    cellManager->grid->swap(gridPos, {gridPos.x + 1, gridPos.y});
-                }
-
-                return true;
             }
             else if (leftNeighbor != nullptr && !leftNeighbor->hasBehavior("static") && leftNeighbor->getWeight() < weight)
             {
-                // left
-
-                cellManager->grid->swap(gridPos, {gridPos.x - 1, gridPos.y});
-
-                return true;
+                if (!pointAllBeingsCollide(gridToWorldCoords(cellManager, sf::Vector2u(gridPos.x - 1, gridPos.y), true), cellManager->beings, cellManager->beingRectInflationSize))
+                {
+                    // left
+    
+                    cellManager->grid->swap(gridPos, {gridPos.x - 1, gridPos.y});
+    
+                    return true;
+                }
             }
             else if (rightNeighbor != nullptr && !rightNeighbor->hasBehavior("static") && rightNeighbor->getWeight() < weight)
             {
-                // right
-
-                cellManager->grid->swap(gridPos, {gridPos.x + 1, gridPos.y});
-
-                return true;
+                if (!pointAllBeingsCollide(gridToWorldCoords(cellManager, sf::Vector2u(gridPos.x + 1, gridPos.y), true), cellManager->beings, cellManager->beingRectInflationSize))
+                {
+                    // right
+    
+                    cellManager->grid->swap(gridPos, {gridPos.x + 1, gridPos.y});
+    
+                    return true;
+                }
             }
         }
     }

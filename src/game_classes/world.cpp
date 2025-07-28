@@ -15,7 +15,7 @@ const float CELLOFFSETY = 0;
 
 World::World() {}
 
-void World::create(sf::RenderWindow* window)
+void World::create(sf::RenderWindow* window, sf::RenderStates* states)
 {
     cellManager = CellManager(CELLSIZE, {CELLOFFSETX, CELLOFFSETY}, &grid, &beings);
 
@@ -24,9 +24,20 @@ void World::create(sf::RenderWindow* window)
     resourceManager.load();
 
     beings.emplace_back(std::make_shared<Being>(sf::Vector2f(200, 300), sf::Vector2f(100, 100), 0, resourceManager.getTexture("moon"), window, &grid));
-    beings.emplace_back(std::make_shared<Being>(sf::Vector2f(800, 800), sf::Vector2f(500, 500), -30, resourceManager.getTexture("sun"), window, &grid));
+    beings.emplace_back(std::make_shared<Being>(sf::Vector2f(800, 800), sf::Vector2f(50, 50), -30, resourceManager.getTexture("sun"), window, &grid));
 
     this->window = window;
+
+    this->states = states;
+
+    if (CELLOFFSETX != 0 || CELLOFFSETY != 0)
+    {
+        sf::Transform newTransform;
+
+        newTransform.translate({CELLOFFSETX, CELLOFFSETY});
+
+        states->transform = newTransform;
+    }
 }
 
 void World::tick(sf::Vector2u creatorPos)
@@ -45,7 +56,7 @@ void World::tick(sf::Vector2u creatorPos)
     }
 }
 
-void World::update(sf::Vector2u creatorPos)
+void World::update(sf::Vector2u creatorPos, float dt)
 {
     if (beings.size() > 0)
     {
@@ -55,7 +66,7 @@ void World::update(sf::Vector2u creatorPos)
         }
     }
 
-    grid.update();
+    grid.update(dt);
 
     // creates a sand cell; temporary for testing
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
@@ -98,15 +109,15 @@ void World::update(sf::Vector2u creatorPos)
 
 void World::draw()
 {
-    grid.draw(*window);
+    grid.draw(*window, *states);
 
     if (beings.size() > 0)
     {
         for (int i = 0; i < beings.size(); i++)
         {
-            beings[i]->draw();
+            beings[i]->draw(*states);
 
-            // if (i != -1)
+            // if (i == 1)
             // {
             //     std::vector<sf::Vector2f> points = getRectAlignedPoints(&cellManager, beings[i]->getPosition(), beings[i]->getSize(), beings[i]->getRotation(), false);
                 

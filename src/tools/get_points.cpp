@@ -114,8 +114,8 @@ sf::Vector2f gridToWorldCoords(CellManager* cellManager, sf::Vector2i gridCoord,
 {
     sf::Vector2f point;
 
-    point.x = cellManager->cellOffset.x + gridCoord.x * cellManager->cellSize;
-    point.y = cellManager->cellOffset.y + gridCoord.y * cellManager->cellSize;
+    point.x = gridCoord.x * cellManager->cellSize;
+    point.y = gridCoord.y * cellManager->cellSize;
 
     if (convertCenter)
     {
@@ -130,8 +130,8 @@ sf::Vector2f gridToWorldCoords(CellManager* cellManager, sf::Vector2u gridCoord,
 {
     sf::Vector2f point;
 
-    point.x = cellManager->cellOffset.x + gridCoord.x * cellManager->cellSize;
-    point.y = cellManager->cellOffset.y + gridCoord.y * cellManager->cellSize;
+    point.x = gridCoord.x * cellManager->cellSize;
+    point.y = gridCoord.y * cellManager->cellSize;
 
     if (convertCenter)
     {
@@ -146,8 +146,8 @@ sf::Vector2u worldToGridCoords(CellManager* cellManager, sf::Vector2f worldCoord
 {
     sf::Vector2u point;
 
-    point.x = (worldCoord.x - cellManager->cellOffset.x) / cellManager->cellSize;
-    point.y = (worldCoord.y - cellManager->cellOffset.y) / cellManager->cellSize;
+    point.x = worldCoord.x / cellManager->cellSize;
+    point.y = worldCoord.y / cellManager->cellSize;
 
     return point;
 }
@@ -160,6 +160,16 @@ float getDistance(sf::Vector2i vector)
 float getDistance(sf::Vector2f vector)
 {
     return sqrt(pow(vector.x, 2) + pow(vector.y, 2));
+}
+
+float getDistance(sf::Vector2f vector1, sf::Vector2f vector2)
+{
+    return sqrt(pow(vector2.x - vector1.x, 2) + pow(vector2.y - vector1.y, 2));
+}
+
+float getDistance(sf::Vector2i vector1, sf::Vector2i vector2)
+{
+    return sqrt(pow(vector2.x - vector1.x, 2) + pow(vector2.y - vector1.y, 2));
 }
 
 float getRotation(sf::Vector2i vector)

@@ -120,13 +120,10 @@ bool Grid::canMoveDistance(sf::Vector2u from, sf::Vector2i distance)
 void Grid::createCell(std::string type, sf::Vector2u position)
 {
     // make sure this position does not collide with a being
-    for (int i = 0; i < beings->size(); i++)
+    if (pointAllBeingsCollide(gridToWorldCoords(cellManager, position, true), beings, cellManager->beingRectInflationSize))
     {
-        if (pointBeingCollide(gridToWorldCoords(cellManager, position, true), (*beings)[i].get(), cellManager->beingRectInflationSize))
-        {
-            return;
-        }   
-    }   
+        return;
+    }
 
     // make sure all other necessary checks have been done before calling this function
     if (theGrid[position.y][position.x] == nullptr)
@@ -144,11 +141,10 @@ void Grid::removeCell(sf::Vector2u gridPos)
 
 void Grid::moveCell(sf::Vector2u gridPos, sf::Vector2i distance)
 {
-    if (gridPos != sf::Vector2u(0, 0))
+    if (distance != sf::Vector2i(0, 0))
     {
         gridVertices.addMovingCell(gridPos.x, gridPos.y, sf::Vector2u({gridPos.x + distance.x, gridPos.y + distance.y}), theGrid[gridPos.y][gridPos.x].get());
 
-        // make sure all other necessary checks have been done before calling this function
         theGrid[gridPos.y][gridPos.x]->changePos(distance);
         theGrid[gridPos.y + distance.y][gridPos.x + distance.x] = std::move(theGrid[gridPos.y][gridPos.x]);
 
@@ -289,12 +285,12 @@ bool Grid::tickCell(sf::Vector2u position)
     return false;
 }
 
-void Grid::update()
+void Grid::update(float dt)
 {
-    gridVertices.updateMoving();
+    gridVertices.updateMoving(dt);
 }
 
-void Grid::draw(sf::RenderWindow& window)
+void Grid::draw(sf::RenderWindow& window, sf::RenderStates& states)
 {
-    gridVertices.draw(window);
+    gridVertices.draw(window, states);
 }

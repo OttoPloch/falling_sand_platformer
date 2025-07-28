@@ -57,10 +57,10 @@ public:
     // updates a single cell, returns whether or not a change occured
     bool tickCell(sf::Vector2u position);
 
-    void update();
+    void update(float dt);
 
     // this actually draws the grid, believe it or not
-    void draw(sf::RenderWindow& window);
+    void draw(sf::RenderWindow& window, sf::RenderStates& states);
 private:
     int gridLength, gridHeight;
 

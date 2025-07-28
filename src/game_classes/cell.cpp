@@ -125,11 +125,7 @@ int Cell::decrementWeightCounter()
 {
     int prevCounter = static_cast<int>(weightCounter);
 
-    int direction;
-
-    (weight > 0.f) ? direction = 1 : (weight < 0.f) ? direction = -1 : direction = 0;
-
-    weightCounter -= 1 * direction;
+    weightCounter -= static_cast<int>(weightCounter);
 
     return prevCounter;
 }

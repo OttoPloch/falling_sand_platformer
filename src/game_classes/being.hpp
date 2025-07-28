@@ -30,7 +30,7 @@ public:
 
     void update();
 
-    void draw();
+    void draw(sf::RenderStates& states);
 private:
     sf::Vector2f position;
 

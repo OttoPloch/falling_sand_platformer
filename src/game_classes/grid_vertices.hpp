@@ -19,9 +19,9 @@ public:
 
     void updateStatic();
 
-    void updateMoving();
+    void updateMoving(float dt);
 
-    void draw(sf::RenderWindow& window);
+    void draw(sf::RenderWindow& window, sf::RenderStates& states);
 
     void addMovingCell(unsigned int x, unsigned int y, sf::Vector2u targetPos, Cell* cell);
 private:
@@ -34,8 +34,6 @@ private:
     Grid* grid;
 
     sf::VertexArray vertices;
-
-    sf::RenderStates states;
 
     // vector of tuples -> (6 vertices for a square, vector of target GRID positions, ptr of a Cell)
     std::vector<std::tuple<std::array<sf::Vertex, 6>, std::vector<sf::Vector2u>, Cell*>> movingCells;

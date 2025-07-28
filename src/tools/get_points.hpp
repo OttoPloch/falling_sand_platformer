@@ -31,5 +31,9 @@ float getDistance(sf::Vector2i vector);
 
 float getDistance(sf::Vector2f vector);
 
+float getDistance(sf::Vector2f vector1, sf::Vector2f vector2);
+
+float getDistance(sf::Vector2i vector1, sf::Vector2i vector2);
+
 // Up is considered 0, and it continues clockwise
 float getRotation(sf::Vector2i vector);

@@ -13,11 +13,11 @@ class World
 public:
     World();
 
-    void create(sf::RenderWindow* window);
+    void create(sf::RenderWindow* window, sf::RenderStates* states);
 
     void tick(sf::Vector2u creatorPos);
     
-    void update(sf::Vector2u creatorPos);
+    void update(sf::Vector2u creatorPos, float dt);
 
     void draw();
 
@@ -32,6 +32,8 @@ public:
     void deleteACell(sf::Vector2u position);
 private:
     sf::RenderWindow* window;
+    
+    sf::RenderStates* states;
     
     CellManager cellManager;
 
