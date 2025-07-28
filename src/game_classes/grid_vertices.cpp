@@ -137,6 +137,8 @@ void GridVertices::updateMoving()
                 {
                     (*vertices)[j].position.x += xDiff / 2.f;
                     (*vertices)[j].position.y += yDiff / 2.f;
+
+                    (*vertices)[j].color = cell->getColor();
                 }
             }
         }
@@ -197,7 +199,7 @@ void GridVertices::addMovingCell(unsigned int x, unsigned int y, sf::Vector2u ta
         for (int i = 0; i < movingCells.size(); i++)
         {
             // if the last target pos of the moving cell is equal to the start of this one
-            if (std::get<1>(movingCells[i]).back() == sf::Vector2u(x, y))
+            if (std::get<1>(movingCells[i]).back() == sf::Vector2u(x, y) && std::get<2>(movingCells[i]) == cell)
             {
                 std::array<sf::Vertex, 6>* vertices = &std::get<0>(movingCells[i]);
                 std::vector<sf::Vector2u>* targetPositions = &std::get<1>(movingCells[i]);
@@ -221,8 +223,10 @@ void GridVertices::addMovingCell(unsigned int x, unsigned int y, sf::Vector2u ta
                     targetBeforeLast = worldToGridCoords(cellManager, (*vertices)[0].position);
                 }
 
-                // on a vertical or horizontal line, can combine target positions
-                if (targetBeforeLast.x == x || targetBeforeLast.y == y)
+                // on a vertical, horizontal, or diagonal line, can combine target positions
+                // as we add more cell types and more ways to move (potentially), this may need to be expanded
+                // i have noticed that having a moving cell with a long list of targets is ALWAYS bad, because it causes a lot of delay
+                if (targetBeforeLast.x == x || targetBeforeLast.y == y || (static_cast<int>(targetBeforeLast.x) - static_cast<int>(x) == static_cast<int>(targetBeforeLast.y) - static_cast<int>(y)))
                 {
                     targetPositions->back() = targetPos;
 
@@ -236,7 +240,6 @@ void GridVertices::addMovingCell(unsigned int x, unsigned int y, sf::Vector2u ta
             }
         }
     }
-
 
     // This cell is not currently being represented by a moving cell
 

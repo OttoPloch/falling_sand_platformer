@@ -1,10 +1,5 @@
 #include "game.hpp"
 
-
-#include <algorithm>
-
-
-
 const WindowPreset WINDOWPRESET1(sf::VideoMode({800, 600}), "game", false, false);
 const WindowPreset WINDOWPRESET2(sf::VideoMode::getDesktopMode(), "game", false, false);
 const WindowPreset WINDOWPRESET3(sf::VideoMode::getDesktopMode(), "game", true, false);

@@ -14,7 +14,7 @@
 // Of note:
 //     - To make a cell preset, follow the pattern below.
 //
-//          const CellPreset PRESETNAME(weight, color, { vector of behaviors as shared ptrs });
+//          const CellPreset PRESETNAME(weight, canSmooth, color, { vector of behaviors as shared ptrs });
 //
 //     - Some behaviors, like CoolingBehavior or FlammableBehavior, have no real code in them and always return false.
 //       These behaviors still can have settings tied to them or provide information to other behaviors.
@@ -25,6 +25,8 @@
 //     - If a cell is heavier than another cell, but does not have SinkBehavior, it will not sink
 //     - The FlowingBehavior optionalSetting is the chance that the cell will flow if it can flow both ways, if it can only go one side it will
 //     - Behaviors that use their optionalSetting as a chance use x/1000, where x is the optionalSetting (1 is least likely, 1000 is most, 0 is never or leave blank)
+//     - canSmooth determines if the grid will use interpolation to smooth the movement of the cell, this can cause a delay if the cell is moving very rapidly, so
+//       it is best to disable it for things like fire
 
 const CellPreset SANDPRESET(1, true, sf::Color(252, 191, 98), {std::make_shared<FallingBehavior>(), std::make_shared<SinkBehavior>(), std::make_shared<SettlingBehavior>()});
 const CellPreset WATERPRESET(.5f, true, sf::Color(19, 94, 186), {std::make_shared<FallingBehavior>(), std::make_shared<SinkBehavior>(), std::make_shared<FlowingBehavior>(1000), std::make_shared<CoolingBehavior>()});
