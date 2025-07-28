@@ -17,6 +17,8 @@ const WindowPreset gridSizedWindowPreset(sf::VideoMode({1000, 1000}), "game", fa
 // DONE: Interpolate updating being sprites and drawing cells (might need to actually properly draw cells for this)
 // DONE: Try to fix the "flickering" issue with cells like water that always move, especially when iterating while paused. Could be as simple as them moving too fast
 
+// TODO: soil, seeds and stems (for the "garden" level? was thinking about how to make this game)
+// TODO: Push Behavior (could help with fixing being/cell interaction)
 // TODO: BeingManager? This would help for tracking constants like gravity for \/\/\/
 // TODO: Being Gravity
 // TODO: Struct for Being Settings (disableGravity, disableCollision, etc)
