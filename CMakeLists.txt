@@ -38,6 +38,9 @@ src/managers/resource_manager.cpp
 src/tools/get_points.cpp
 src/tools/collision.cpp
 src/game_classes/grid_vertices.cpp
+src/behaviors/planted_behavior.cpp
+src/behaviors/seed_behavior.cpp
+src/behaviors/grow_behavior.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

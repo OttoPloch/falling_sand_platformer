@@ -8,6 +8,7 @@ bool FlamingBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 {
     std::vector<sf::Vector2i> flammableNeighbors;
 
+    // if any neighbors are flammable, add to flammableNeighbors
     if (gridPos.x > 0 && gridPos.y > 0 && cellManager->grid->at({gridPos.x - 1, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x - 1, gridPos.y - 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({-1, -1}); }
     if (gridPos.y > 0 && cellManager->grid->at({gridPos.x, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x, gridPos.y - 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({0, -1}); }
     if (gridPos.x < cellManager->grid->getLength() - 1 && gridPos.y > 0 && cellManager->grid->at({gridPos.x + 1, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x + 1, gridPos.y - 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({1, -1}); }

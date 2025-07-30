@@ -12,7 +12,9 @@ CellPreset::CellPreset(float weight, bool canSmooth, sf::Color color, std::vecto
     optionalSettings = {
         {"flammable", -1},
         {"burning", -1},
-        {"flow", -1}
+        {"flow", -1},
+        {"seed", -1},
+        {"grow", -1}
     };
 
     for (auto i : optionalSettings)

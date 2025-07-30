@@ -18,6 +18,13 @@ const WindowPreset gridSizedWindowPreset(sf::VideoMode({1000, 1000}), "game", fa
 // DONE: Try to fix the "flickering" issue with cells like water that always move, especially when iterating while paused. Could be as simple as them moving too fast
 
 // TODO: soil, seeds and stems (for the "garden" level? was thinking about how to make this game)
+// To finish: 
+//   - add a plantID to each plant cell that is created when the stem cell grows and is the same for the entire plant.
+//   - when the stem cell that is the root of the plant gets unplanted, tell it's neighbors to check their neighbors for the same plantID, and if it is the same then change type to dead stem
+//   - splitting behavior that has a chance for a stem cell to grow in two places and they both can grow on their own, making branches
+//   - buds/flowers as a behavior that has a chance to end the branch and create a flower. Maybe plants should grow on their own without water so cool flowers could generate quickly and it would be like gambling >:) to see how big your flower is
+//   - certain flowers could be valuable so one method of getting a lot of money or whatever would be making a farm that grows a lot of plants to try and get valuable buds/flowers (for the garden level)
+
 // TODO: Push Behavior (could help with fixing being/cell interaction)
 // TODO: BeingManager? This would help for tracking constants like gravity for \/\/\/
 // TODO: Being Gravity

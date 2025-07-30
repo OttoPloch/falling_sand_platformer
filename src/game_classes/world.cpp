@@ -24,7 +24,7 @@ void World::create(sf::RenderWindow* window, sf::RenderStates* states)
     resourceManager.load();
 
     beings.emplace_back(std::make_shared<Being>(sf::Vector2f(200, 300), sf::Vector2f(100, 100), 0, resourceManager.getTexture("moon"), window, &grid));
-    beings.emplace_back(std::make_shared<Being>(sf::Vector2f(800, 800), sf::Vector2f(50, 50), -30, resourceManager.getTexture("sun"), window, &grid));
+    //beings.emplace_back(std::make_shared<Being>(sf::Vector2f(800, 800), sf::Vector2f(500, 500), -30, resourceManager.getTexture("sun"), window, &grid));
 
     this->window = window;
 
@@ -45,7 +45,7 @@ void World::tick(sf::Vector2u creatorPos)
     grid.tick(creatorPos);
     
     beings[0]->rotate(3);
-    beings[1]->move({0, 1});
+    //beings[1]->move({0, 1});
 
     if (beings.size() > 0)
     {
@@ -96,6 +96,24 @@ void World::update(sf::Vector2u creatorPos, float dt)
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::O))
     {
         makeACell("smoke", creatorPos);
+    }
+
+    // creates a soil cell; temporary for testing
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::L))
+    {
+        makeACell("soil", creatorPos);
+    }
+
+    // creates a seed cell; temporary for testing
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E))
+    {
+        makeACell("seed", creatorPos);
+    }
+
+    // creates a stem cell; temporary for testing
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::T))
+    {
+        makeACell("stem", creatorPos);
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q)) makeACell("temp", creatorPos);

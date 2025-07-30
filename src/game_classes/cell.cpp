@@ -23,6 +23,8 @@ void Cell::create(CellManager* cellManager, Grid* grid, std::vector<std::shared_
     weight = cellManager->presets[type].weight;
     weightCounter = 0;
 
+    waterLevel = 0;
+
     myPreset = cellManager->presets[type];
 }
 
@@ -36,12 +38,12 @@ std::pair<Cell*, bool> Cell::tick(bool log)
         {
             if (myPreset.behaviors[i]->update(cellManager, position))
             {
-                if (log) std::cout << myPreset.behaviors[i]->getName() << " was a success\n";
-
                 hasChanged = true;
-
+                
                 break;
             }
+
+            if (log) std::cout << myPreset.behaviors[i]->getName() << " failed\n";
         }
     }
 
@@ -87,12 +89,37 @@ void Cell::changeType(std::string newType)
 
     weight = cellManager->presets[type].weight;
 
+    waterLevel = 0;
+
     myPreset = cellManager->presets[type];
 }
 
 void Cell::addStartBehavior(std::shared_ptr<Behavior> newBehavior) { myPreset.behaviors.insert(myPreset.behaviors.begin(), newBehavior); }
 
 void Cell::addEndBehavior(std::shared_ptr<Behavior> newBehavior) { myPreset.behaviors.push_back(newBehavior); }
+
+int Cell::removeBehavior(std::string behaviorName)
+{
+    int returnCode = -1;
+
+    if (myPreset.behaviors.size() > 0)
+    {
+        for (int i = 0; i < myPreset.behaviors.size(); i++)
+        {
+            if (myPreset.behaviors[i]->getName() == behaviorName)
+            {
+                if (returnCode < 0)
+                {
+                    myPreset.behaviors.erase(myPreset.behaviors.begin() + i);
+                }
+
+                returnCode++;
+            }
+        }
+    }
+
+    return returnCode;
+}
 
 sf::Vector2u Cell::getPosition() { return position; }
 
@@ -129,6 +156,10 @@ int Cell::decrementWeightCounter()
 
     return prevCounter;
 }
+
+int Cell::getWaterLevel() { return waterLevel; }
+
+void Cell::addToWaterLevel(int amount) { waterLevel += amount; }
 
 sf::Color Cell::getColor() { return myPreset.color; }
 

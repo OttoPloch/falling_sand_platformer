@@ -10,6 +10,9 @@
 #include "../behaviors/static_behavior.hpp"
 #include "../behaviors/burning_behavior.hpp"
 #include "../behaviors/cooling_behavior.hpp"
+#include "../behaviors/planted_behavior.hpp"
+#include "../behaviors/seed_behavior.hpp"
+#include "../behaviors/grow_behavior.hpp"
 
 // Of note:
 //     - To make a cell preset, follow the pattern below.
@@ -31,8 +34,12 @@
 const CellPreset SANDPRESET(1, true, sf::Color(252, 191, 98), {std::make_shared<FallingBehavior>(), std::make_shared<SinkBehavior>(), std::make_shared<SettlingBehavior>()});
 const CellPreset WATERPRESET(.5f, true, sf::Color(19, 94, 186), {std::make_shared<FallingBehavior>(), std::make_shared<SinkBehavior>(), std::make_shared<FlowingBehavior>(1000), std::make_shared<CoolingBehavior>()});
 const CellPreset FIREPRESET(0, false, sf::Color(255, 0, 0), {std::make_shared<BurningBehavior>(30), std::make_shared<FlamingBehavior>(), std::make_shared<SpreadingBehavior>()});
-const CellPreset WOODPRESET(0, true, sf::Color(99, 64, 28), {std::make_shared<FlammableBehavior>(100), std::make_shared<StaticBehavior>()});
+const CellPreset WOODPRESET(0, true, sf::Color(69, 44, 22), {std::make_shared<FlammableBehavior>(100), std::make_shared<StaticBehavior>()});
 const CellPreset SMOKEPRESET(-1, true, sf::Color(55, 55, 55), {std::make_shared<FallingBehavior>(), std::make_shared<SinkBehavior>(), std::make_shared<SettlingBehavior>()});
+const CellPreset SOILPRESET(0.25, true, sf::Color(110, 70, 30), {std::make_shared<FallingBehavior>(), std::make_shared<SettlingBehavior>()});
+const CellPreset SEEDPRESET(0.5, true, sf::Color(15, 100, 30), {std::make_shared<FallingBehavior>(), std::make_shared<SeedBehavior>(3)});
+const CellPreset STEMPRESET(0.5, true, sf::Color(25, 170, 35), {std::make_shared<GrowBehavior>(1)});
+const CellPreset DEADSTEMPRESET(0.5, true, sf::Color(80, 100, 30), {});
 
 const CellPreset TEMPPRESET(5, true, sf::Color(255, 255, 255), {std::make_shared<FallingBehavior>(), std::make_shared<SinkBehavior>()});
 
@@ -46,7 +53,11 @@ CellManager::CellManager(float cellSize, sf::Vector2f cellOffset, Grid* grid, st
         {"fire", FIREPRESET},
         {"wood", WOODPRESET},
         {"smoke", SMOKEPRESET},
-        {"temp", TEMPPRESET}
+        {"temp", TEMPPRESET},
+        {"soil", SOILPRESET},
+        {"seed", SEEDPRESET},
+        {"stem", STEMPRESET},
+        {"dead stem", DEADSTEMPRESET}
     };
 
     this->grid = grid;

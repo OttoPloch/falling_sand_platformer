@@ -32,6 +32,9 @@ public:
 
     void addEndBehavior(std::shared_ptr<Behavior> newBehavior);
 
+    // -1 = behavior not found, 0 = one instance and it was deleted, >0 = first instance was deleted and there are x more
+    int removeBehavior(std::string behaviorName);
+
     sf::Vector2u getPosition();
 
     std::string getType();
@@ -47,6 +50,10 @@ public:
     int incrementWeightCounter();
 
     int decrementWeightCounter();
+
+    int getWaterLevel();
+
+    void addToWaterLevel(int amount);
 
     sf::Color getColor();
 
@@ -70,6 +77,9 @@ private:
 
     // if weight has a decimal, this gets incremented to add more precision
     float weightCounter;
+
+    // for plant-related behaviors
+    int waterLevel;
 
     CellPreset myPreset;
 };

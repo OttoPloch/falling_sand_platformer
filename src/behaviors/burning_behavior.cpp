@@ -8,6 +8,7 @@ BurningBehavior::BurningBehavior(int smokeChance) : Behavior("burning", smokeCha
 
 bool BurningBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 {
+    // if any neighbors have the cooling behavior, destroy this cell
     if (gridPos.x > 0 && gridPos.y > 0 && cellManager->grid->at({gridPos.x - 1, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x - 1, gridPos.y - 1})->hasBehavior("cooling")) { cellManager->grid->removeCell(gridPos); return true; }
     if (gridPos.y > 0 && cellManager->grid->at({gridPos.x, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x, gridPos.y - 1})->hasBehavior("cooling")) { cellManager->grid->removeCell(gridPos); return true; }
     if (gridPos.x < cellManager->grid->getLength() - 1 && gridPos.y > 0 && cellManager->grid->at({gridPos.x + 1, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x + 1, gridPos.y - 1})->hasBehavior("cooling")) { cellManager->grid->removeCell(gridPos); return true; }
