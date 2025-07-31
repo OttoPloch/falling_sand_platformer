@@ -7,15 +7,16 @@
 #include "../managers/cell_manager.hpp"
 #include "../presets/cell_preset.hpp"
 #include "grid.hpp"
+#include "cell_settings.hpp"
 
 class Cell
 {
 public:
     Cell();
 
-    Cell(CellManager* cellManager, Grid* grid, std::vector<std::shared_ptr<Being>>* beings, std::string type, sf::Vector2u position);
+    Cell(CellManager* cellManager, std::string type, sf::Vector2u position, CellSettings cellSettings);
 
-    void create(CellManager* cellManager, Grid* grid, std::vector<std::shared_ptr<Being>>* beings, std::string type, sf::Vector2u position);
+    void create(CellManager* cellManager, std::string type, sf::Vector2u position, CellSettings cellSettings);
 
     // ptr to this cell, hasChanged
     std::pair<Cell*, bool> tick(bool log = false);
@@ -35,6 +36,8 @@ public:
     // -1 = behavior not found, 0 = one instance and it was deleted, >0 = first instance was deleted and there are x more
     int removeBehavior(std::string behaviorName);
 
+    CellSettings* getCellSettings();
+
     sf::Vector2u getPosition();
 
     std::string getType();
@@ -43,23 +46,15 @@ public:
 
     int getOptionalSetting(std::string settingName);
 
-    float getWeight();
-
-    int getWeightCounterInt();
-
-    int incrementWeightCounter();
-
-    int decrementWeightCounter();
-
-    int getWaterLevel();
-
-    void addToWaterLevel(int amount);
-
     sf::Color getColor();
 
     bool hasBehavior(std::string behaviorName);
 
     bool canSmooth();
+
+    std::vector<Cell*> getNeighbors();
+
+    std::vector<Cell*> getNearbySpaces();
 private:
     CellManager* cellManager;
 
@@ -73,13 +68,7 @@ private:
     
     sf::Vector2i velocity;
 
-    float weight;
-
-    // if weight has a decimal, this gets incremented to add more precision
-    float weightCounter;
-
-    // for plant-related behaviors
-    int waterLevel;
-
     CellPreset myPreset;
+
+    CellSettings cellSettings;
 };

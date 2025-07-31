@@ -5,25 +5,23 @@
 
 Cell::Cell() {}
 
-Cell::Cell(CellManager* cellManager, Grid* grid, std::vector<std::shared_ptr<Being>>* beings, std::string type, sf::Vector2u position)
+Cell::Cell(CellManager* cellManager, std::string type, sf::Vector2u position, CellSettings cellSettings)
 {
-    create(cellManager, grid, beings, type, position);
+    create(cellManager, type, position, cellSettings);
 }
 
-void Cell::create(CellManager* cellManager, Grid* grid, std::vector<std::shared_ptr<Being>>* beings, std::string type, sf::Vector2u position)
+void Cell::create(CellManager* cellManager, std::string type, sf::Vector2u position, CellSettings cellSettings)
 {
     this->cellManager = cellManager;
-    this->grid = grid;
-    this->beings = beings;
+
+    grid = cellManager->grid;
+    beings = cellManager->beings;
+
     this->type = type;
     this->position = position;
+    this->cellSettings = cellSettings;
 
     velocity = {0, 0};
-
-    weight = cellManager->presets[type].weight;
-    weightCounter = 0;
-
-    waterLevel = 0;
 
     myPreset = cellManager->presets[type];
 }
@@ -74,6 +72,8 @@ std::pair<Cell*, bool> Cell::tick(bool log)
         }
     }
 
+    cellSettings.addAge();
+
     return std::pair(this, hasChanged);
 }
 
@@ -87,9 +87,7 @@ void Cell::changeType(std::string newType)
 {
     type = newType;
 
-    weight = cellManager->presets[type].weight;
-
-    waterLevel = 0;
+    cellSettings.init(cellManager->presets[type].weight, 0);
 
     myPreset = cellManager->presets[type];
 }
@@ -121,6 +119,8 @@ int Cell::removeBehavior(std::string behaviorName)
     return returnCode;
 }
 
+CellSettings* Cell::getCellSettings() { return &cellSettings; }
+
 sf::Vector2u Cell::getPosition() { return position; }
 
 std::string Cell::getType() { return type; }
@@ -134,32 +134,8 @@ int Cell::getOptionalSetting(std::string settingName)
         return myPreset.optionalSettings[settingName];
     }
 
-    return -2;
+    return -1;
 }
-
-float Cell::getWeight() { return weight; }
-
-int Cell::getWeightCounterInt() { return static_cast<int>(weightCounter); }
-
-int Cell::incrementWeightCounter()
-{
-    weightCounter += weight;
-
-    return weight;
-}
-
-int Cell::decrementWeightCounter()
-{
-    int prevCounter = static_cast<int>(weightCounter);
-
-    weightCounter -= static_cast<int>(weightCounter);
-
-    return prevCounter;
-}
-
-int Cell::getWaterLevel() { return waterLevel; }
-
-void Cell::addToWaterLevel(int amount) { waterLevel += amount; }
 
 sf::Color Cell::getColor() { return myPreset.color; }
 
@@ -177,3 +153,45 @@ bool Cell::hasBehavior(std::string behaviorName)
 }
 
 bool Cell::canSmooth() { return myPreset.canSmooth; }
+
+std::vector<Cell*> Cell::getNeighbors()
+{
+    std::vector<Cell*> neighbors;
+
+    bool onLeft = (position.x == 0);
+    bool onRight = (position.x == grid->getLength() - 1);
+    bool onTop = (position.y == 0);
+    bool onBottom = (position.y == grid->getHeight() - 1);
+
+    if (!onLeft && !onTop     && grid->at({position.x - 1, position.y - 1}) != nullptr) { neighbors.emplace_back(grid->at({position.x - 1, position.y - 1})); }
+    if (!onTop                && grid->at({position.x, position.y - 1})     != nullptr) { neighbors.emplace_back(grid->at({position.x, position.y - 1}));     }
+    if (!onRight && !onTop    && grid->at({position.x + 1, position.y - 1}) != nullptr) { neighbors.emplace_back(grid->at({position.x + 1, position.y - 1})); }
+    if (!onLeft               && grid->at({position.x - 1, position.y})     != nullptr) { neighbors.emplace_back(grid->at({position.x - 1, position.y}));     }
+    if (!onRight              && grid->at({position.x + 1, position.y})     != nullptr) { neighbors.emplace_back(grid->at({position.x + 1, position.y}));     }
+    if (!onLeft && !onBottom  && grid->at({position.x - 1, position.y + 1}) != nullptr) { neighbors.emplace_back(grid->at({position.x - 1, position.y + 1})); }
+    if (!onBottom             && grid->at({position.x, position.y + 1})     != nullptr) { neighbors.emplace_back(grid->at({position.x, position.y + 1}));     }
+    if (!onRight && !onBottom && grid->at({position.x + 1, position.y + 1}) != nullptr) { neighbors.emplace_back(grid->at({position.x + 1, position.y + 1})); }
+
+    return neighbors;
+}
+
+std::vector<Cell*> Cell::getNearbySpaces()
+{
+    std::vector<Cell*> spaces;
+
+    bool onLeft = (position.x == 0);
+    bool onRight = (position.x == grid->getLength() - 1);
+    bool onTop = (position.y == 0);
+    bool onBottom = (position.y == grid->getHeight() - 1);
+
+    if (!onLeft && !onTop    ) { spaces.emplace_back(grid->at({position.x - 1, position.y - 1})); }
+    if (!onTop               ) { spaces.emplace_back(grid->at({position.x, position.y - 1}));     }
+    if (!onRight && !onTop   ) { spaces.emplace_back(grid->at({position.x + 1, position.y - 1})); }
+    if (!onLeft              ) { spaces.emplace_back(grid->at({position.x - 1, position.y}));     }
+    if (!onRight             ) { spaces.emplace_back(grid->at({position.x + 1, position.y}));     }
+    if (!onLeft && !onBottom ) { spaces.emplace_back(grid->at({position.x - 1, position.y + 1})); }
+    if (!onBottom            ) { spaces.emplace_back(grid->at({position.x, position.y + 1}));     }
+    if (!onRight && !onBottom) { spaces.emplace_back(grid->at({position.x + 1, position.y + 1})); }
+
+    return spaces;
+}

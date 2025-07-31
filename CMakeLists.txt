@@ -41,6 +41,9 @@ src/game_classes/grid_vertices.cpp
 src/behaviors/planted_behavior.cpp
 src/behaviors/seed_behavior.cpp
 src/behaviors/grow_behavior.cpp
+src/game_classes/cell_settings.cpp
+src/behaviors/splitting_behavior.cpp
+src/behaviors/burnable_behavior.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

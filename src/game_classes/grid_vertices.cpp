@@ -168,10 +168,19 @@ void GridVertices::draw(sf::RenderWindow& window, sf::RenderStates& states)
 {
     window.draw(&vertices[0], vertices.getVertexCount(), vertices.getPrimitiveType(), states);
 
-    // TODO: try to avoid a draw call for each moving cell
-    for (int i = 0; i < movingCells.size(); i++)
+    if (movingCells.size() > 0)
     {
-        window.draw(&std::get<0>(movingCells[i])[0], 6, sf::PrimitiveType::Triangles, states);
+        sf::VertexArray movingCellVertices;
+
+        for (int i = 0; i < movingCells.size(); i++)
+        {
+            for (int j = 0; j < 6; j++)
+            {
+                movingCellVertices.append(std::get<0>(movingCells[i])[j]);
+            }
+        }
+        
+        window.draw(&movingCellVertices[0], movingCellVertices.getVertexCount(), sf::PrimitiveType::Triangles, states);
     }
 }
 
@@ -189,7 +198,7 @@ void GridVertices::addMovingCell(unsigned int x, unsigned int y, sf::Vector2u ta
         for (int i = 0; i < movingCells.size(); i++)
         {   
             // If this moving cell does not represent that same one as the argument
-            if (!(std::get<2>(movingCells[i]) == cell))
+            if (std::get<2>(movingCells[i]) != cell)
             {
                 continue;
             }

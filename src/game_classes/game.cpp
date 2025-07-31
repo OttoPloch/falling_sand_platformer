@@ -19,11 +19,23 @@ const WindowPreset gridSizedWindowPreset(sf::VideoMode({1000, 1000}), "game", fa
 
 // TODO: soil, seeds and stems (for the "garden" level? was thinking about how to make this game)
 // To finish: 
-//   - add a plantID to each plant cell that is created when the stem cell grows and is the same for the entire plant.
-//   - when the stem cell that is the root of the plant gets unplanted, tell it's neighbors to check their neighbors for the same plantID, and if it is the same then change type to dead stem
-//   - splitting behavior that has a chance for a stem cell to grow in two places and they both can grow on their own, making branches
-//   - buds/flowers as a behavior that has a chance to end the branch and create a flower. Maybe plants should grow on their own without water so cool flowers could generate quickly and it would be like gambling >:) to see how big your flower is
+//   - DONE: add a plantID to each plant cell that is created when the stem cell grows and is the same for the entire plant.
+//   - DONE: when the stem cell that is the root of the plant gets unplanted, tell it's neighbors to check their neighbors for the same plantID, and if it is the same then change type to dead stem
+//   - DONE: splitting behavior that has a chance for a stem cell to grow in two places and they both can grow on their own, making branches
+//   - DONE: buds/flowers as a behavior that has a chance to end the branch and create a flower. Maybe plants should grow on their own without water so cool flowers could generate quickly and it would be like gambling >:) to see how big your flower is
 //   - certain flowers could be valuable so one method of getting a lot of money or whatever would be making a farm that grows a lot of plants to try and get valuable buds/flowers (for the garden level)
+
+
+// To improve what has been done so far with plants:
+//   - Try to unify the cell preset and cell settings so that behavior settings get applied to cell settings so they can be modified
+//   - In some cases change the input method of a setting from the behavior it correlates to to the cell setting when the cell is created
+//   - Balance plant growing so that the two extremes (very little growth, taking up the whole screen) don't happen so much and the middle ground happens more
+//   - To do this, probably just increase the chance to stop and make a flower every time the plant splits or something like that that would increase the chance of stopping as the plant grows
+//   - Improve the method used to turn stem cells into dead stem cells, one way could be adding the ID of the dead plant to a vector in grid.cpp that would get checked every tick and every stem cell that has that ID would get killed.
+
+// Optimize moving cells, an improvement was made i think with turning it into one draw call, but see if you can improve it more.
+
+
 
 // TODO: Push Behavior (could help with fixing being/cell interaction)
 // TODO: BeingManager? This would help for tracking constants like gravity for \/\/\/

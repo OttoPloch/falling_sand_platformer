@@ -25,4 +25,7 @@ struct CellManager
     sf::Vector2f cellOffset;
     
     sf::Vector2f beingRectInflationSize;
+
+    // x/1000 chance that a plant will grow straight up when other options are valid
+    int plantGrowUpChance;
 };

@@ -6,25 +6,44 @@ FlamingBehavior::FlamingBehavior() : Behavior("flaming", -1) {}
 
 bool FlamingBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 {
-    std::vector<sf::Vector2i> flammableNeighbors;
+    std::vector<Cell*> neighbors = cellManager->grid->at(gridPos)->getNeighbors();
 
-    // if any neighbors are flammable, add to flammableNeighbors
-    if (gridPos.x > 0 && gridPos.y > 0 && cellManager->grid->at({gridPos.x - 1, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x - 1, gridPos.y - 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({-1, -1}); }
-    if (gridPos.y > 0 && cellManager->grid->at({gridPos.x, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x, gridPos.y - 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({0, -1}); }
-    if (gridPos.x < cellManager->grid->getLength() - 1 && gridPos.y > 0 && cellManager->grid->at({gridPos.x + 1, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x + 1, gridPos.y - 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({1, -1}); }
-    if (gridPos.x > 0 && cellManager->grid->at({gridPos.x - 1, gridPos.y}) != nullptr && cellManager->grid->at({gridPos.x - 1, gridPos.y})->hasBehavior("flammable")) { flammableNeighbors.push_back({-1, 0}); }
-    if (gridPos.x < cellManager->grid->getLength() - 1 && cellManager->grid->at({gridPos.x + 1, gridPos.y}) != nullptr && cellManager->grid->at({gridPos.x + 1, gridPos.y})->hasBehavior("flammable")) { flammableNeighbors.push_back({1, 0}); }
-    if (gridPos.x > 0 && gridPos.y < cellManager->grid->getHeight() - 1 && cellManager->grid->at({gridPos.x - 1, gridPos.y + 1}) != nullptr && cellManager->grid->at({gridPos.x - 1, gridPos.y + 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({-1, 1}); }
-    if (gridPos.y < cellManager->grid->getHeight() - 1 && cellManager->grid->at({gridPos.x, gridPos.y + 1}) != nullptr && cellManager->grid->at({gridPos.x, gridPos.y + 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({0, 1}); }
-    if (gridPos.x < cellManager->grid->getLength() - 1 && gridPos.y < cellManager->grid->getHeight() - 1 && cellManager->grid->at({gridPos.x + 1, gridPos.y + 1}) != nullptr && cellManager->grid->at({gridPos.x + 1, gridPos.y + 1})->hasBehavior("flammable")) { flammableNeighbors.push_back({1, 1}); }
+    std::vector<Cell*> flammableNeighbors;
+    std::vector<Cell*> burnableNeighbors;
+
+    if (neighbors.size() > 0)
+    {
+        for (int i = 0; i < neighbors.size(); i++)
+        {
+            if (neighbors[i]->hasBehavior("flammable"))
+            {
+                flammableNeighbors.emplace_back(neighbors[i]);
+            }
+            if (neighbors[i]->hasBehavior("burnable"))
+            {
+                burnableNeighbors.emplace_back(neighbors[i]);
+            }
+        }
+    }
 
     if (flammableNeighbors.size() > 0)
     {   
         for (int i = 0; i < flammableNeighbors.size(); i++)
         {
-            if (getRandomInt(999) + 1 <= cellManager->grid->at({gridPos.x + flammableNeighbors[i].x, gridPos.y + flammableNeighbors[i].y})->getOptionalSetting("flammable"))
+            if (getRandomInt(999) + 1 <= flammableNeighbors[i]->getOptionalSetting("flammable"))
             {
-                cellManager->grid->at({gridPos.x + flammableNeighbors[i].x, gridPos.y + flammableNeighbors[i].y})->changeType("fire");
+                flammableNeighbors[i]->changeType("fire");
+            }
+        }
+    }
+
+    if (burnableNeighbors.size() > 0)
+    {   
+        for (int i = 0; i < burnableNeighbors.size(); i++)
+        {
+            if (getRandomInt(999) + 1 <= burnableNeighbors[i]->getOptionalSetting("burnable"))
+            {
+                cellManager->grid->removeCell(burnableNeighbors[i]->getPosition());
             }
         }
     }

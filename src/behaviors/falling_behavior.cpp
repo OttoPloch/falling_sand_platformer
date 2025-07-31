@@ -9,18 +9,18 @@ bool FallingBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 {
     Cell* cell = cellManager->grid->at(gridPos);
 
-    if (cell->getWeight() != 0)
+    if (cell->getCellSettings()->getWeight() != 0 && cellManager->grid->canMoveDistance(gridPos, {0, 1}))
     {
         // increment the counter and get the weight value
-        float weight = cell->incrementWeightCounter();
+        float weight = cell->getCellSettings()->incrementWeightCounter();
 
         // if the increment we did was enough to fall, check if we can move
-        if (abs(cell->getWeightCounterInt()) >= 1)
+        if (abs(cell->getCellSettings()->getWeightCounterInt()) >= 1)
         {
             // This doesnt take into account the cells current velocity.
             // It only does a basic check, and I'm not sure accessing velocity
             // when deciding to add more velocity is a good practice
-            int maxYMove = maxMovableDistance(cellManager, gridPos, {0, cell->decrementWeightCounter()}, false).y;
+            int maxYMove = maxMovableDistance(cellManager, gridPos, {0, static_cast<int>(cell->getCellSettings()->decrementWeightCounter())}, false).y;
     
             if (maxYMove != 0)
             {

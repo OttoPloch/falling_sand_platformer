@@ -14,7 +14,9 @@ CellPreset::CellPreset(float weight, bool canSmooth, sf::Color color, std::vecto
         {"burning", -1},
         {"flow", -1},
         {"seed", -1},
-        {"grow", -1}
+        {"grow", -1},
+        {"split", -1},
+        {"burnable", -1}
     };
 
     for (auto i : optionalSettings)

@@ -6,11 +6,11 @@ bool SettlingBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 {
     int fallDirection;
 
-    if (cellManager->grid->at(gridPos)->getWeight() > 0.f)
+    if (cellManager->grid->at(gridPos)->getCellSettings()->getWeight() > 0.f)
     {
         fallDirection = 1;
     }
-    else if (cellManager->grid->at(gridPos)->getWeight() < 0.f)
+    else if (cellManager->grid->at(gridPos)->getCellSettings()->getWeight() < 0.f)
     {
         fallDirection = -1;
     }

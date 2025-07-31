@@ -28,6 +28,9 @@ public:
     // gets the current amount of cells on the grid
     unsigned int getCellCount();
     
+    // increments the plantIDMaker and returns the old value
+    int getNewPlantID();
+
     // Fills an area with cells where a being is located
     // (as of right now, this doesn't exist, but i plan to add a toggle for beings that turn off their cell interaction,
     // which would be the only case that this could be used since otherwise there would be no valid spaces to make cells)
@@ -40,7 +43,7 @@ public:
     bool canMoveDistance(sf::Vector2u from, sf::Vector2i distance);
 
     // makes the cell, no checks other than for nullptr and beings
-    void createCell(std::string type, sf::Vector2u position);
+    void createCell(std::string type, sf::Vector2u position, unsigned int plantID = 0);
 
     // removes a cell from the grid
     void removeCell(sf::Vector2u gridPos);
@@ -71,4 +74,6 @@ private:
     CellManager* cellManager;
 
     GridVertices gridVertices;
+
+    unsigned int plantIDMaker;
 };

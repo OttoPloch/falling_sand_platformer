@@ -32,6 +32,8 @@ void Grid::create(unsigned int gridLength, unsigned int gridHeight, std::vector<
     this->cellManager = cellManager;
 
     gridVertices = GridVertices(gridLength, gridHeight, cellManager);
+
+    plantIDMaker = 1;
 }
 
 Cell* Grid::at(sf::Vector2u position) {
@@ -70,6 +72,13 @@ unsigned int Grid::getCellCount()
     }
 
     return cells;
+}
+
+int Grid::getNewPlantID()
+{
+    plantIDMaker += 1;
+
+    return plantIDMaker - 1;
 }
 
 void Grid::makeCellsFromBeing(Being* being, std::string cellType)
@@ -117,7 +126,7 @@ bool Grid::canMoveDistance(sf::Vector2u from, sf::Vector2i distance)
     return true;
 }
 
-void Grid::createCell(std::string type, sf::Vector2u position)
+void Grid::createCell(std::string type, sf::Vector2u position, unsigned int plantID)
 {
     // make sure this position does not collide with a being
     if (pointAllBeingsCollide(gridToWorldCoords(cellManager, position, true), beings, cellManager->beingRectInflationSize))
@@ -128,7 +137,10 @@ void Grid::createCell(std::string type, sf::Vector2u position)
     // make sure all other necessary checks have been done before calling this function
     if (theGrid[position.y][position.x] == nullptr)
     {
-        theGrid[position.y][position.x] = std::make_shared<Cell>(cellManager, this, beings, type, position);
+        CellSettings cellSettings;
+        cellSettings.init(cellManager->presets[type].weight, plantID);
+
+        theGrid[position.y][position.x] = std::make_shared<Cell>(cellManager, type, position, cellSettings);
         gridVertices.updateSquare(static_cast<unsigned int>(position.x), static_cast<unsigned int>(position.y));
     }
 }
@@ -235,7 +247,7 @@ void Grid::tick(sf::Vector2u creatorPos)
                     // iterates through falling cells
                     if (theGrid[y][x] != nullptr)
                     {
-                        if (theGrid[y][x]->getWeight() >= 0.f)
+                        if (theGrid[y][x]->getCellSettings()->getWeight() >= 0.f)
                         {
                             if (tickCell({static_cast<unsigned int>(x), static_cast<unsigned int>(y)}))
                             {
@@ -249,7 +261,7 @@ void Grid::tick(sf::Vector2u creatorPos)
                     // iterates through rising cells
                     if (theGrid[oppY][x] != nullptr)
                     {
-                        if (theGrid[oppY][x]->getWeight() < 0.f)
+                        if (theGrid[oppY][x]->getCellSettings()->getWeight() < 0.f)
                         {
                             if (tickCell({static_cast<unsigned int>(x), static_cast<unsigned int>(oppY)}))
                             {
@@ -260,7 +272,7 @@ void Grid::tick(sf::Vector2u creatorPos)
             }
         }
     }
-
+    
     if (gridHasChanged)
     {
         gridVertices.updateStatic();

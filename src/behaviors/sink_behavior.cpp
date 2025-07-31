@@ -7,16 +7,15 @@ SinkBehavior::SinkBehavior() : Behavior("sink", -1) {}
 
 bool SinkBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 {
-    if ((cellManager->grid->at(gridPos)->getWeight() > 0.f && gridPos.y < cellManager->grid->getHeight() - 1) || (cellManager->grid->at(gridPos)->getWeight() < 0.f && gridPos.y > 0))
+    if ((cellManager->grid->at(gridPos)->getCellSettings()->getWeight() > 0.f && gridPos.y < cellManager->grid->getHeight() - 1) || (cellManager->grid->at(gridPos)->getCellSettings()->getWeight() < 0.f && gridPos.y > 0))
     {
         // EVERYTHING HERE IS RELATIVE
         // "bottom" here can refer to the cell above this one if the weight is below 0
 
-
         Cell* cell = cellManager->grid->at(gridPos);
 
         // no need to increment weight counter here, just checking if positive/negative
-        float weight = cell->getWeight();
+        float weight = cell->getCellSettings()->getWeight();
 
         int sinkDirection;
 
@@ -47,7 +46,7 @@ bool SinkBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
         {
             Cell* bottomNeighbor = cellManager->grid->at({gridPos.x, gridPos.y + sinkDirection});
 
-            if (bottomNeighbor != nullptr && !bottomNeighbor->hasBehavior("static") && bottomNeighbor->getWeight() < weight)
+            if (bottomNeighbor != nullptr && !bottomNeighbor->hasBehavior("static") && bottomNeighbor->getCellSettings()->getWeight() < weight)
             {
                 if (!pointAllBeingsCollide(gridToWorldCoords(cellManager, sf::Vector2u(gridPos.x, gridPos.y + sinkDirection), true), cellManager->beings, cellManager->beingRectInflationSize))
                 {
@@ -67,7 +66,7 @@ bool SinkBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
             Cell* bottomLeftNeighbor = cellManager->grid->at({gridPos.x - 1, gridPos.y + sinkDirection});
             Cell* bottomRightNeighbor = cellManager->grid->at({gridPos.x + 1, gridPos.y + sinkDirection});
 
-            if (bottomLeftNeighbor != nullptr && bottomRightNeighbor != nullptr && !bottomLeftNeighbor->hasBehavior("static") && !bottomRightNeighbor->hasBehavior("static") && bottomLeftNeighbor->getWeight() < weight && bottomRightNeighbor->getWeight() < weight)
+            if (bottomLeftNeighbor != nullptr && bottomRightNeighbor != nullptr && !bottomLeftNeighbor->hasBehavior("static") && !bottomRightNeighbor->hasBehavior("static") && bottomLeftNeighbor->getCellSettings()->getWeight() < weight && bottomRightNeighbor->getCellSettings()->getWeight() < weight)
             {
                 if (!pointAllBeingsCollide(gridToWorldCoords(cellManager, sf::Vector2u(gridPos.x - 1, gridPos.y + sinkDirection), true), cellManager->beings, cellManager->beingRectInflationSize))
                 {
@@ -89,7 +88,7 @@ bool SinkBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
                 }
             }
             
-            if (bottomLeftNeighbor != nullptr && !bottomLeftNeighbor->hasBehavior("static") && bottomLeftNeighbor->getWeight() < weight)
+            if (bottomLeftNeighbor != nullptr && !bottomLeftNeighbor->hasBehavior("static") && bottomLeftNeighbor->getCellSettings()->getWeight() < weight)
             {
                 if (!pointAllBeingsCollide(gridToWorldCoords(cellManager, sf::Vector2u(gridPos.x - 1, gridPos.y + sinkDirection), true), cellManager->beings, cellManager->beingRectInflationSize))
                 {
@@ -101,7 +100,7 @@ bool SinkBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
                 }
             }
             
-            if (bottomRightNeighbor != nullptr && !bottomRightNeighbor->hasBehavior("static") && bottomRightNeighbor->getWeight() < weight)
+            if (bottomRightNeighbor != nullptr && !bottomRightNeighbor->hasBehavior("static") && bottomRightNeighbor->getCellSettings()->getWeight() < weight)
             {
                 if (!pointAllBeingsCollide(gridToWorldCoords(cellManager, sf::Vector2u(gridPos.x + 1, gridPos.y + sinkDirection), true), cellManager->beings, cellManager->beingRectInflationSize))
                 {
@@ -121,7 +120,7 @@ bool SinkBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
             Cell* leftNeighbor = cellManager->grid->at({gridPos.x - 1, gridPos.y});
             Cell* rightNeighbor = cellManager->grid->at({gridPos.x + 1, gridPos.y});
 
-            if (leftNeighbor != nullptr && rightNeighbor != nullptr && !leftNeighbor->hasBehavior("static") && !rightNeighbor->hasBehavior("static") && leftNeighbor->getWeight() < weight && rightNeighbor->getWeight() < weight)
+            if (leftNeighbor != nullptr && rightNeighbor != nullptr && !leftNeighbor->hasBehavior("static") && !rightNeighbor->hasBehavior("static") && leftNeighbor->getCellSettings()->getWeight() < weight && rightNeighbor->getCellSettings()->getWeight() < weight)
             {
                 if (!pointAllBeingsCollide(gridToWorldCoords(cellManager, sf::Vector2u(gridPos.x - 1, gridPos.y), true), cellManager->beings, cellManager->beingRectInflationSize))
                 {
@@ -142,7 +141,7 @@ bool SinkBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
                     }
                 }
             }
-            else if (leftNeighbor != nullptr && !leftNeighbor->hasBehavior("static") && leftNeighbor->getWeight() < weight)
+            else if (leftNeighbor != nullptr && !leftNeighbor->hasBehavior("static") && leftNeighbor->getCellSettings()->getWeight() < weight)
             {
                 if (!pointAllBeingsCollide(gridToWorldCoords(cellManager, sf::Vector2u(gridPos.x - 1, gridPos.y), true), cellManager->beings, cellManager->beingRectInflationSize))
                 {
@@ -153,7 +152,7 @@ bool SinkBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
                     return true;
                 }
             }
-            else if (rightNeighbor != nullptr && !rightNeighbor->hasBehavior("static") && rightNeighbor->getWeight() < weight)
+            else if (rightNeighbor != nullptr && !rightNeighbor->hasBehavior("static") && rightNeighbor->getCellSettings()->getWeight() < weight)
             {
                 if (!pointAllBeingsCollide(gridToWorldCoords(cellManager, sf::Vector2u(gridPos.x + 1, gridPos.y), true), cellManager->beings, cellManager->beingRectInflationSize))
                 {

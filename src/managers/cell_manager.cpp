@@ -13,6 +13,8 @@
 #include "../behaviors/planted_behavior.hpp"
 #include "../behaviors/seed_behavior.hpp"
 #include "../behaviors/grow_behavior.hpp"
+#include "../behaviors/splitting_behavior.hpp"
+#include "../behaviors/burnable_behavior.hpp"
 
 // Of note:
 //     - To make a cell preset, follow the pattern below.
@@ -32,14 +34,15 @@
 //       it is best to disable it for things like fire
 
 const CellPreset SANDPRESET(1, true, sf::Color(252, 191, 98), {std::make_shared<FallingBehavior>(), std::make_shared<SinkBehavior>(), std::make_shared<SettlingBehavior>()});
-const CellPreset WATERPRESET(.5f, true, sf::Color(19, 94, 186), {std::make_shared<FallingBehavior>(), std::make_shared<SinkBehavior>(), std::make_shared<FlowingBehavior>(1000), std::make_shared<CoolingBehavior>()});
+const CellPreset WATERPRESET(0.5, true, sf::Color(19, 94, 186), {std::make_shared<FallingBehavior>(), std::make_shared<SinkBehavior>(), std::make_shared<FlowingBehavior>(1000), std::make_shared<CoolingBehavior>()});
 const CellPreset FIREPRESET(0, false, sf::Color(255, 0, 0), {std::make_shared<BurningBehavior>(30), std::make_shared<FlamingBehavior>(), std::make_shared<SpreadingBehavior>()});
 const CellPreset WOODPRESET(0, true, sf::Color(69, 44, 22), {std::make_shared<FlammableBehavior>(100), std::make_shared<StaticBehavior>()});
 const CellPreset SMOKEPRESET(-1, true, sf::Color(55, 55, 55), {std::make_shared<FallingBehavior>(), std::make_shared<SinkBehavior>(), std::make_shared<SettlingBehavior>()});
 const CellPreset SOILPRESET(0.25, true, sf::Color(110, 70, 30), {std::make_shared<FallingBehavior>(), std::make_shared<SettlingBehavior>()});
-const CellPreset SEEDPRESET(0.5, true, sf::Color(15, 100, 30), {std::make_shared<FallingBehavior>(), std::make_shared<SeedBehavior>(3)});
-const CellPreset STEMPRESET(0.5, true, sf::Color(25, 170, 35), {std::make_shared<GrowBehavior>(1)});
-const CellPreset DEADSTEMPRESET(0.5, true, sf::Color(80, 100, 30), {});
+const CellPreset SEEDPRESET(0.3, true, sf::Color(15, 100, 30), {std::make_shared<FallingBehavior>(), std::make_shared<SeedBehavior>(3)});
+const CellPreset STEMPRESET(0.3, true, sf::Color(25, 170, 35), {std::make_shared<SplittingBehavior>(100), std::make_shared<GrowBehavior>(100), /*std::make_shared<StaticBehavior>()*/});
+const CellPreset DEADSTEMPRESET(0.2, true, sf::Color(80, 100, 30), {std::make_shared<PlantedBehavior>(), std::make_shared<FallingBehavior>(), std::make_shared<SettlingBehavior>(), std::make_shared<BurnableBehavior>(300)});
+const CellPreset FLOWERPRESET(0, true, sf::Color(214, 55, 200), {std::make_shared<StaticBehavior>()});
 
 const CellPreset TEMPPRESET(5, true, sf::Color(255, 255, 255), {std::make_shared<FallingBehavior>(), std::make_shared<SinkBehavior>()});
 
@@ -57,7 +60,8 @@ CellManager::CellManager(float cellSize, sf::Vector2f cellOffset, Grid* grid, st
         {"soil", SOILPRESET},
         {"seed", SEEDPRESET},
         {"stem", STEMPRESET},
-        {"dead stem", DEADSTEMPRESET}
+        {"dead stem", DEADSTEMPRESET},
+        {"flower", FLOWERPRESET}
     };
 
     this->grid = grid;
@@ -77,4 +81,6 @@ CellManager::CellManager(float cellSize, sf::Vector2f cellOffset, Grid* grid, st
 
     // The - 1 is so that a flat surface will not have an extra layer of collision
     beingRectInflationSize = {cellSize - 1, cellSize - 1};
+
+    plantGrowUpChance = 600;
 }

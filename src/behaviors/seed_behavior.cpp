@@ -9,32 +9,48 @@ SeedBehavior::SeedBehavior(int waterToSprout) : Behavior("seed", waterToSprout) 
 
 bool SeedBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 {
-    if (!cellManager->grid->at(gridPos)->hasBehavior("planted"))
+    Cell* thisCell = cellManager->grid->at(gridPos);
+
+    // this cell is not planted
+    if (!thisCell->hasBehavior("planted"))
     {
+        // this cell can become planted only if it has soil directly beneath it
         if (cellManager->grid->at({gridPos.x, gridPos.y + 1}) != nullptr && cellManager->grid->at({gridPos.x, gridPos.y + 1})->getType() == "soil")
         {
-            cellManager->grid->at(gridPos)->addEndBehavior(std::make_shared<PlantedBehavior>());
+            thisCell->addEndBehavior(std::make_shared<PlantedBehavior>());
         }
     }
     else
     {
+        // this cell is planted
+
         // if any neighbors are water, absorb it and add to waterLevel
-        if (gridPos.x > 0 && gridPos.y > 0 && cellManager->grid->at({gridPos.x - 1, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x - 1, gridPos.y - 1})->getType() == "water") { cellManager->grid->removeCell({gridPos.x - 1, gridPos.y - 1}); cellManager->grid->at(gridPos)->addToWaterLevel(1); }
-        if (gridPos.y > 0 && cellManager->grid->at({gridPos.x, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x, gridPos.y - 1})->getType() == "water") { cellManager->grid->removeCell({gridPos.x, gridPos.y - 1}); cellManager->grid->at(gridPos)->addToWaterLevel(1); }
-        if (gridPos.x < cellManager->grid->getLength() - 1 && gridPos.y > 0 && cellManager->grid->at({gridPos.x + 1, gridPos.y - 1}) != nullptr && cellManager->grid->at({gridPos.x + 1, gridPos.y - 1})->getType() == "water") { cellManager->grid->removeCell({gridPos.x + 1, gridPos.y - 1}); }
-        if (gridPos.x > 0 && cellManager->grid->at({gridPos.x - 1, gridPos.y}) != nullptr && cellManager->grid->at({gridPos.x - 1, gridPos.y})->getType() == "water") { cellManager->grid->removeCell({gridPos.x - 1, gridPos.y}); cellManager->grid->at(gridPos)->addToWaterLevel(1); }
-        if (gridPos.x < cellManager->grid->getLength() - 1 && cellManager->grid->at({gridPos.x + 1, gridPos.y}) != nullptr && cellManager->grid->at({gridPos.x + 1, gridPos.y})->getType() == "water") { cellManager->grid->removeCell({gridPos.x + 1, gridPos.y}); cellManager->grid->at(gridPos)->addToWaterLevel(1); }
-        if (gridPos.x > 0 && gridPos.y < cellManager->grid->getHeight() - 1 && cellManager->grid->at({gridPos.x - 1, gridPos.y + 1}) != nullptr && cellManager->grid->at({gridPos.x - 1, gridPos.y + 1})->getType() == "water") { cellManager->grid->removeCell({gridPos.x - 1, gridPos.y + 1}); cellManager->grid->at(gridPos)->addToWaterLevel(1); }
-        if (gridPos.y < cellManager->grid->getHeight() - 1 && cellManager->grid->at({gridPos.x, gridPos.y + 1}) != nullptr && cellManager->grid->at({gridPos.x, gridPos.y + 1})->getType() == "water") { cellManager->grid->removeCell({gridPos.x, gridPos.y + 1}); cellManager->grid->at(gridPos)->addToWaterLevel(1); }
-        if (gridPos.x < cellManager->grid->getLength() - 1 && gridPos.y < cellManager->grid->getHeight() - 1 && cellManager->grid->at({gridPos.x + 1, gridPos.y + 1}) != nullptr && cellManager->grid->at({gridPos.x + 1, gridPos.y + 1})->getType() == "water") { cellManager->grid->removeCell({gridPos.x + 1, gridPos.y + 1}); cellManager->grid->at(gridPos)->addToWaterLevel(1); }
-    
-        if (cellManager->grid->at(gridPos)->getWaterLevel() >= cellManager->grid->at(gridPos)->getOptionalSetting("seed"))
+        std::vector<Cell*> neighbors = thisCell->getNeighbors();
+
+        if (neighbors.size() > 0)
         {
-            cellManager->grid->at(gridPos)->changeType("stem");
+            for (int i = 0; i < neighbors.size(); i++)
+            {
+                // if this neighbor is water, absorb it
+                if (neighbors[i]->getType() == "water")
+                {
+                    cellManager->grid->removeCell(neighbors[i]->getPosition());
 
-            cellManager->grid->at(gridPos)->addEndBehavior(std::make_shared<PlantedBehavior>());
+                    thisCell->getCellSettings()->addToWaterLevel(1);
+                }
 
-            return true;
+                // we have enough water to sprout
+                if (thisCell->getCellSettings()->getWaterLevel() >= thisCell->getOptionalSetting("seed"))
+                {
+                    thisCell->changeType("stem");
+
+                    thisCell->getCellSettings()->setPlantID(cellManager->grid->getNewPlantID());
+
+                    thisCell->addEndBehavior(std::make_shared<PlantedBehavior>());
+
+                    return true;
+                }
+            }
         }
     }
 
