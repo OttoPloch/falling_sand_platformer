@@ -44,6 +44,7 @@ src/behaviors/grow_behavior.cpp
 src/game_classes/cell_settings.cpp
 src/behaviors/splitting_behavior.cpp
 src/behaviors/burnable_behavior.cpp
+src/managers/plant_manager.cpp
 )
 
 target_compile_features(app PRIVATE cxx_std_17)

@@ -17,7 +17,9 @@ World::World() {}
 
 void World::create(sf::RenderWindow* window, sf::RenderStates* states)
 {
-    cellManager = CellManager(CELLSIZE, {CELLOFFSETX, CELLOFFSETY}, &grid, &beings);
+    plantManager.init();
+
+    cellManager = CellManager(CELLSIZE, {CELLOFFSETX, CELLOFFSETY}, &grid, &beings, &plantManager);
 
     grid.create(GRIDLENGTH, GRIDHEIGHT, &beings, &cellManager);
     

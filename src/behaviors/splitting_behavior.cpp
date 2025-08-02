@@ -32,6 +32,17 @@ bool SplittingBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 
         if (openSpots.size() > 1)
         {
+            if (cellManager->plantManager->splitCounts[thisCell->getCellSettings()->getPlantID()] >= cellManager->plantManager->maxPlantSplits)
+            {
+                thisCell->removeBehavior("split");
+
+                return true;
+            }
+            else
+            {
+                cellManager->plantManager->splitCounts[thisCell->getCellSettings()->getPlantID()]++;
+            }
+
             int index1, index2;
 
             index1 = getRandomInt(openSpots.size() - 1);
@@ -45,6 +56,7 @@ bool SplittingBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
             cellManager->grid->createCell(thisCell->getType(), openSpots[index2], thisCell->getCellSettings()->getPlantID());
 
             thisCell->removeBehavior("grow");
+            thisCell->removeBehavior("split");
         }
         else
         {

@@ -58,7 +58,7 @@ void Game::start()
 
     world.create(&window, &states);
 
-    creatorPos = {static_cast<unsigned int>(world.getGridSize().x / 2), 1};
+    creatorPos = {static_cast<unsigned int>(world.getGridSize().x / 2), static_cast<unsigned int>(world.getGridSize().y - 2)};
 
     run();
 }
@@ -81,7 +81,7 @@ void Game::run()
         {
             // formula is: milliseconds since last frame / desired milliseconds per update
             // the last number is the desired ups (20 right now)
-            ticksToProcess += (dt * 1000) / (1000 / 20.f);
+            ticksToProcess += (dt * 1000) / (1000 / 10.f);
             
             // if there was a big stutter, then this will run continuously until it is caught up
             while (ticksToProcess >= 1.f)

@@ -7,6 +7,7 @@
 #include "grid.hpp"
 #include "being.hpp"
 #include "../managers/resource_manager.hpp"
+#include "../managers/plant_manager.hpp"
 
 class World
 {
@@ -36,6 +37,8 @@ private:
     sf::RenderStates* states;
     
     CellManager cellManager;
+
+    PlantManager plantManager;
 
     ResourceManager resourceManager;
     

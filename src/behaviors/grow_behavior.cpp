@@ -66,7 +66,7 @@ bool GrowBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
     }
 
     // chance to stop growing and make a flower
-    if (getRandomInt(999) + 1 <= thisCell->getOptionalSetting("grow"))
+    if (getRandomInt(999) + 1 <= thisCell->getOptionalSetting("grow") || cellManager->plantManager->splitCounts[thisCell->getCellSettings()->getPlantID()] >= cellManager->plantManager->maxPlantSplits)
     {
         thisCell->changeType("flower");
 

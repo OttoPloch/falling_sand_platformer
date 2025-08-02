@@ -48,6 +48,8 @@ bool SeedBehavior::update(CellManager* cellManager, sf::Vector2u gridPos)
 
                     thisCell->addEndBehavior(std::make_shared<PlantedBehavior>());
 
+                    cellManager->plantManager->splitCounts[thisCell->getCellSettings()->getPlantID()] = 0;
+
                     return true;
                 }
             }

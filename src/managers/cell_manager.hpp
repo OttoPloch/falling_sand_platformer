@@ -6,12 +6,13 @@
 #include "../presets/cell_preset.hpp"
 #include "../game_classes/grid.hpp"
 #include "../game_classes/being.hpp"
+#include "plant_manager.hpp"
 
 struct CellManager
 {
     CellManager();
 
-    CellManager(float cellSize, sf::Vector2f cellOffset, Grid* grid, std::vector<std::shared_ptr<Being>>* beings);
+    CellManager(float cellSize, sf::Vector2f cellOffset, Grid* grid, std::vector<std::shared_ptr<Being>>* beings, PlantManager* plantManager);
 
     std::map<std::string, CellPreset> presets;
 
@@ -28,4 +29,6 @@ struct CellManager
 
     // x/1000 chance that a plant will grow straight up when other options are valid
     int plantGrowUpChance;
+
+    PlantManager* plantManager;
 };
